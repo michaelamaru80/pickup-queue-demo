@@ -1,0 +1,1615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inbound – Inbox</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/untitledui/components/bundle.css">
+<script src="ds/untitledui/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+html:root{--color-brand-25:#f6fafb;--color-brand-50:#eef5f7;--color-brand-100:#d9e9ed;--color-brand-200:#b7d3db;--color-brand-300:#8bb6c2;--color-brand-400:#5d93a2;--color-brand-500:#437886;--color-brand-600:#35626e;--color-brand-700:#2f525c;--color-brand-800:#2b454d;--color-brand-900:#263b42;--color-brand-950:#15252a}
+a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-secondary_hover)}
+/* Untitled UI ButtonGroup in the drawer: joined segments, full width.
+   Selectors don't depend on how the canvas wraps each item. */
+.rt-wrap{width:100%}
+.rt-wrap [role="radiogroup"],.rt-wrap .rt-group{display:flex !important;width:100% !important;gap:0 !important}
+.rt-wrap [role="radiogroup"]>*,.rt-wrap .rt-group>*{flex:1 1 0 !important;min-width:0;margin:0 !important;display:flex}
+.rt-wrap [role="radio"],.rt-wrap .rt-item{flex:1 1 0 !important;width:100% !important;justify-content:center !important;margin:0 0 0 -1px !important;border-radius:0 !important;padding-left:12px !important;padding-right:12px !important}
+.rt-wrap [role="radiogroup"]>:first-child,.rt-wrap [role="radiogroup"]>:first-child [role="radio"],
+.rt-wrap .rt-first{margin-left:0 !important;border-top-left-radius:8px !important;border-bottom-left-radius:8px !important}
+.rt-wrap [role="radiogroup"]>:last-child,.rt-wrap [role="radiogroup"]>:last-child [role="radio"],
+.rt-wrap .rt-last{border-top-right-radius:8px !important;border-bottom-right-radius:8px !important}
+.rt-wrap [role="radio"][aria-checked="true"],.rt-wrap [role="radio"][data-selected]{position:relative;z-index:1}
+.rr-off>*{flex:1 1 auto;min-width:0;display:flex}
+.rr-off button{display:flex !important;width:100% !important;align-items:center;text-align:left;cursor:not-allowed;background:none;border:0;padding:0;font:inherit}
+/* Action list hover / focus (Untitled UI secondary-button feel) */
+.act-btn{transition:background-color 100ms linear,border-color 100ms linear}
+.act-btn:hover{background:var(--color-bg-primary_hover) !important;color:var(--color-text-secondary_hover) !important}
+.act-btn:hover>span:last-child{color:var(--color-fg-quaternary_hover) !important}
+.act-btn.act-danger:hover{color:var(--color-text-error-primary_hover) !important}
+.act-btn:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px}
+/* Filter panel: date range trigger fills its 320px field, matching input height */
+.drp-wrap button{width:100%;height:40px;justify-content:flex-start !important}
+/* Icon-only dropdown triggers show the focus ring while their menu is open */
+.dd-open button{outline:2px solid var(--color-focus-ring) !important;outline-offset:2px !important}
+/* Searchable preset lists: search icon + chevron (chevron opens the list); keep typed text clear of the chevron */
+.cb-chev input{padding-right:32px !important}
+.st-off{opacity:1}
+div[role="row"]{transition:background-color 300ms ease}
+/* Prototype-only simulate control: dev-tools look */
+.proto{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;background:#1E1E1E !important;color:#CCCCCC !important;border-radius:4px !important;box-shadow:0 0 0 1px #3C3C3C,0 8px 24px rgba(0,0,0,.4) !important}
+.proto *{font-family:inherit !important;letter-spacing:0 !important;font-size:12px !important;line-height:18px !important;border-color:#3C3C3C !important}
+.proto *:not([role=radio]):not([role=switch]){color:#CCCCCC !important;background-color:transparent !important;box-shadow:none !important;border-radius:2px !important}
+.proto .uu-row:hover,.proto .uu-btn:hover{background-color:#2D2D2D !important}
+.proto-trigger{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;font-size:11px !important;letter-spacing:0 !important}
+/* Rejected-scan warning: pulse on every rejected scan (two names so it re-triggers) */
+@keyframes scanPulseA{0%{transform:translateX(0);box-shadow:0 0 0 0 rgba(220,104,3,.45)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px);box-shadow:0 0 0 6px rgba(220,104,3,.18)}80%{transform:translateX(2px)}100%{transform:translateX(0);box-shadow:0 0 0 0 rgba(220,104,3,0)}}
+@keyframes scanPulseB{0%{transform:translateX(0);box-shadow:0 0 0 0 rgba(220,104,3,.45)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px);box-shadow:0 0 0 6px rgba(220,104,3,.18)}80%{transform:translateX(2px)}100%{transform:translateX(0);box-shadow:0 0 0 0 rgba(220,104,3,0)}}
+.scan-pulse-a{animation:scanPulseA 450ms ease-out}
+.scan-pulse-b{animation:scanPulseB 450ms ease-out}
+@media (prefers-reduced-motion: reduce){.scan-pulse-a,.scan-pulse-b{animation:none}}
+.st-opt:hover{background:var(--color-bg-primary_hover) !important}
+.st-opt:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:-2px}
+.side-nav{transition:width 220ms cubic-bezier(.2,.8,.2,1),box-shadow 220ms ease}
+.nav-label{transition:opacity 160ms ease}
+@media (prefers-reduced-motion: reduce){.side-nav,.nav-label{transition:none !important}}
+.rail-btn:hover,.nav-row:hover{background:var(--color-bg-primary_hover) !important}
+.rail-btn:focus-visible,.nav-row:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px}
+/* Scroll-collapsing product bar: 200ms linear, none with reduced motion */
+.hdr-anim{transition:transform 200ms linear}
+.hdr-anim-top{transition:top 200ms linear,height 200ms linear}
+@media (prefers-reduced-motion: reduce){.hdr-anim,.hdr-anim-top{transition:none !important}}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: var(--color-bg-primary); color: var(--color-text-primary); font-family: Inter, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 20px; display: flex; flex-direction: column">
+
+  <div style="position: sticky; top: 0; z-index: 30; height: 52px" onMouseLeave="{{headerLeave}}">
+  <!-- Platform bar -->
+  <header onMouseEnter="{{headerEnter}}" style="position: relative; z-index: 1; background: var(--color-brand-800); color: #ffffff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 0 clamp(24px, 5vw, 80px); height: 52px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 28px">
+      <button type="button" onClick="{{resetPrototype}}" title="Reset prototype" aria-label="Ricoh – reset prototype" style="display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; cursor: pointer"><svg role="img" aria-label="Ricoh" width="139" height="32" viewBox="0 0 139 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-left: -10px; flex: 0 0 auto"><path d="M56.6944 15.5944C56.6944 19.7361 59.8187 22.7678 65.0427 22.7678C67.259 22.8097 69.4562 22.3594 71.469 21.4508L73.4291 24.0518C70.7239 25.4475 68.1246 26.1847 64.1156 26.1847C55.7843 26.1847 49.6585 22.2584 49.6585 15.5944C49.6712 8.93046 55.797 5 64.1283 5C68.1204 5 70.4191 5.56741 73.2301 6.74779L71.2277 9.74638C69.111 8.64054 67.2483 8.41275 65.0427 8.41275C59.8187 8.41275 56.6944 11.4569 56.6944 15.582" fill="white"></path><path d="M88.4831 5C80.4184 5 74.6018 8.93046 74.6018 15.5944C74.6018 22.2584 80.4184 26.1889 88.4831 26.1889C96.5477 26.1889 102.369 22.2626 102.369 15.5944C102.369 8.92632 96.5519 5 88.4831 5ZM88.4831 22.8921C84.0465 22.8921 81.5996 19.6326 81.5996 15.5903C81.5996 11.548 84.0507 8.2885 88.4831 8.2885C92.9155 8.2885 95.3708 11.5522 95.3708 15.5903C95.3708 19.6284 92.9197 22.8921 88.4831 22.8921Z" fill="white"></path><path d="M123.337 17.1269V25.6505H130V5.53014H123.337V13.2047H113.147V5.53014H106.496V25.6505H113.147V17.1269H123.337Z" fill="white"></path><path d="M45.6537 5.53427H38.6347V25.6546H45.6537V5.53427Z" fill="white"></path><path d="M18.5007 14.7413V16.663C21.9124 19.2781 24.9796 22.297 27.6321 25.6505H35.4893C32.7545 22.5069 28.5635 18.7753 25.4731 16.8949C29.1011 16.75 33.1398 15.3128 33.1398 11.2415C33.1398 6.01886 27.4332 5.05798 21.663 5.05798C16.9512 5.05798 12.6078 5.27335 10 5.48044V25.6505H16.5575V8.52044C18.2618 8.32596 19.9769 8.23605 21.6927 8.25123C25.0794 8.25123 26.7727 9.34463 26.7727 11.2457C26.7727 12.8734 26.0658 14.8199 18.4964 14.7454" fill="white"></path></svg></button>
+      <span style="font-size: 13px; font-weight: 600; line-height: 18px">Intelligent Business Platform</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px">
+      <button type="button" aria-label="Notifications" style="background: none; border: 0; padding: 8px; color: #ffffff; cursor: pointer; display: flex; border-radius: 8px">
+        <x-import component-from-global-scope="UntitledUI.Icons.Bell01" class="size-5"></x-import>
+      </button>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" initials="JB" alt="John Bourne"></x-import>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 14px; font-weight: 600; line-height: 20px">John Bourne</span>
+          <span style="font-size: 12px; line-height: 18px; opacity: 0.85">john.bourne@ricoh-usa.com</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product bar -->
+  <nav aria-label="Product" class="hdr-anim" onFocus="{{navFocusIn}}" onBlur="{{navFocusOut}}" data-collapsed="{{navHidden}}" style="position: absolute; top: 52px; left: 0; right: 0; z-index: 0; transform: translateY({{navY}}); background: var(--color-brand-700); color: #ffffff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 0 clamp(24px, 5vw, 80px); height: 64px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button type="button" aria-label="App switcher" style="background: none; border: 0; padding: 6px; margin-left: -6px; color: #ffffff; cursor: pointer; display: flex; border-radius: 8px">
+        <x-import component-from-global-scope="UntitledUI.Icons.DotsGrid" class="size-5"></x-import>
+      </button>
+      <span style="font-size: 18px; font-weight: 600; line-height: 28px; margin-right: 12px">Delivery CTRL™</span>
+      <button type="button" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px 0 8px; border-radius: 8px; border: 0; background: rgba(0,0,0,0.22); color: #ffffff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">
+        <span style="width: 20px; height: 20px; border-radius: 999px; background: #ffffff; color: var(--color-brand-800); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">UP</span>
+        Print Center
+        <x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-4"></x-import>
+      </button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <a href="#" aria-current="page" style="display: flex; align-items: center; height: 40px; box-sizing: border-box; padding: 0 12px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-bottom: 2px solid #ffffff">Work Queue</a>
+      <a href="#" style="display: flex; align-items: center; height: 40px; box-sizing: border-box; padding: 0 12px; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; border-bottom: 2px solid transparent">Analytics</a>
+      <button type="button" style="display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 0 0 12px; color: #ffffff; font: inherit; font-size: 16px; font-weight: 600; background: none; border: 0; cursor: pointer">More<x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-4"></x-import></button>
+    </div>
+  </nav>
+
+  </div>
+
+  <!-- Body: rail + content -->
+  <div style="position: relative; display: flex; flex-wrap: wrap; gap: 40px; padding: 64px 0 0 0; flex-grow: 1; min-height: 0">
+
+    <!-- Side menu: one panel that widens from the 56px rail to 300px; icons stay put, labels fade in -->
+    <div onMouseLeave="{{closeNav}}" class="hdr-anim-top" style="position: sticky; top: {{drawerTop}}; align-self: flex-start; height: calc(100vh - {{drawerTop}} - 24px); flex: 0 0 56px; display: flex; z-index: 25">
+      <nav aria-label="Sections" onMouseEnter="{{openNav}}" class="side-nav" style="position: absolute; top: 4px; bottom: 0; left: 0; width: {{navW}}; padding: 20px 8px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; overflow: hidden; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-left: 0; border-radius: 0 12px 12px 0; box-shadow: {{navShadow}}">
+        <button type="button" aria-label="Contacts Lookup" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Contacts Lookup</span></button>
+        <button type="button" aria-current="page" aria-label="Inbound" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: var(--color-bg-brand-solid); font-family: inherit; color: #ffffff; text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto"><x-import component-from-global-scope="UntitledUI.Icons.ArrowDownRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Inbound</span></button>
+        <button type="button" aria-label="Outbound" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowUpRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Outbound</span></button>
+        <button type="button" aria-label="Routes" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Routes</span></button>
+        <button type="button" aria-label="Search" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Scan" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Search</span></button>
+        <a href="PickupQueue.dc.html" aria-label="Pickup Queue" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; color: var(--color-text-secondary); text-decoration: none"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Ticket01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Pickup Queue</span></a>
+        <button type="button" aria-label="Event Manager" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lightbulb02" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Event Manager</span></button>
+        <button type="button" aria-label="Submit an Idea" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageSquare01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Submit an Idea</span></button>
+        <button type="button" aria-label="Knowledge Base" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.BookOpen01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Knowledge Base</span></button>
+        <div style="flex-grow: 1"></div>
+        <button type="button" aria-label="{{navToggleLabel}}" aria-expanded="{{navOpen}}" onClick="{{toggleNav}}" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary); transform: {{navChevron}}; transition: transform 200ms ease"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Collapse</span></button>
+      </nav>
+    </div>
+
+    <!-- Main content -->
+    <main style="flex: 999 1 560px; min-width: 0; min-height: 0; padding: 20px 40px 24px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px">
+
+      <!-- Page header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px">
+        <h1 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; color: var(--color-text-primary)">Inbound</h1>
+        <div style="display: flex; align-items: center; gap: 12px">
+          <x-import component-from-global-scope="UntitledUI.Button" color="primary" size="md" icon-trailing="{{ic.ChevronDown}}">Receive</x-import>
+          <x-import component-from-global-scope="UntitledUI.Tooltip" title="More options" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.DotsVertical}}" aria-label="More options"></x-import></x-import>
+        </div>
+      </div>
+
+      <!-- Card -->
+      <section ref="{{cardRef}}" style="flex: 1 1 auto; min-height: 360px; min-width: 1082px; border: 1px solid var(--color-border-secondary); border-radius: 12px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); display: flex; flex-direction: column; overflow: visible">
+
+        <!-- Tabs (underline, full width) -->
+        <div role="tablist" aria-label="Inbound views" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--color-border-secondary)">
+          <button type="button" role="tab" aria-selected="true" style="height: 44px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--color-text-brand-secondary); border-bottom: 2px solid var(--color-fg-brand-primary_alt); margin-bottom: -1px; cursor: pointer">Inbox</button>
+          <button type="button" role="tab" aria-selected="false" style="height: 44px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--color-text-quaternary); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer">Containers</button>
+          <button type="button" role="tab" aria-selected="false" style="height: 44px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--color-text-quaternary); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer">Research Required</button>
+          <button type="button" role="tab" aria-selected="false" style="height: 44px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--color-text-quaternary); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer">Non-Accountable</button>
+        </div>
+
+        <!-- Quick filters -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--color-border-secondary)">
+          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px">
+            <button type="button" aria-haspopup="listbox" style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px 0 12px; border-radius: 999px; border: 0; background: var(--color-bg-brand-solid); color: #ffffff; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer" onClick="{{showAllItems}}" title="Show all active items">Active items<x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-4"></x-import></button>
+            <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+              <button type="button" style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 4px 0 12px; border-radius: 999px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-primary); color: var(--color-text-secondary); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">{{f.label}}<x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">{{f.count}}</x-import></button>
+            </sc-for>
+          </div>
+          <x-import component-from-global-scope="UntitledUI.Button" color="link-gray" size="md" icon-leading="{{ic.Sliders04}}">Configure view</x-import>
+        </div>
+
+        <!-- Toolbar -->
+        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 20px {{toolbarPadR}} 20px 24px">
+          <div style="position: relative; flex: 1 1 360px; min-width: 0">
+            <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Scan or search by tracking number, name or service point" placeholder="Scan or search tracking number" icon="{{ic.SearchLg}}" value="{{searchValue}}" on-change="{{setSearch}}" on-key-down="{{onSearchKey}}"></x-import>
+            <div style="position: absolute; right: 6px; top: 22px; transform: translateY(-50%); display: flex; align-items: center; gap: 2px">
+              <sc-if value="{{hasSearch}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="Clear search" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.XClose}}" on-press="{{clearSearch}}" aria-label="Clear search"></x-import></x-import>
+              </sc-if>
+              <x-import component-from-global-scope="UntitledUI.Tooltip" title="Scan barcode" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.Scan}}" aria-label="Scan barcode"></x-import></x-import>
+              <span class="{{filterTriggerClass}}" style="display: flex"><x-import component-from-global-scope="UntitledUI.Tooltip" title="Filters" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="{{filterBtnColor}}" size="xs" icon="{{ic.FilterLines}}" aria-expanded="{{panelOpen}}" on-press="{{togglePanel}}" aria-label="Filters"></x-import></x-import></span>
+            </div>
+
+            <!-- Filter panel -->
+            <sc-if value="{{panelOpen}}" hint-placeholder-val="{{false}}">
+              <div aria-hidden="true" onClick="{{closePanel}}" style="position: fixed; inset: 0; z-index: 14"></div>
+              <div role="dialog" aria-label="Filters" style="position: absolute; top: {{panelTop}}; right: 6px; width: max-content; max-width: calc(100vw - 140px); z-index: 15; box-sizing: border-box; overflow: visible; padding: 24px; display: flex; flex-direction: column; gap: 20px; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-radius: 12px; box-shadow: 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)">
+
+                <!-- Fields: 320px each, two per row -->
+                <div class="pf-grid" style="display: grid; grid-template-columns: repeat(2, 320px); gap: 20px 16px; align-items: start">
+                <!-- Status (works; locked during a workflow) -->
+                <div style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Status</span>
+                  <sc-if value="{{statusEnabled}}" hint-placeholder-val="{{true}}">
+                    <div class="st-wrap" style="position: relative; z-index: 20">
+                      <div class="st-field" onClick="{{toggleStatus}}" style="display: flex; align-items: center; gap: 8px; min-height: 40px; box-sizing: border-box; padding: 3px 4px 3px 12px; border: 1px solid {{statusBorder}}; border-radius: 8px; background: var(--color-bg-primary); box-shadow: {{statusShadow}}; cursor: pointer">
+                        <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px">
+                          <sc-for list="{{draftStatusTags}}" as="t" hint-placeholder-count="0">
+                            <span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 4px 0 8px; border: 1px solid var(--color-border-brand_alt, var(--color-border-secondary)); border-radius: 6px; background: var(--color-bg-brand-primary); font-size: 12px; font-weight: 500; color: var(--color-text-brand-secondary)">{{t.label}}<button type="button" aria-label="{{t.removeLabel}}" onClick="{{t.remove}}" style="display: flex; width: 16px; height: 16px; padding: 0; border: 0; border-radius: 4px; background: none; color: var(--color-fg-brand-secondary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.XClose" class="size-3"></x-import></button></span>
+                          </sc-for>
+                          <sc-if value="{{noDraftStatus}}" hint-placeholder-val="{{true}}">
+                            <span style="font-size: 16px; line-height: 24px; color: var(--color-text-placeholder)">Select statuses</span>
+                          </sc-if>
+                        </div>
+                        <button type="button" aria-label="Choose statuses" aria-haspopup="listbox" aria-expanded="{{statusOpen}}" style="display: flex; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--color-fg-quaternary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-5"></x-import></button>
+                      </div>
+                      <sc-if value="{{statusOpen}}" hint-placeholder-val="{{false}}">
+                        <div role="listbox" aria-multiselectable="true" aria-label="Statuses" style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 3; max-height: 264px; overflow-y: auto; padding: 4px 0; background: var(--color-bg-primary); border-radius: 8px; box-shadow: 0 0 0 1px var(--color-border-secondary_alt, var(--color-border-secondary)), 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)">
+                          <sc-for list="{{statusOptions}}" as="o" hint-placeholder-count="6">
+                            <sc-if value="{{o.divider}}" hint-placeholder-val="{{false}}">
+                              <div role="separator" style="height: 1px; margin: 4px 0; background: var(--color-border-secondary)"></div>
+                            </sc-if>
+                            <button type="button" role="option" aria-selected="{{o.on}}" aria-disabled="{{o.disabled}}" disabled="{{o.disabled}}" title="{{o.tip}}" class="{{o.cls}}" onClick="{{o.flip}}" style="display: flex; align-items: center; gap: 8px; width: calc(100% - 12px); margin: 1px 6px; padding: 8px 10px; box-sizing: border-box; border: 0; border-radius: 6px; background: transparent; font: inherit; font-size: 16px; line-height: 24px; font-weight: 500; color: {{o.color}}; text-align: left; cursor: {{o.cursor}}">
+                              <x-import component-from-global-scope="UntitledUI.CheckboxBase" size="sm" is-selected="{{o.on}}" is-disabled="{{o.disabled}}"></x-import>
+                              <span style="flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{o.label}}</span>
+                              <span style="flex: 0 0 auto; font-size: 13px; line-height: 18px; font-weight: 400; color: var(--color-text-quaternary)">{{o.why}}</span>
+                            </button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{statusDisabled}}" hint-placeholder-val="{{false}}">
+                    <div class="rr-off" style="display: flex; align-items: center; min-height: 40px; padding: 0 12px; box-sizing: border-box; border: 1px solid var(--color-border-secondary); border-radius: 8px; background: var(--color-bg-secondary)">
+                      <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{statusLockTip}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}">
+                        <x-import component-from-global-scope="UntitledUI.TooltipTrigger" aria-disabled="true" aria-label="{{statusLockAria}}" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2">
+                          <span style="display: flex; align-items: center; gap: 8px; width: 100%">
+                            <span style="flex-grow: 1; font-size: 16px; line-height: 24px; color: var(--color-text-quaternary)">{{statusLockText}}</span>
+                            <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lock01" class="size-4"></x-import></span>
+                          </span>
+                        </x-import>
+                      </x-import>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <!-- Visual-only fields for now -->
+                <!-- Searchable fields: Untitled UI ComboBox (type to filter) -->
+                <div class="cb-chev" style="position: relative"><x-import component-from-global-scope="UntitledUI.ComboBox" label="Route" selected-key="{{dfxRoute}}" on-selection-change="{{setDfxRoute}}" aria-label="Route" size="md" placeholder="Search" shortcut="{{no}}" items="{{routeItems}}" children="{{routeItemRender}}"></x-import><button type="button" tabindex="-1" aria-hidden="true" onClick="{{openCombo}}" style="position: absolute; right: 4px; bottom: 4px; z-index: 11; display: flex; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--color-fg-quaternary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-5"></x-import></button></div>
+                <div class="cb-chev" style="position: relative"><x-import component-from-global-scope="UntitledUI.ComboBox" label="Received from" selected-key="{{dfxSender}}" on-selection-change="{{setDfxSender}}" aria-label="Received from" size="md" placeholder="Search" shortcut="{{no}}" items="{{senderItems}}" children="{{routeItemRender}}"></x-import><button type="button" tabindex="-1" aria-hidden="true" onClick="{{openCombo}}" style="position: absolute; right: 4px; bottom: 4px; z-index: 11; display: flex; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--color-fg-quaternary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-5"></x-import></button></div>
+                <div class="cb-chev" style="position: relative"><x-import component-from-global-scope="UntitledUI.ComboBox" label="Sent to" selected-key="{{dfxRecipient}}" on-selection-change="{{setDfxRecipient}}" aria-label="Sent to" size="md" placeholder="Search" shortcut="{{no}}" items="{{recipientItems}}" children="{{routeItemRender}}"></x-import><button type="button" tabindex="-1" aria-hidden="true" onClick="{{openCombo}}" style="position: absolute; right: 4px; bottom: 4px; z-index: 11; display: flex; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--color-fg-quaternary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-5"></x-import></button></div>
+                <div class="cb-chev" style="position: relative"><x-import component-from-global-scope="UntitledUI.ComboBox" label="Last known waypoint" selected-key="{{dfxWaypoint}}" on-selection-change="{{setDfxWaypoint}}" aria-label="Last known waypoint" size="md" placeholder="Search" shortcut="{{no}}" items="{{waypointItems}}" children="{{routeItemRender}}"></x-import><button type="button" tabindex="-1" aria-hidden="true" onClick="{{openCombo}}" style="position: absolute; right: 4px; bottom: 4px; z-index: 11; display: flex; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--color-fg-quaternary); cursor: pointer; align-items: center; justify-content: center"><x-import component-from-global-scope="UntitledUI.Icons.ChevronDown" class="size-5"></x-import></button></div>
+                <!-- Arrival date: Untitled UI Date range picker (presets, two months, Apply/Cancel) -->
+                <div class="drp-wrap" style="display: flex; flex-direction: column; gap: 6px">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Arrival date</span>
+                  <x-import component-from-global-scope="UntitledUI.DateRangePicker" size="md" aria-label="Arrival date" value="{{dfxDate}}" on-change="{{setDfxDate}}"></x-import>
+                </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px">
+                  <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" on-press="{{clearFilters}}">Clear filters</x-import>
+                  <x-import component-from-global-scope="UntitledUI.Button" color="primary" size="sm" on-press="{{applyFilters}}">Apply filters</x-import>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.Printer}}">Export</x-import>
+          <sc-if value="{{showActionsBtn}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.DotsVertical}}" on-press="{{openActions}}">Actions</x-import></sc-if>
+          <sc-if value="{{hasChips}}" hint-placeholder-val="{{false}}">
+            <div style="flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: -4px">
+              <sc-for list="{{searchPillList}}" as="sp" hint-placeholder-count="0">
+                <x-import component-from-global-scope="UntitledUI.BadgeWithButton" type="color" color="gray" size="sm" button-label="{{sp.removeLabel}}" on-button-click="{{sp.remove}}">{{sp.label}}</x-import>
+              </sc-for>
+              <sc-if value="{{showClearAllPills}}" hint-placeholder-val="{{false}}">
+                <!-- 16px either side of Clear all (8px row gap + 8px margin) to separate it from the badges -->
+                <span style="display: flex; margin-left: {{clearAllML}}; margin-right: 8px"><x-import component-from-global-scope="UntitledUI.Button" color="link-gray" size="sm" on-press="{{clearAllPills}}">Clear all</x-import></span>
+              </sc-if>
+              <sc-if value="{{hasStatusChips}}" hint-placeholder-val="{{false}}">
+                <sc-for list="{{statusChipList}}" as="c" hint-placeholder-count="0">
+                  <x-import component-from-global-scope="UntitledUI.BadgeWithButton" type="color" color="gray" size="sm" button-label="{{c.removeLabel}}" on-button-click="{{c.remove}}">{{c.label}}</x-import>
+                </sc-for>
+              </sc-if>
+              <sc-for list="{{fxChipList}}" as="c" hint-placeholder-count="0">
+                <x-import component-from-global-scope="UntitledUI.BadgeWithButton" type="color" color="gray" size="sm" button-label="{{c.removeLabel}}" on-button-click="{{c.remove}}">{{c.label}}</x-import>
+              </sc-for>
+              <sc-if value="{{filterChip}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="Only items that can be rerouted" description="You’re rerouting, so this list hides items that can’t be rerouted, like packages already out for delivery or still being processed. Exit reroute to see all items." arrow="{{yes}}" placement="bottom" delay="{{tooltipDelay}}">
+                  <x-import component-from-global-scope="UntitledUI.TooltipTrigger" aria-label="Filtered to items available for reroute. Items that can’t be rerouted are hidden." class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2">
+                    <x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="color" color="brand" size="sm" icon-trailing="{{ic.Lock01}}">Available for reroute</x-import>
+                  </x-import>
+                </x-import>
+              </sc-if>
+              <sc-if value="{{phaseChip}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="Items must be in the same phase" description="{{phaseTooltip}}" arrow="{{yes}}" placement="bottom" delay="{{tooltipDelay}}">
+                  <x-import component-from-global-scope="UntitledUI.TooltipTrigger" aria-label="{{phaseTooltipAria}}" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2">
+                    <x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="color" color="brand" size="sm" icon-trailing="{{ic.Lock01}}">{{phaseChipLabel}}</x-import>
+                  </x-import>
+                </x-import>
+              </sc-if>
+              <sc-if value="{{showPhaseHidden}}" hint-placeholder-val="{{false}}">
+                <div role="status" style="flex-basis: 100%; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: var(--color-text-tertiary); white-space: nowrap">
+                  <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
+                  Items in other phases are hidden. Reroute these first to see them.
+                </div>
+              </sc-if>
+              <sc-if value="{{showHiddenSel}}" hint-placeholder-val="{{false}}">
+                <div role="status" style="flex-basis: 100%; display: flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; color: var(--color-text-tertiary); white-space: nowrap">
+                  <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
+                  {{hiddenSelText}}
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Table -->
+        <div style="position: relative; flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column" aria-busy="{{filtering}}">
+        <div style="flex: 1 1 auto">
+          <div role="table" aria-label="Inbound items" style="min-width: 1080px; opacity: {{tableOpacity}}; transition: opacity 150ms linear">
+            <div role="row" class="hdr-anim-top" style="position: sticky; top: {{drawerTop}}; z-index: 2; display: grid; grid-template-columns: 56px minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr) 160px 56px; align-items: center; min-height: 44px; padding: 6px 0; box-sizing: border-box; background: var(--color-bg-secondary); border-top: 1px solid var(--color-border-secondary); border-bottom: 1px solid var(--color-border-secondary); font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-quaternary)">
+              <div role="columnheader" style="display: flex; justify-content: center"><x-import component-from-global-scope="UntitledUI.Checkbox" size="sm" aria-label="Select all" is-selected="{{allSelected}}" is-indeterminate="{{someSelected}}" on-change="{{toggleAll}}"></x-import></div>
+              <div role="columnheader" style="padding: 0 12px 0 28px">Sender</div>
+              <div role="columnheader" style="padding: 0 12px; display: flex; flex-direction: column"><span>Recipient</span><span style="color: var(--color-text-placeholder)">Sender</span></div>
+              <div role="columnheader" style="padding: 0 12px">Arrival date</div>
+              <div role="columnheader" style="padding: 0 12px; display: flex; flex-direction: column"><span>Service point</span><span style="color: var(--color-text-placeholder)">Route</span></div>
+              <div role="columnheader" style="padding: 0 12px">SLA</div>
+              <div role="columnheader" style="padding: 0 12px">Info</div>
+              <div role="columnheader" aria-label="Row actions"></div>
+            </div>
+
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+              <div role="row" style="display: grid; grid-template-columns: 56px minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr) 160px 56px; align-items: center; min-height: 64px; padding: 10px 0; box-sizing: border-box; border-bottom: 1px solid var(--color-border-secondary); background: {{r.rowBg}}">
+                <div role="cell" style="display: flex; justify-content: center"><x-import component-from-global-scope="UntitledUI.Checkbox" size="sm" aria-label="Select row" is-selected="{{r.selected}}" on-change="{{r.toggle}}"></x-import></div>
+                <div role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 10px; min-width: 0">
+                  <div style="position: relative; width: 36px; height: 36px; flex: 0 0 auto; border-radius: 999px; border: 2px solid var(--color-border-secondary); border-top-color: var(--color-fg-brand-secondary); border-right-color: var(--color-fg-brand-secondary); box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: var(--color-fg-secondary)">
+                    <x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-4"></x-import>
+                  </div>
+                  <div style="display: flex; flex-direction: column; min-width: 0">
+                    <a href="#" style="font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.tracking}}</a>
+                    <span title="{{r.statusLine}}" style="font-size: 11px; line-height: 16px; font-weight: 500; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.statusLine}}</span>
+                  </div>
+                </div>
+                <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column; min-width: 0"><span title="{{r.recipient}}" style="color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.recipient}}</span><span title="{{r.sender}}" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sender}}</span></div>
+                <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column"><span style="color: var(--color-text-primary)">{{r.date}}</span><span style="color: var(--color-text-tertiary)">{{r.time}}</span></div>
+                <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column; min-width: 0"><span title="{{r.point}}" style="color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.point}}</span><span title="{{r.route}}" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.route}}</span></div>
+                <div role="cell" style="padding: 0 12px"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" size="md" color="{{r.slaColor}}">{{r.sla}}</x-import></div>
+                <div role="cell" style="padding: 0 8px; display: flex; align-items: center; gap: 2px">
+                  <x-import component-from-global-scope="UntitledUI.Tooltip" title="Notify recipient" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.Bell01}}" aria-label="Notify recipient"></x-import></x-import>
+                  <x-import component-from-global-scope="UntitledUI.Tooltip" title="Notes" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.MessageTextSquare01}}" aria-label="Notes"></x-import></x-import>
+                  <x-import component-from-global-scope="UntitledUI.Tooltip" title="Edit" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.Edit05}}" aria-label="Edit"></x-import></x-import>
+                  <sc-if value="{{r.alert}}" hint-placeholder-val="{{false}}">
+                    <button type="button" aria-label="Exception flagged" title="Exception flagged" style="width: 32px; height: 32px; border: 0; border-radius: 6px; background: none; color: var(--color-fg-error-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-4"></x-import></button>
+                  </sc-if>
+                  <sc-if value="{{r.noAlert}}" hint-placeholder-val="{{true}}">
+                    <x-import component-from-global-scope="UntitledUI.Tooltip" title="Flag exception" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset4}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.AlertTriangle}}" aria-label="Flag exception"></x-import></x-import>
+                  </sc-if>
+                </div>
+                <div role="cell" style="display: flex; justify-content: center"><x-import component-from-global-scope="UntitledUI.TableRowActionsDropdown"></x-import></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{noRows}}" hint-placeholder-val="{{false}}">
+              <div style="padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding-right: calc(24px + {{footerPadR}})">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">No items match your search</span>
+                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Search looks at tracking number, recipient, sender and service point in this view.</span>
+                <div style="margin-top: 12px"><x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" on-press="{{clearSearch}}">Clear search</x-import></div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <sc-if value="{{filtering}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="position: absolute; inset: 0; padding-right: {{footerPadR}}; display: flex; align-items: flex-start; justify-content: center; padding-top: 160px; box-sizing: border-box; background: rgba(255, 255, 255, 0.55); z-index: 5">
+            <x-import component-from-global-scope="UntitledUI.LoadingIndicator" type="line-spinner" size="md" label="{{loadingLabel}}"></x-import>
+          </div>
+        </sc-if>
+        </div>
+
+        <!-- Footer (sticks to the bottom of the screen while the table is in view) -->
+        <div style="position: sticky; bottom: 0; z-index: 6; background: var(--color-bg-primary); border-radius: 0 0 12px 12px; display: flex; align-items: stretch; flex-wrap: wrap; padding-right: {{footerPadR}}">
+          <div style="display: flex; align-items: center; padding: 12px 24px; border-top: 1px solid var(--color-border-secondary)">
+            <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-trailing="{{ic.ChevronDown}}">10 per page</x-import>
+          </div>
+          <div style="flex: 1 1 360px; min-width: 0">
+            <x-import component-from-global-scope="UntitledUI.PaginationButtonGroup" align="right" page="{{page}}" total="{{total}}" on-page-change="{{setPage}}"></x-import>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Select action drawer -->
+    <sc-if value="{{drawerOpen}}" hint-placeholder-val="{{false}}">
+      <sc-if value="{{showOverlay}}" hint-placeholder-val="{{true}}">
+        <div aria-hidden="true" onClick="{{onOverlayClick}}" class="hdr-anim-top" style="position: fixed; top: {{drawerTop}}; right: 0; bottom: 0; left: 0; background: rgba(12, 17, 29, 0.45); z-index: 20; cursor: default"></div>
+        <sc-if value="{{overlayTipOn}}" hint-placeholder-val="{{false}}">
+          <div role="status" style="position: fixed; left: {{overlayTipX}}; top: {{overlayTipY}}; transform: translate(-50%, calc(-100% - 12px)); z-index: 22; max-width: 320px; padding: 8px 12px; border-radius: 8px; background: var(--color-bg-primary-solid); box-shadow: 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03); font-size: 12px; line-height: 18px; color: #ffffff; pointer-events: none">
+            <span style="display: block; font-weight: 600">Making a bulk selection?</span>
+            <span style="display: block; color: rgba(255,255,255,0.8)">Choose an action from the drawer first, then select more items from the table.</span>
+            <span aria-hidden="true" style="position: absolute; left: 50%; bottom: -4px; width: 8px; height: 8px; background: var(--color-bg-primary-solid); transform: translateX(-50%) rotate(45deg)"></span>
+          </div>
+        </sc-if>
+      </sc-if>
+      <aside role="dialog" aria-modal="true" aria-labelledby="select-action-title" class="hdr-anim-top" style="position: fixed; top: {{drawerTop}}; right: 0; bottom: 0; width: 412px; max-width: 100%; z-index: 21; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column">
+      <div style="height: 100%; display: flex; flex-direction: column">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 20px 16px 20px 24px; border-bottom: 1px solid var(--color-border-secondary)">
+          <sc-if value="{{hasAction}}" hint-placeholder-val="{{false}}">
+            <button type="button" aria-label="Back to actions" onClick="{{backToActions}}" style="width: 36px; height: 36px; margin: 0 4px 0 -8px; border: 0; border-radius: 8px; background: none; color: var(--color-fg-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer"><x-import component-from-global-scope="UntitledUI.Icons.ArrowLeft" class="size-5"></x-import></button>
+          </sc-if>
+          <div style="flex-grow: 1; display: flex; align-items: center; gap: 10px; margin-top: 4px; min-width: 0">
+            <h2 id="select-action-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">{{drawerTitle}}</h2>
+            <sc-if value="{{showItemCount}}" hint-placeholder-val="{{false}}">
+              <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="brand" size="sm">{{itemCountLabel}}</x-import>
+            </sc-if>
+          </div>
+          <x-import component-from-global-scope="UntitledUI.CloseButton" size="sm" label="Close" on-press="{{closeDrawer}}"></x-import>
+        </div>
+        <sc-if value="{{pickingAction}}" hint-placeholder-val="{{true}}">
+        <div style="flex: 1 1 auto; min-height: 0; padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto">
+          <sc-if value="{{noScanWarn}}" hint-placeholder-val="{{true}}">
+            <div role="note" style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-border-primary); border-radius: 12px; background: var(--color-bg-secondary)">
+              <span style="display: flex; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-5"></x-import></span>
+              <span style="font-size: 14px; line-height: 20px; color: var(--color-text-secondary)"><span style="font-weight: 600; color: var(--color-text-primary)">Making a bulk selection?</span> Choose an action first, then select more items from the table.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{scanWarn}}" hint-placeholder-val="{{false}}">
+            <div role="alert" class="{{scanWarnClass}}" style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-fg-warning-secondary); border-radius: 12px; background: var(--color-bg-warning-primary)">
+              <span style="display: flex; padding-top: 2px; color: var(--color-fg-warning-primary)"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-5"></x-import></span>
+              <span style="font-size: 14px; line-height: 20px; color: var(--color-text-secondary)"><span style="font-weight: 600; color: var(--color-text-warning-primary)">{{scanWarnTitle}}</span> {{scanWarnBody}}</span>
+            </div>
+          </sc-if>
+          <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Select action <span style="color: var(--color-text-error-primary)">*</span></span>
+          <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Search action" placeholder="Search action" icon="{{ic.SearchLg}}" on-change="{{setQuery}}"></x-import>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <sc-if value="{{show.ofd}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-5"></x-import></span><span style="flex-grow: 1">Out for delivery</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{rerouteOn}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" onClick="{{pickReroute}}" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Shuffle01" class="size-5"></x-import></span><span style="flex-grow: 1">Reroute</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{rerouteOff}}" hint-placeholder-val="{{false}}">
+              <div class="rr-off" style="display: flex; min-height: 44px; padding: 10px 14px; box-sizing: border-box; border: 1px solid var(--color-border-secondary); border-radius: 8px; background: var(--color-bg-secondary)">
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{notEligibleTip}}" placement="top end" arrow="{{yes}}" delay="{{tooltipDelay}}">
+                  <x-import component-from-global-scope="UntitledUI.TooltipTrigger" aria-disabled="true" aria-label="{{notEligibleAria}}" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2">
+                    <span style="display: flex; align-items: center; gap: 12px; width: 100%">
+                    <span style="display: flex; color: var(--color-fg-quaternary); opacity: 0.6"><x-import component-from-global-scope="UntitledUI.Icons.Shuffle01" class="size-5"></x-import></span>
+                    <span style="flex-grow: 1; font-size: 15px; line-height: 22px; font-weight: 600; color: var(--color-text-quaternary); opacity: 0.8">Reroute</span>
+                    <x-import component-from-global-scope="UntitledUI.BadgeWithDot" type="modern" color="gray" size="sm">Not eligible</x-import>
+                    </span>
+                  </x-import>
+                </x-import>
+              </div>
+            </sc-if>
+            <sc-if value="{{show.delayed}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Clock" class="size-5"></x-import></span><span style="flex-grow: 1">Delivery delayed</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.hold}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Lock01" class="size-5"></x-import></span><span style="flex-grow: 1">Hold in service center</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.rts}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowLeft" class="size-5"></x-import></span><span style="flex-grow: 1">Return to sender</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.picked}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.PackageCheck" class="size-5"></x-import></span><span style="flex-grow: 1">Picked up</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.container}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.PackagePlus" class="size-5"></x-import></span><span style="flex-grow: 1">Add/New container</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.special}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-5"></x-import></span><span style="flex-grow: 1">Add special handling</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.report}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-5"></x-import></span><span style="flex-grow: 1">Report image</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{show.cancel}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="act-btn act-danger" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 15px; font-weight: 600; color: var(--color-text-error-primary); text-align: left; cursor: pointer"><span style="display: flex; color: var(--color-fg-error-primary)"><x-import component-from-global-scope="UntitledUI.Icons.SlashCircle01" class="size-5"></x-import></span><span style="flex-grow: 1">Cancel delivery</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-4"></x-import></span></button>
+            </sc-if>
+            <sc-if value="{{noMatches}}" hint-placeholder-val="{{false}}">
+              <p style="margin: 8px 0 0; font-size: 14px; color: var(--color-text-tertiary)">No actions match your search.</p>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+        <sc-if value="{{hasAction}}" hint-placeholder-val="{{false}}">
+          <div style="flex: 0 0 auto; padding: 20px 24px 16px; background: var(--color-bg-primary)">
+            <!-- Reroute to: mode switch -->
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <span id="reroute-to-label" style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Reroute to</span>
+              <div class="rt-wrap"><x-import component-from-global-scope="UntitledUI.ButtonGroup" size="sm" aria-labelledby="reroute-to-label" selection-mode="single" disallow-empty-selection="{{yes}}" selected-keys="{{rtKeys}}" on-selection-change="{{setRtMode}}" class="rt-group"><x-import component-from-global-scope="UntitledUI.ButtonGroupItem" id="sp" class="rt-item rt-first">Service point</x-import><x-import component-from-global-scope="UntitledUI.ButtonGroupItem" id="recipient" class="rt-item rt-mid">Recipient</x-import><x-import component-from-global-scope="UntitledUI.ButtonGroupItem" id="location" class="rt-item rt-last">Location</x-import></x-import></div>
+            </div>
+          </div>
+          <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 4px 24px 0; display: flex; flex-direction: column; gap: 20px">
+
+            <!-- New service point -->
+            <sc-if value="{{modeSp}}" hint-placeholder-val="{{true}}">
+              <div style="flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+                <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Search service points" placeholder="Search service points" icon="{{ic.SearchLg}}" value="{{spQuery}}" on-change="{{setSpQuery}}"></x-import>
+                <div style="display: flex; flex-direction: column; gap: 16px; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 2px 2px 16px; scrollbar-gutter: stable">
+                <sc-for list="{{spGroups}}" as="g" hint-placeholder-count="2">
+                  <div role="radiogroup" aria-label="{{g.name}}" style="display: flex; flex-direction: column; gap: 8px">
+                    <div style="position: sticky; top: -2px; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 4px 0; background: var(--color-bg-primary); font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-quaternary)">
+                      <x-import component-from-global-scope="UntitledUI.Icons.Building07" class="size-4"></x-import>{{g.name}}
+                    </div>
+                    <sc-for list="{{g.items}}" as="s" hint-placeholder-count="2">
+                    <button type="button" onClick="{{s.pick}}" disabled="{{s.disabled}}" aria-pressed="{{s.selected}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; text-align: left; padding: 12px 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; font: inherit; cursor: {{s.cursor}}; opacity: {{s.opacity}}">
+                      <span style="display: flex; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.RadioButtonBase" size="sm" is-selected="{{s.selected}}" is-disabled="{{s.disabled}}"></x-import></span>
+                      <span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{s.title}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{s.sub}}</span>
+                      </span>
+                      <sc-if value="{{s.hasTag}}" hint-placeholder-val="{{false}}">
+                        <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.tagColor}}" size="sm">{{s.tag}}</x-import>
+                      </sc-if>
+                    </button>
+                    </sc-for>
+                  </div>
+                </sc-for>
+                <sc-if value="{{spEmpty}}" hint-placeholder-val="{{false}}">
+                  <p style="margin: 0; font-size: 14px; color: var(--color-text-tertiary)">No service points match your search.</p>
+                </sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- New recipient -->
+            <sc-if value="{{modeRecipient}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; flex-direction: column; gap: 20px; padding-bottom: 24px">
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Recipient <span style="color: var(--color-text-error-primary)">*</span></span>
+                  <sc-if value="{{noRecipient}}" hint-placeholder-val="{{true}}">
+                    <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Search recipients" placeholder="Search by name or department" icon="{{ic.SearchLg}}" value="{{recQuery}}" on-change="{{setRecQuery}}"></x-import>
+                    <div role="radiogroup" aria-label="Recipients" style="display: flex; flex-direction: column; gap: 8px; max-height: 404px; overflow-y: auto; padding: 2px; scrollbar-gutter: stable">
+                      <sc-for list="{{recipients}}" as="s" hint-placeholder-count="4">
+                      <button type="button" onClick="{{s.pick}}" disabled="{{s.disabled}}" aria-pressed="{{s.selected}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; text-align: left; padding: 12px 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; font: inherit; cursor: {{s.cursor}}; opacity: {{s.opacity}}">
+                      <span style="display: flex; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.RadioButtonBase" size="sm" is-selected="{{s.selected}}" is-disabled="{{s.disabled}}"></x-import></span>
+                      <span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{s.title}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{s.sub}}</span>
+                      </span>
+                      <sc-if value="{{s.hasTag}}" hint-placeholder-val="{{false}}">
+                        <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.tagColor}}" size="sm">{{s.tag}}</x-import>
+                      </sc-if>
+                    </button>
+                      </sc-for>
+                      <sc-if value="{{recEmpty}}" hint-placeholder-val="{{false}}">
+                        <p style="margin: 0; font-size: 14px; color: var(--color-text-tertiary)">No recipients match your search.</p>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{hasRecipient}}" hint-placeholder-val="{{false}}">
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--color-border-secondary); border-radius: 12px; background: var(--color-bg-secondary)">
+                      <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" initials="{{recInitials}}" alt="{{recName}}"></x-import>
+                      <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">{{recName}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{recDept}}</span>
+                      </div>
+                      <x-import component-from-global-scope="UntitledUI.Button" color="link-color" size="sm" on-press="{{clearRecipient}}">Change</x-import>
+                    </div>
+                  </sc-if>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Service point <span style="color: var(--color-text-error-primary)">*</span></span>
+                  <sc-if value="{{noRecipient}}" hint-placeholder-val="{{true}}">
+                    <div style="padding: 16px; border: 1px dashed var(--color-border-primary); border-radius: 12px; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Select a recipient to see their default service point.</div>
+                  </sc-if>
+                  <sc-if value="{{hasRecipient}}" hint-placeholder-val="{{false}}">
+                    <div role="radiogroup" aria-label="Service point for recipient" style="display: flex; flex-direction: column; gap: 12px">
+                      <span style="font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-quaternary)">{{recDefaultLabel}}</span>
+                      <sc-for list="{{recDefault}}" as="s" hint-placeholder-count="1">
+                      <button type="button" onClick="{{s.pick}}" disabled="{{s.disabled}}" aria-pressed="{{s.selected}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; text-align: left; padding: 12px 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; font: inherit; cursor: {{s.cursor}}; opacity: {{s.opacity}}">
+                      <span style="display: flex; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.RadioButtonBase" size="sm" is-selected="{{s.selected}}" is-disabled="{{s.disabled}}"></x-import></span>
+                      <span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{s.title}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{s.sub}}</span>
+                      </span>
+                      <sc-if value="{{s.hasTag}}" hint-placeholder-val="{{false}}">
+                        <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.tagColor}}" size="sm">{{s.tag}}</x-import>
+                      </sc-if>
+                    </button>
+                      </sc-for>
+                      <div style="display: flex; align-items: center; gap: 12px; margin: 4px 0">
+                        <span style="flex-grow: 1; height: 1px; background: var(--color-border-secondary)"></span>
+                        <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">or choose a different service point</span>
+                        <span style="flex-grow: 1; height: 1px; background: var(--color-border-secondary)"></span>
+                      </div>
+                      <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Search service points" placeholder="Search service points" icon="{{ic.SearchLg}}" value="{{recSpQuery}}" on-change="{{setRecSpQuery}}"></x-import>
+                      <div style="display: flex; flex-direction: column; gap: 16px; max-height: 404px; overflow-y: auto; padding: 2px; scrollbar-gutter: stable">
+                      <sc-for list="{{recSpGroups}}" as="g" hint-placeholder-count="2">
+                        <div style="display: flex; flex-direction: column; gap: 8px">
+                          <div style="position: sticky; top: -2px; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 4px 0; background: var(--color-bg-primary); font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-quaternary)">
+                            <x-import component-from-global-scope="UntitledUI.Icons.Building07" class="size-4"></x-import>{{g.name}}
+                          </div>
+                          <sc-for list="{{g.items}}" as="s" hint-placeholder-count="2">
+                          <button type="button" onClick="{{s.pick}}" disabled="{{s.disabled}}" aria-pressed="{{s.selected}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; text-align: left; padding: 12px 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; font: inherit; cursor: {{s.cursor}}; opacity: {{s.opacity}}">
+                      <span style="display: flex; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.RadioButtonBase" size="sm" is-selected="{{s.selected}}" is-disabled="{{s.disabled}}"></x-import></span>
+                      <span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{s.title}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{s.sub}}</span>
+                      </span>
+                      <sc-if value="{{s.hasTag}}" hint-placeholder-val="{{false}}">
+                        <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.tagColor}}" size="sm">{{s.tag}}</x-import>
+                      </sc-if>
+                    </button>
+                          </sc-for>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{recSpEmpty}}" hint-placeholder-val="{{false}}">
+                        <p style="margin: 0; font-size: 14px; color: var(--color-text-tertiary)">No service points match your search.</p>
+                      </sc-if>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- New location -->
+            <sc-if value="{{modeLocation}}" hint-placeholder-val="{{false}}">
+              <div style="flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 16px">
+                <x-import component-from-global-scope="UntitledUI.Input" size="md" aria-label="Search locations" placeholder="Search locations" icon="{{ic.SearchLg}}" value="{{locQuery}}" on-change="{{setLocQuery}}"></x-import>
+                <div role="radiogroup" aria-label="Locations" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 2px 2px 16px; scrollbar-gutter: stable">
+                  <sc-for list="{{locations}}" as="s" hint-placeholder-count="4">
+                  <button type="button" onClick="{{s.pick}}" disabled="{{s.disabled}}" aria-pressed="{{s.selected}}" style="display: flex; align-items: flex-start; gap: 12px; width: 100%; box-sizing: border-box; text-align: left; padding: 12px 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; font: inherit; cursor: {{s.cursor}}; opacity: {{s.opacity}}">
+                      <span style="display: flex; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.RadioButtonBase" size="sm" is-selected="{{s.selected}}" is-disabled="{{s.disabled}}"></x-import></span>
+                      <span style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{s.title}}</span>
+                        <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{s.sub}}</span>
+                      </span>
+                      <sc-if value="{{s.hasTag}}" hint-placeholder-val="{{false}}">
+                        <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.tagColor}}" size="sm">{{s.tag}}</x-import>
+                      </sc-if>
+                    </button>
+                  </sc-for>
+                  <sc-if value="{{locEmpty}}" hint-placeholder-val="{{false}}">
+                    <p style="margin: 0; font-size: 14px; color: var(--color-text-tertiary)">No locations match your search.</p>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <!-- Footer -->
+          <div style="flex: 0 0 auto; padding: 16px 24px 24px; border-top: 1px solid var(--color-border-secondary); display: flex; flex-direction: column; gap: 12px">
+            <sc-if value="{{showSuccess}}" hint-placeholder-val="{{false}}">
+              <div role="status" aria-live="polite" style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--color-bg-success-primary)">
+                <span style="display: flex; padding-top: 1px; color: var(--color-fg-success-primary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-5"></x-import></span>
+                <div style="display: flex; flex-direction: column; min-width: 0; font-size: 14px; line-height: 20px">
+                  <span style="font-weight: 600; color: var(--color-text-primary)">{{successTitle}}</span>
+                  <span style="color: var(--color-text-tertiary)">{{successBody}}</span>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{hasDest}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; flex-direction: column; font-size: 14px; line-height: 20px">
+                <span style="color: var(--color-text-tertiary)">Rerouting to</span>
+                <span style="font-weight: 600; color: var(--color-text-primary)">{{destSummary}}</span>
+              </div>
+            </sc-if>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <x-import component-from-global-scope="UntitledUI.Button" color="primary" size="lg" class="w-full" is-disabled="{{noDest}}" on-press="{{doReroute}}">{{confirmLabel}}</x-import>
+              <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="lg" class="w-full" on-press="{{closeDrawer}}">Exit reroute</x-import>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+      </aside>
+    </sc-if>
+  </div>
+
+</div>
+<!-- PROTOTYPE ONLY: Simulate control (dev-tools look, never part of the product) -->
+<button type="button" class="proto-trigger" onClick="{{toggleSim}}" aria-expanded="{{simOpen}}" style="position: fixed; left: 50%; bottom: 8px; transform: translateX(-50%); z-index: 60; padding: 2px 6px; border: 0; background: none; color: #555; opacity: 0.55; cursor: pointer">Simulate</button>
+<sc-if value="{{simOpen}}" hint-placeholder-val="{{false}}">
+  <aside class="proto" aria-label="Prototype simulation" style="position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%); z-index: 61; width: 240px; padding: 8px; display: flex; flex-direction: column; gap: 2px">
+    <div style="padding: 2px 6px 6px; opacity: 0.7">prototype only</div>
+    <button type="button" class="uu-row" onClick="{{simScan}}" style="text-align: left; padding: 4px 6px; border: 0; cursor: pointer">Scan a package</button>
+    <button type="button" class="uu-row" onClick="{{simReset}}" style="text-align: left; padding: 4px 6px; border: 0; cursor: pointer">Reset prototype</button>
+  </aside>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  // ---- Shared prototype data ------------------------------------------------
+  // The same block runs in Pickup queue, Staff display and Lobby display. All
+  // three read and write one record in this browser's storage, so an action on
+  // the operator screen shows up on both TVs. Windows 1, 3, 4 and 5 are other
+  // operators, simulated every 25 seconds by whichever screen is open.
+  sharedKey() { return 'pq.shared.v6'; }
+  sharedSeed() {
+    const t = Date.now();
+    const s = (sec) => t - sec * 1000;
+    const q = (id, name, sid, pk, shelf, via, ago) => ({ id: id, name: name, sid: sid, pk: pk, shelf: shelf, via: via, at: s(ago) });
+    const sv = (id, name, sid, pk, shelf, via, ago, win, since, annAgo) => Object.assign(q(id, name, sid, pk, shelf, via, ago), { win: win, since: s(since), ann: annAgo == null ? 0 : 1, annAt: annAgo == null ? null : s(annAgo) });
+    return {
+      v: 6, t0: t, lastSimAt: t, nextNum: 118, poolIdx: 0,
+      // Leo Park was the last pickup at Window 5 before it closed; Windows 2 and 5 have no simulated operator.
+      // Window 2 starts empty so a newly signed-in operator serves someone first. Priya (A101) was moved to
+      // Window 5, which has no operator, and waits there until someone takes that window.
+      completed: [Object.assign(sv('A097', 'Leo Park', '2040 5512', 1, 'A-10', 'App', 980, 'Window 5', 330, 325), { doneAt: s(240) })].concat(this.sharedSeedCompleted(t)),
+      queue: [
+        q('A102', 'Elena Petrova', '2037 4481', 1, 'A-01', 'Kiosk', 1180),
+        q('A103', 'Daniel Reyes', '2041 8823', 2, 'B-12, B-13', 'App', 1122),
+        q('A104', 'Hannah Okafor', '2039 1170', 1, 'A-04', 'Kiosk', 842),
+        q('A105', 'Marcus Bell', '2044 0391', 3, 'C-01 (oversize)', 'App', 611),
+        q('A106', 'Grace Kim', '2040 7756', 1, 'A-09', 'App', 455),
+        q('A107', 'Omar Haddad', '2042 3318', 2, 'B-03', 'Kiosk', 402),
+        q('A108', 'Sophia Martinez', '2043 9902', 1, 'A-11', 'App', 371),
+        q('A109', 'Aaron Whitfield', '2038 6604', 1, 'B-07', 'Kiosk', 333),
+        q('A110', 'Isabella Cruz', '2045 2287', 2, 'B-10', 'App', 290),
+        q('A111', 'Ethan Brooks', '2039 7741', 1, 'A-03', 'Kiosk', 251),
+        q('A112', 'Fatima Ali', '2042 0915', 1, 'A-12', 'App', 214),
+        q('A113', 'Lucas Romero', '2040 6638', 3, 'C-02 (oversize)', 'App', 176),
+        q('A114', 'Nina Kowalski', '2043 1206', 1, 'A-08', 'Kiosk', 140),
+        q('A115', 'Tyler Nguyen', '2044 9953', 2, 'B-05', 'App', 102),
+        q('A116', 'Zoe Bennett', '2038 4471', 1, 'A-15', 'App', 66),
+        q('A117', 'Malik Johnson', '2041 3390', 1, 'A-07', 'Kiosk', 31)
+      ],
+      serving: [
+        sv('A098', 'Chloe Martin', '2042 7704', 2, 'B-11', 'Kiosk', 900, 'Window 4', 260, 255),
+        sv('A099', 'Sam Rivera', '2039 2268', 1, 'A-05', 'App', 820, 'Window 3', 190, 185),
+        sv('A100', 'Jordan Lee', '2044 1187', 1, 'A-13', 'App', 760, 'Window 1', 130, 125),
+        sv('A101', 'Priya Natarajan', '2041 2209', 2, 'B-02', 'App', 1250, 'Window 5', 96, 90)
+      ],
+      // Students with packages ready who haven't checked in (searchable for walk-ups)
+      ready: [
+        { id: 'E1', name: 'Rachel Goldberg', sid: '2040 1187', pk: 1, shelf: 'A-06', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E2', name: 'Kevin O’Brien', sid: '2045 0072', pk: 2, shelf: 'B-09', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E3', name: 'Mei Lin', sid: '2039 5531', pk: 2, shelf: 'B-15', ready: 'Oct 15', day: 0, notified: 'Email reminder sent' },
+        { id: 'E4', name: 'Jasmine Patel', sid: '2042 8890', pk: 1, shelf: 'A-14', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E5', name: 'Liam Novak', sid: '2044 6612', pk: 3, shelf: 'C-03 (oversize)', ready: 'Oct 16', day: 1, notified: 'App notification' },
+        { id: 'E6', name: 'Noah Fischer', sid: '2038 2245', pk: 1, shelf: 'A-02', ready: 'Oct 16', day: 1, notified: 'Email reminder sent' },
+        { id: 'E7', name: 'Ava Thompson', sid: '2043 3378', pk: 1, shelf: 'A-17', ready: 'Oct 16', day: 2, notified: 'App notification' },
+        { id: 'E8', name: 'Aiden Brooks', sid: '2041 5530', pk: 1, shelf: 'A-22', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E9', name: 'Bella Ortiz', sid: '2043 6619', pk: 2, shelf: 'B-17', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E10', name: 'Caleb Wu', sid: '2039 8872', pk: 1, shelf: 'A-23', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E11', name: 'Daria Ivanova', sid: '2044 1048', pk: 1, shelf: 'A-24', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E12', name: 'Elijah Grant', sid: '2040 7731', pk: 3, shelf: 'C-05 (oversize)', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E13', name: 'Freya Holm', sid: '2042 9906', pk: 1, shelf: 'A-25', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E14', name: 'Gavin Reed', sid: '2038 4425', pk: 2, shelf: 'B-18', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E15', name: 'Hailey Moss', sid: '2045 3387', pk: 1, shelf: 'A-26', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E16', name: 'Isaac Levy', sid: '2041 6694', pk: 1, shelf: 'A-27', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E17', name: 'Jade Kowal', sid: '2043 2253', pk: 2, shelf: 'B-19', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E18', name: 'Kai Nakamura', sid: '2039 5508', pk: 1, shelf: 'A-28', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E19', name: 'Lena Fischer', sid: '2044 7716', pk: 1, shelf: 'A-29', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E20', name: 'Miles Carter', sid: '2040 3362', pk: 2, shelf: 'B-20', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E21', name: 'Nadia Rahman', sid: '2042 8849', pk: 1, shelf: 'A-30', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E22', name: 'Owen Blake', sid: '2038 1197', pk: 1, shelf: 'A-31', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E23', name: 'Priya Shah', sid: '2045 6625', pk: 3, shelf: 'C-06 (oversize)', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E24', name: 'Ruby Allen', sid: '2041 9934', pk: 1, shelf: 'A-32', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E25', name: 'Samir Haddad', sid: '2043 4471', pk: 2, shelf: 'B-21', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E26', name: 'Tessa Lowe', sid: '2039 2286', pk: 1, shelf: 'A-33', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E27', name: 'Victor Chen', sid: '2044 5512', pk: 1, shelf: 'A-34', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E28', name: 'Willa Grant', sid: '2040 8807', pk: 2, shelf: 'B-22', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E29', name: 'Yusuf Ali', sid: '2042 3348', pk: 1, shelf: 'A-35', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E30', name: 'Zara Patel', sid: '2038 6673', pk: 1, shelf: 'A-36', ready: 'Oct 15', day: 0, notified: 'App notification' }
+      ]
+    };
+  }
+  sharedSeedCompleted(t) {
+    // 46 pickups already completed this morning, newest first
+    const names = [['Ana Torres', '2040 1102'], ['Brian Walsh', '2043 2271'], ['Carmen Diaz', '2039 8840'], ['Devin Shah', '2044 3315'], ['Emma Rossi', '2041 6629'], ['Felix Wagner', '2038 7703'], ['Gabriela Ruiz', '2042 5518'], ['Henry Cole', '2045 1194'], ['Ivy Morgan', '2040 9927'], ['Jamal Wright', '2043 4406'], ['Kara Lund', '2039 6650'], ['Leah Kim', '2044 8813'], ['Mateo Silva', '2041 2287'], ['Nora Quinn', '2038 3361'], ['Oscar Bell', '2042 7745'], ['Paige Ford', '2045 6602'], ['Quinn Avery', '2040 4478'], ['Rosa Mendes', '2043 9156'], ['Sean Doyle', '2039 1839'], ['Tara Iyer', '2044 5524'], ['Umar Farouk', '2041 7790'], ['Vera Novak', '2038 8867'], ['Wes Turner', '2042 3349']];
+    const out = [];
+    for (let i = 0; i < 46; i++) {
+      const n = names[i % names.length];
+      const doneAt = t - (410 + i * 230) * 1000;
+      out.push({ id: 'A0' + String(96 - i).padStart(2, '0'), name: n[0], sid: n[1], pk: 1 + (i % 3 === 0 ? 1 : 0), shelf: ['A', 'B'][i % 2] + '-' + String(1 + (i * 7) % 20).padStart(2, '0'), via: i % 3 ? 'App' : 'Kiosk', win: 'Window ' + (1 + (i % 5)), at: doneAt - (360 + (i * 53) % 480) * 1000, since: doneAt - (90 + (i * 31) % 150) * 1000, ann: 1, annAt: doneAt - (85 + (i * 31) % 150) * 1000, doneAt: doneAt });
+    }
+    return out;
+  }
+  sharedRead() {
+    let d = null;
+    try { d = JSON.parse(window.localStorage.getItem(this.sharedKey()) || 'null'); } catch (e) { d = null; }
+    // Start over after 4 hours so a stale prototype doesn't come back half-empty.
+    if (!d || d.v !== 6 || Date.now() - d.t0 > 4 * 3600 * 1000) {
+      d = this._mem && this._mem.v === 6 ? this._mem : this.sharedSeed();
+      try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    }
+    return d;
+  }
+  sharedData() {
+    if (!this._mem) this._mem = this.sharedRead();
+    return this.state.sh || this._mem;
+  }
+  sharedUpdate(fn) {
+    const d = JSON.parse(JSON.stringify(this.sharedRead()));
+    fn(d);
+    try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    this._mem = d;
+    this.setState({ sh: d });
+  }
+  sharedReset() {
+    const d = this.sharedSeed();
+    try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    this._mem = d;
+    this.setState({ sh: d });
+  }
+  sharedStart() {
+    this._onStorage = (e) => {
+      if (e.key !== this.sharedKey() || !e.newValue) return;
+      try { const d = JSON.parse(e.newValue); this._mem = d; this.setState({ sh: d }); } catch (err) {}
+    };
+    window.addEventListener('storage', this._onStorage);
+    this._mem = this.sharedRead();
+    this.setState({ sh: this._mem, now: Date.now() });
+    this._tick = setInterval(() => { this.setState({ now: Date.now() }); this.sharedSim(); }, 1000);
+  }
+  sharedStop() {
+    window.removeEventListener('storage', this._onStorage);
+    clearInterval(this._tick);
+  }
+  sharedSim() {
+    const cur = this.sharedData();
+    if (Date.now() - (cur.lastSimAt || 0) < 25000) return;
+    const POOL = [['Ava Collins', '2040 3321', 1, 'A-16', 'App'], ['Ben Carter', '2043 8812', 2, 'B-14', 'Kiosk'], ['Maya Singh', '2041 7709', 1, 'A-18', 'App'], ['Owen Price', '2038 9934', 1, 'A-19', 'App'], ['Lily Chen', '2044 2205', 3, 'C-04 (oversize)', 'Kiosk'], ['Diego Alvarez', '2042 6617', 1, 'A-20', 'App'], ['Hana Sato', '2039 4410', 2, 'B-16', 'App'], ['Noor Hassan', '2045 7783', 1, 'A-21', 'Kiosk']];
+    this.sharedUpdate((x) => {
+      const now = Date.now();
+      if (now - (x.lastSimAt || 0) < 25000) return; // another screen just ran it
+      x.lastSimAt = now;
+      const wins = ['Window 1', 'Window 3', 'Window 4']; // windows with a simulated operator
+      const others = x.serving.filter((s) => wins.indexOf(s.win) >= 0);
+      let free = wins.find((w) => !others.some((s) => s.win === w));
+      if (!free && others.length) {
+        const oldest = others.reduce((a, b) => (a.since < b.since ? a : b));
+        x.serving = x.serving.filter((s) => s.id !== oldest.id);
+        x.completed.unshift(Object.assign({}, oldest, { doneAt: now }));
+        free = oldest.win;
+      }
+      if (free && x.queue.length) {
+        const nx = x.queue.shift();
+        x.serving.push(Object.assign(nx, { win: free, since: now, ann: 1, annAt: now }));
+      }
+      // Simulate › Empty the check-in queue pauses new arrivals until the queue is refilled or reset.
+      if (x.arrivalsPaused) return;
+      // Someone new checks in from the name pool (the ready list is kept for walk-up search).
+      let p;
+      if (false) { // walk-up pool stays intact; new arrivals come from the name pool
+        const e = x.ready.shift();
+        p = [e.name, e.sid, e.pk, e.shelf, x.nextNum % 4 === 0 ? 'App' : 'Kiosk'];
+      } else {
+        p = POOL[x.poolIdx % POOL.length];
+        x.poolIdx += 1;
+      }
+      x.queue.push({ id: 'A' + x.nextNum, name: p[0], sid: p[1], pk: p[2], shelf: p[3], via: p[4], at: now });
+      x.nextNum += 1;
+    });
+  }
+  // ---------------------------------------------------------------------------
+  // Measure how far the 412px drawer overlaps the table card, so shifted controls keep a 24px gap.
+  measureOverlap() {
+    if (!this._card) return;
+    const drawerLeft = (document.documentElement.clientWidth || window.innerWidth) - 412;
+    const ov = Math.max(0, Math.round(this._card.getBoundingClientRect().right - drawerLeft));
+    if (ov !== this.state.overlap) this.setState({ overlap: ov });
+  }
+  // PROTOTYPE PATCH: the installed Untitled UI ComboBox expects React 19, but the canvas runs React 18,
+  // so its suggestion list can't find its field and opens at the top-left. This only re-anchors the
+  // list under the focused field (4px below, same width); the component itself is unchanged.
+  placeComboPopover() {
+    const pop = document.querySelector('[data-trigger="ComboBox"]');
+    if (!pop) return;
+    const input = document.activeElement && document.activeElement.getAttribute('role') === 'combobox' ? document.activeElement : this._lastCombo;
+    if (!input || !input.isConnected) return;
+    this._lastCombo = input;
+    let field = input.parentElement;
+    while (field && field.parentElement && !/\bshadow-xs\b/.test(field.className || '')) field = field.parentElement;
+    const r = (field || input.parentElement).getBoundingClientRect();
+    const room = window.innerHeight - r.bottom - 12;
+    pop.style.setProperty('top', (r.bottom + 4) + 'px');
+    pop.style.setProperty('left', r.left + 'px');
+    pop.style.setProperty('width', r.width + 'px');
+    pop.style.setProperty('max-height', Math.max(160, Math.min(320, room)) + 'px');
+  }
+  componentDidMount() {
+    // Only one list open at a time: a press outside the Status field closes its list.
+    this._onDocDown = (e) => { if (this.state.statusOpen && !(e.target.closest && e.target.closest('.st-wrap'))) this.setState({ statusOpen: false }); };
+    document.addEventListener('pointerdown', this._onDocDown, true);
+    this._comboObs = new MutationObserver(() => this.placeComboPopover());
+    this._comboObs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+    this._onComboScroll = () => this.placeComboPopover();
+    window.addEventListener('scroll', this._onComboScroll, true);
+    // Page scroll: collapse the product bar after >4px down (past 8px); show it after >4px up or at the top.
+    this._onWinScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      const last = this._lastY || 0;
+      if (y <= 8) { this._lastY = y; if (this.state.navCollapsed) this.setState({ navCollapsed: false }); return; }
+      if (y - last > 4) { this._lastY = y; if (!this.state.navCollapsed) this.setState({ navCollapsed: true }); }
+      else if (last - y > 4) { this._lastY = y; if (this.state.navCollapsed) this.setState({ navCollapsed: false }); }
+    };
+    window.addEventListener('scroll', this._onWinScroll, { passive: true });
+    this._onResize = () => this.measureOverlap();
+    window.addEventListener('resize', this._onResize);
+    if (window.ResizeObserver) { this._ro = new ResizeObserver(this._onResize); this._ro.observe(document.documentElement); }
+    this.measureOverlap();
+  }
+  componentDidUpdate() { this.measureOverlap(); }
+  componentWillUnmount() {
+    clearTimeout(this._filterTimer);
+    clearTimeout(this._tipTimer);
+    clearTimeout(this._panelTimer);
+    clearTimeout(this._scanTimer);
+    clearTimeout(this._flashTimer);
+    window.removeEventListener('resize', this._onResize);
+    if (this._comboObs) this._comboObs.disconnect();
+    document.removeEventListener('pointerdown', this._onDocDown, true);
+    window.removeEventListener('scroll', this._onComboScroll, true);
+    window.removeEventListener('scroll', this._onWinScroll);
+    if (this._ro) this._ro.disconnect();
+  }
+  renderVals() {
+    const navHidden = !!this.state.navCollapsed && !this.state.navPeek && !this.state.navFocus;
+    const U = window.UntitledUI || {};
+    // [tracking, phase, status, recipient, sender, date, time, service point, route, sla, slaColor, alert]
+    const data = [
+      ['1Z 8V7 W42 03 1184 9926', 'Processing', 'Scheduled', 'Priya Natarajan', 'Amazon.com', '10-08-2026', '8:42 AM', 'Service point 8824', 'Bank Route', '10-09-2026', 'brand', false],
+      ['7749 3018 2265', 'Processing', 'Processing', 'Marcus Bell', 'Dell Technologies', '10-08-2026', '9:15 AM', 'Receiving Dock A', 'Unassigned', '10-09-2026', 'brand', false],
+      ['9400 1118 9922 3844 5517 26', 'Pending Decision', 'Pending Decision', 'Hannah Okafor', 'Grainger', '10-07-2026', '2:10 PM', 'No service point', 'Awaiting recipient', '10-08-2026', 'warning', false],
+      ['TBA312874095000', 'Available for Pickup', 'Available for Pickup', 'Daniel Reyes', 'Amazon.com', '10-07-2026', '11:26 AM', 'Service point 3110', 'Lobby Lockers', '10-10-2026', 'brand', false],
+      ['1Z 4E2 9X1 01 5530 2219', 'Research Required', 'Unknown Recipient', 'Unknown recipient', 'CDW', '10-06-2026', '3:48 PM', 'Mailroom hold', 'Unassigned', '10-07-2026', 'error', true],
+      ['5839 2210 4471', 'Processing', 'Delivery Failed', 'Elena Petrova', 'Staples Business', '10-07-2026', '9:05 AM', 'Service point 8824', 'Bank Route', '10-08-2026', 'warning', true],
+      ['1Z 0A1 3F7 03 7720 4481', 'Out for Delivery', 'Out for Delivery', 'Kevin O’Brien', 'Uline', '10-08-2026', '7:30 AM', 'Service point 2207', 'Tower Route', '10-08-2026', 'brand', false],
+      ['9205 5901 2233 4410 7788 93', 'Research Required', 'Multiple Matches', 'J. Chen (2 matches)', 'Fisher Scientific', '10-06-2026', '1:22 PM', 'Mailroom hold', 'Unassigned', '10-07-2026', 'error', true],
+      ['JD0146 0000 6281 2307', 'Processing', 'Rescheduled', 'Sophia Martinez', 'Siemens Healthineers', '10-07-2026', '4:15 PM', 'Service point 5402', 'Research Park Route', '10-09-2026', 'brand', false],
+      ['6129 9873 0012', 'Processing', 'Delivery Delayed', 'Aaron Whitfield', 'Herman Miller', '10-05-2026', '10:40 AM', 'Service point 8824', 'Bank Route', '10-13-2026', 'brand', false],
+      // Page 2
+      ['1Z 9F3 R88 02 4471 0038', 'Processing', 'Scheduled', 'Grace Kim', 'Apple', '10-08-2026', '8:55 AM', 'Service point 5402', 'Research Park Route', '10-09-2026', 'brand', false],
+      ['TBA313002781000', 'Available for Pickup', 'Available for Pickup', 'Omar Haddad', 'Amazon.com', '10-06-2026', '3:02 PM', 'Service point 3110', 'Lobby Lockers', '10-09-2026', 'warning', false],
+      ['7802 4419 6630', 'Pending Decision', 'Pending Decision', 'Rachel Goldberg', 'McMaster-Carr', '10-07-2026', '10:18 AM', 'No service point', 'Awaiting recipient', '10-09-2026', 'brand', false],
+      ['9400 1093 6655 2817 4402 11', 'Processing', 'In Transit', 'Tom Nguyen', 'B&H Photo', '10-08-2026', '9:47 AM', 'Service point 2207', 'Tower Route', '10-09-2026', 'brand', false],
+      ['1Z 2K6 A11 01 9902 3375', 'Research Required', 'Contact Service Center', 'Lauren Mitchell', 'Lenovo', '10-05-2026', '4:30 PM', 'Mailroom hold', 'Unassigned', '10-06-2026', 'error', true],
+      ['5530 8812 9047', 'Out for Delivery', 'Out for Delivery', 'Victor Alvarez', 'VWR International', '10-08-2026', '7:30 AM', 'Service point 5402', 'Research Park Route', '10-08-2026', 'brand', false],
+      ['JD0146 0000 6281 4419', 'Processing', 'Delivery Failed', 'Nina Kowalski', 'Bosch', '10-07-2026', '1:55 PM', 'Service point 8824', 'Bank Route', '10-08-2026', 'warning', true],
+      ['1Z 7W0 E52 03 6128 5590', 'Processing', 'Processing', 'Ben Carter', 'Office Depot', '10-08-2026', '10:02 AM', 'Receiving Dock A', 'Unassigned', '10-10-2026', 'brand', false],
+      ['TBA313118205000', 'Research Required', 'Unknown Recipient', 'Unknown recipient', 'Amazon.com', '10-06-2026', '11:40 AM', 'Mailroom hold', 'Unassigned', '10-07-2026', 'error', true],
+      ['6644 1027 3381', 'Processing', 'Rescheduled', 'Fatima Siddiqui', 'Thermo Fisher', '10-07-2026', '2:36 PM', 'Service point 6015', 'West Annex Route', '10-09-2026', 'brand', false],
+      // Page 3
+      ['9205 5901 7734 2290 1165 48', 'Available for Pickup', 'Available for Pickup', 'Jordan Hayes', 'Etsy', '10-05-2026', '12:15 PM', 'Service point 3110', 'Lobby Lockers', '10-08-2026', 'warning', false],
+      ['1Z 3H8 T27 02 0045 8813', 'Processing', 'Scheduled', 'Mei Lin', 'HP Inc.', '10-08-2026', '9:20 AM', 'Service point 6015', 'West Annex Route', '10-09-2026', 'brand', false],
+      ['4471 2209 8836', 'Pending Decision', 'Pending Decision', 'Chris Donnelly', 'Zoro', '10-06-2026', '9:12 AM', 'No service point', 'Awaiting recipient', '10-07-2026', 'error', false],
+      ['TBA313245019000', 'Out for Delivery', 'Out for Delivery', 'Ashley Turner', 'Amazon.com', '10-08-2026', '7:30 AM', 'Service point 8824', 'Bank Route', '10-08-2026', 'brand', false],
+      ['1Z 6Y4 V09 01 3317 2246', 'Research Required', 'Multiple Matches', 'A. Patel (3 matches)', 'Medline', '10-07-2026', '10:05 AM', 'Mailroom hold', 'Unassigned', '10-08-2026', 'warning', true],
+      ['8125 6604 1190', 'Processing', 'Delivery Delayed', 'Samuel Brooks', 'Steelcase', '10-06-2026', '3:50 PM', 'Service point 2207', 'Tower Route', '10-14-2026', 'brand', false],
+      ['9400 1118 9956 0021 7783 05', 'Processing', 'In Transit', 'Isabella Romero', 'Chewy', '10-08-2026', '10:11 AM', 'Service point 5402', 'Research Park Route', '10-10-2026', 'brand', false],
+      ['JD0146 0000 6281 5502', 'Available for Pickup', 'Available for Pickup', 'Liam Foster', 'Philips', '10-07-2026', '9:58 AM', 'Service point 6015', 'West Annex Lockers', '10-10-2026', 'brand', false],
+      ['1Z 1M5 D73 03 8840 6671', 'Processing', 'Delivery Failed', 'Natalie Wong', 'Microsoft', '10-06-2026', '2:20 PM', 'Service point 2207', 'Tower Route', '10-07-2026', 'error', true],
+      ['3392 7015 4458', 'Processing', 'Scheduled', 'Derek Johnson', 'Cisco', '10-08-2026', '8:30 AM', 'Service point 8824', 'Bank Route', '10-09-2026', 'brand', false]
+    ];
+    // Items rerouted in this session: new destination, status Processing · Scheduled.
+    const ov = this.state.overrides || {};
+    data.forEach((d, i) => {
+      const o = ov[i];
+      if (!o) return;
+      d[1] = 'Processing'; d[2] = 'Scheduled'; d[7] = o.point; d[8] = o.route; d[11] = false;
+      if (o.recipient) d[3] = o.recipient;
+    });
+    // Reroute eligibility (spec): Processing (all statuses except Processing), Pending Decision,
+    // Available for Pickup, Research Required (all statuses except Research Required).
+    const rerouteEligible = (d) =>
+      (d[1] === 'Processing' && d[2] !== 'Processing') ||
+      d[1] === 'Pending Decision' ||
+      d[1] === 'Available for Pickup' ||
+      (d[1] === 'Research Required' && d[2] !== 'Research Required');
+    // action = what the drawer shows; applied = the filter the table currently shows.
+    const action = this.state.action || null;
+    const applied = this.state.applied || null;
+    const filtering = !!this.state.filtering;
+    const sel = this.state.selected || {};
+    // Reroute filter = eligible for reroute AND in the same phase as the first selected item
+    // (items in different phases can't be rerouted together).
+    const listFor = (act, phase) => {
+      const all = data.map((d, i) => i);
+      if (act !== 'reroute') return all;
+      return all.filter((i) => rerouteEligible(data[i]) && (!phase || data[i][1] === phase));
+    };
+    const appliedPhase = this.state.appliedPhase || null;
+    // Search (tracking, recipient, sender, service point/route) and the Status filter
+    // narrow whatever the table currently shows.
+    const norm = (t) => String(t || '').toLowerCase().replace(/\s+/g, '');
+    const q = norm(this.state.searchQ);
+    const pills = this.state.searchPills || [];
+    const termsFor = (pillList, text) => pillList.map(norm).concat(norm(text) ? [norm(text)] : []);
+    const matchesTerms = (d, terms) => !terms.length || terms.some((t) => [d[0], d[3], d[4], d[7], d[8]].some((f) => norm(f).includes(t)));
+    const statusOf = (d) => (d[1] === d[2] ? d[1] : d[1] + ' · ' + d[2]);
+    const pfStatuses = this.state.pfStatuses || [];
+    // In a workflow, Status options that conflict with it are disabled and not applied.
+    const statusAllowed = (l) => {
+      if (action !== 'reroute') return { ok: true };
+      const rowsL = data.filter((d) => statusOf(d) === l);
+      if (!rowsL.some(rerouteEligible)) return { ok: false, why: 'Not eligible', tip: 'These items can’t be rerouted.' };
+      if (appliedPhase && !rowsL.some((d) => rerouteEligible(d) && d[1] === appliedPhase)) return { ok: false, why: 'Other phase', tip: 'Items must be in the same phase. Untick everything to choose another phase.' };
+      return { ok: true };
+    };
+    const effStatuses = pfStatuses.filter((l) => statusAllowed(l).ok);
+    const statusFilterOn = effStatuses.length > 0;
+    // Route, Received from, Sent to, Last known waypoint: real filters (work during workflows too).
+    const pfx = this.state.pfx || {};
+    const dfx = this.state.dfx || {};
+    const FX = [['route', 'Route', 8], ['sender', 'Received from', 4], ['recipient', 'Sent to', 3], ['waypoint', 'Waypoint', 7]];
+    const fxOn = FX.filter((f) => pfx[f[0]]);
+    const fmtRange = (v) => {
+      if (!v || !v.start || !v.end) return '';
+      const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const f = (d) => M[d.month - 1] + ' ' + d.day;
+      return f(v.start) + ' – ' + f(v.end) + ', ' + v.end.year;
+    };
+    const list = listFor(applied, appliedPhase).filter((i) => {
+      const d = data[i];
+      if (!matchesTerms(d, termsFor(pills, this.state.searchQ))) return false;
+      if (statusFilterOn && !effStatuses.includes(statusOf(d))) return false;
+      for (const f of fxOn) { if (d[f[2]] !== pfx[f[0]]) return false; }
+      return true;
+    });
+    const pageSize = 10;
+    // Any time the table's contents change: 2-second loading phase, then swap rows
+    // and land on the page holding the (first) selected item.
+    const runTableUpdate = (act, selObj, label, phase, after) => {
+      clearTimeout(this._filterTimer);
+      const target = listFor(act, phase);
+      const pos = target.findIndex((i) => selObj[i]);
+      const landing = pos >= 0 ? Math.floor(pos / pageSize) + 1 : (after ? (this.state.page || 1) : 1);
+      this.setState({ filtering: true, loadingLabel: label });
+      this._filterTimer = setTimeout(() => {
+        this.setState({ filtering: false, applied: act, appliedPhase: phase || null, page: landing });
+        if (after) after();
+      }, 2000);
+    };
+    this.removeFx = (k) => {
+      clearTimeout(this._panelTimer);
+      this.setState({ dfx: Object.assign({}, this.state.dfx, { [k]: null }), filtering: true, loadingLabel: 'Updating results…' });
+      this._panelTimer = setTimeout(() => this.setState({ filtering: false, pfx: Object.assign({}, this.state.pfx, { [k]: null }), page: 1 }), 2000);
+    };
+    // Removing search pills: in a workflow, reload (2s) and land on the first selected item's page.
+    this.removePills = (nextPills) => {
+      const st = this.state;
+      const selNow = st.selected || {};
+      const target = listFor(st.applied, st.appliedPhase).filter((i) => matchesTerms(data[i], termsFor(nextPills, st.searchQ)) && (!(!st.action && (st.pfStatuses || []).length) || (st.pfStatuses || []).includes(statusOf(data[i]))));
+      const pos = target.findIndex((i) => selNow[i]);
+      const landing = pos >= 0 ? Math.floor(pos / pageSize) + 1 : 1;
+      if (st.action) {
+        clearTimeout(this._filterTimer);
+        this.setState({ searchPills: nextPills, filtering: true, loadingLabel: nextPills.length ? 'Updating results…' : 'Showing all eligible items…' });
+        this._filterTimer = setTimeout(() => this.setState({ filtering: false, page: landing }), 2000);
+      } else {
+        this.setState({ searchPills: nextPills, page: landing });
+      }
+    };
+    // While Reroute is active: an empty selection clears the phase filter (anchor resets);
+    // the next selection becomes the anchor and sets the phase.
+    const rerouteSelectionChanged = (next, prevCount, preferredAnchor) => {
+      const chosen = Object.keys(next).filter((k) => next[k]).map(Number);
+      if (chosen.length === 0) {
+        this.setState({ selected: next, anchor: null, phaseDropped: false });
+        if (this.state.appliedPhase || this.state.filtering) runTableUpdate('reroute', next, 'Clearing phase filter…', null);
+        return true;
+      }
+      if (prevCount === 0) {
+        const anchor = chosen.includes(preferredAnchor) ? preferredAnchor : chosen[0];
+        const phase = data[anchor][1];
+        const kept = {};
+        chosen.forEach((k) => { if (data[k][1] === phase) kept[k] = true; });
+        this.setState({ selected: kept, anchor: anchor, phaseDropped: chosen.some((k) => data[k][1] !== phase) });
+        runTableUpdate('reroute', kept, 'Filtering to ' + phase + ' items eligible for reroute…', phase);
+        return true;
+      }
+      return false;
+    };
+    // Called when the drawer stops showing an action: unfilter the table if needed.
+    const clearAction = (extra) => {
+      const pendingOrApplied = this.state.applied || this.state.filtering;
+      this.setState(Object.assign({ action: null, success: null, phaseDropped: false, query: '', rtMode: 'sp', rtSp: null, rtRecipient: null, rtRecipSp: null, rtLocation: null, spQuery: '', recQuery: '', recSpQuery: '', locQuery: '' }, extra));
+      if (this.state.applied) {
+        runTableUpdate(null, this.state.selected || {}, 'Loading all items…');
+      } else if (pendingOrApplied) {
+        clearTimeout(this._filterTimer);
+        this.setState({ filtering: false });
+      }
+    };
+    // Full reset to the all-packages list: drawer closed, no action, selection, search or filters.
+    this._showAll = (label) => {
+      clearTimeout(this._filterTimer); clearTimeout(this._panelTimer); clearTimeout(this._tipTimer);
+      this.setState({ action: null, success: null, phaseDropped: false, query: '', rtMode: 'sp', rtSp: null, rtRecipient: null, rtRecipSp: null, rtLocation: null, spQuery: '', recQuery: '', recSpQuery: '', locQuery: '',
+        drawerOpen: false, selected: {}, anchor: null, searchQ: '', searchPills: [], pfStatuses: [], draftStatuses: [], pfx: {}, dfx: {}, scanRejected: false, scanRejectCount: 0, panelOpen: false, statusOpen: false, overlayTip: null,
+        filtering: true, loadingLabel: label || 'Loading all items…' });
+      this._filterTimer = setTimeout(() => this.setState({ filtering: false, applied: null, appliedPhase: null, page: 1 }), 2000);
+    };
+    // PROTOTYPE SIMULATION (run from the Simulate control): scan the top unticked row. Its tracking number types
+    // into the focused search field, then it is ticked (not searched), the row flashes and the field clears.
+    // Rejected-scan sound: two short low beeps, like a scanner's error tone.
+    this._errorBeep = () => {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        const ctx = this._audio || (this._audio = new AC());
+        if (ctx.state === 'suspended') ctx.resume();
+        [0, 0.16].forEach((t) => {
+          const o = ctx.createOscillator(), g = ctx.createGain();
+          o.type = 'square'; o.frequency.value = 220;
+          g.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+          g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + t + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.12);
+          o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.13);
+        });
+      } catch (e) {}
+    };
+    this._simulateScan = () => {
+      if (this._scanning) return;
+      const lst = this._scanList || [];
+      const cur = this.state.selected || {};
+      const target = lst.find((i) => !cur[i]);
+      if (target === undefined) return;
+      this._scanning = true;
+      const input = document.querySelector('input[aria-label^="Scan or search"]');
+      if (input) input.focus();
+      const code = data[target][0];
+      const steps = 10;
+      let n = 0;
+      const typeNext = () => {
+        n++;
+        this.setState({ scanText: code.slice(0, Math.ceil(code.length * n / steps)) });
+        if (n < steps) { this._scanTimer = setTimeout(typeNext, 50); return; }
+        this._scanTimer = setTimeout(() => {
+          const pos = (this._scanList || []).indexOf(target);
+          this.setState({ scanText: null, flashIdx: target, page: pos >= 0 ? Math.floor(pos / pageSize) + 1 : this.state.page });
+          if (this._toggleIdx) this._toggleIdx(target, true);
+          if (input) input.focus();
+          this._scanning = false;
+          clearTimeout(this._flashTimer);
+          this._flashTimer = setTimeout(() => this.setState({ flashIdx: null }), 900);
+        }, 250);
+      };
+      this.setState({ scanText: '' });
+      this._scanTimer = setTimeout(typeNext, 60);
+    };
+    const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+    const page = Math.min(this.state.page || 1, totalPages);
+    const start = (page - 1) * pageSize;
+    const selCount = Object.keys(sel).filter((k) => sel[k]).length;
+    const aq = (this.state.query || '').trim().toLowerCase();
+    const actions = { ofd: 'Out for delivery', reroute: 'Reroute', delayed: 'Delivery delayed', hold: 'Hold in service center', rts: 'Return to sender', picked: 'Picked up', container: 'Add/New container', special: 'Add special handling', report: 'Report image', cancel: 'Cancel delivery' };
+    const show = {};
+    let shown = 0;
+    Object.keys(actions).forEach((k) => { show[k] = !aq || actions[k].toLowerCase().includes(aq); if (show[k]) shown++; });
+    const pageIdx = list.slice(start, start + pageSize);
+    const pageSel = pageIdx.filter((i) => sel[i]).length;
+    // Ticking a row (checkbox or simulated scan) runs the same selection rules.
+    const toggleIdx = (i, on) => {
+        const next = Object.assign({}, this.state.selected || {});
+        next[i] = on;
+        const others = Object.keys(next).filter((k) => next[k] && Number(k) !== i);
+        if (this.state.action === 'reroute') {
+          const prevCount = Object.keys(this.state.selected || {}).filter((k) => (this.state.selected || {})[k]).length;
+          if (rerouteSelectionChanged(next, prevCount, i)) return;
+        }
+        let anchor = this.state.anchor;
+        if (on && (anchor === undefined || anchor === null || !next[anchor])) anchor = others.length ? Number(others[0]) : i;
+        if (!on && anchor === i) anchor = others.length ? Number(others[0]) : null;
+        this.setState({ selected: next, anchor: anchor, drawerOpen: on ? true : this.state.drawerOpen });
+    };
+    this._toggleIdx = toggleIdx;
+    this._scanList = list;
+    const rows = pageIdx.map((i) => [data[i], i]).map(([d, i]) => ({
+      selected: !!sel[i],
+      rowBg: this.state.flashIdx === i ? 'var(--color-bg-brand-secondary)' : (sel[i] ? 'var(--color-bg-brand-primary)' : 'transparent'),
+      toggle: (on) => toggleIdx(i, on),
+      tracking: d[0],
+      statusLine: d[1] === d[2] ? d[1] : d[1] + ' · ' + d[2],
+      recipient: d[3],
+      sender: d[4],
+      date: d[5],
+      time: d[6],
+      point: d[7],
+      route: d[8],
+      sla: d[9],
+      slaColor: d[10],
+      alert: d[11],
+      noAlert: !d[11]
+    }));
+    // ---------- Reroute drawer ----------
+    const SP = {
+      sp8824: { num: 'Service point 8824', title: '5th Floor · Drop Zone / POD', building: 'Hayes Hall' },
+      sp3110: { num: 'Service point 3110', title: 'Lobby · Parcel Lockers', building: 'Hayes Hall' },
+      sp1402: { num: 'Service point 1402', title: '3rd Floor · HR Suite', building: 'Hayes Hall' },
+      sp1918: { num: 'Service point 1918', title: '9th Floor · Executive Reception', building: 'Hayes Hall' },
+      sp2207: { num: 'Service point 2207', title: '2nd Floor · Conference Room', building: 'Network Building' },
+      sp2711: { num: 'Service point 2711', title: '7th Floor · Mailroom', building: 'Network Building' },
+      sp2405: { num: 'Service point 2405', title: '4th Floor · Data Security', building: 'Network Building' },
+      sp2112: { num: 'Service point 2112', title: '1st Floor · Shipping & Receiving', building: 'Network Building' },
+      sp4280: { num: 'Service point 4280', title: '2nd Floor · Biology Office', building: 'Science Center' },
+      sp4306: { num: 'Service point 4306', title: 'Lecture Hall Lobby', building: 'Science Center' },
+      sp5402: { num: 'Service point 5402', title: 'Lab Receiving · Dock B', building: 'Research Park' },
+      sp6015: { num: 'Service point 6015', title: 'West Annex · Front Desk', building: 'Research Park' },
+      sp5520: { num: 'Service point 5520', title: 'Building C · Clean Room Pass-through', building: 'Research Park' },
+      sp5733: { num: 'Service point 5733', title: 'Greenhouse · Staff Entrance', building: 'Research Park' },
+      sp7104: { num: 'Service point 7104', title: 'Ground Floor · Circulation Desk', building: 'Library Annex' },
+      sp7311: { num: 'Service point 7311', title: '3rd Floor · Archives', building: 'Library Annex' }
+    };
+    const RECIPIENTS = [
+      { id: 'priya', name: 'Priya Natarajan', dept: 'Finance · Hayes Hall', sps: ['sp8824', 'sp3110'] },
+      { id: 'marcus', name: 'Marcus Bell', dept: 'IT Services · Network Building', sps: ['sp2207', 'sp2711'] },
+      { id: 'grace', name: 'Grace Kim', dept: 'Research Lab 4 · Research Park', sps: ['sp5402', 'sp6015'] },
+      { id: 'omar', name: 'Omar Haddad', dept: 'Facilities · Hayes Hall', sps: ['sp8824', 'sp3110', 'sp2207'] },
+      { id: 'rachel', name: 'Rachel Goldberg', dept: 'Legal · Network Building', sps: ['sp2405', 'sp2711'] },
+      { id: 'tom', name: 'Tom Nguyen', dept: 'Marketing · Network Building', sps: ['sp2207'] },
+      { id: 'fatima', name: 'Fatima Siddiqui', dept: 'Chemistry · Research Park', sps: ['sp5402'] },
+      { id: 'derek', name: 'Derek Johnson', dept: 'Executive Office · Hayes Hall', sps: ['sp8824'] }
+    ];
+    const LOCATIONS = [
+      { id: 'nyc', name: 'NYC Main', city: 'New York, NY' },
+      { id: 'nycmid', name: 'NYC Midtown Annex', city: 'New York, NY' },
+      { id: 'hartford', name: 'Hartford Campus', city: 'Hartford, CT' },
+      { id: 'stamford', name: 'Stamford Operations Center', city: 'Stamford, CT' },
+      { id: 'seaport', name: 'Boston Seaport', city: 'Boston, MA' },
+      { id: 'newton', name: 'Newton Distribution Hub', city: 'Newton, MA' },
+      { id: 'providence', name: 'Providence Medical Campus', city: 'Providence, RI' },
+      { id: 'philly', name: 'Philadelphia Center City', city: 'Philadelphia, PA' },
+      { id: 'dc', name: 'Washington Federal Office', city: 'Washington, DC' },
+      { id: 'raleigh', name: 'Research Triangle Park', city: 'Durham, NC' },
+      { id: 'atlanta', name: 'Atlanta Midtown', city: 'Atlanta, GA' },
+      { id: 'miami', name: 'Miami Brickell', city: 'Miami, FL' },
+      { id: 'chicago', name: 'Chicago West Loop', city: 'Chicago, IL' },
+      { id: 'dallas', name: 'Dallas Las Colinas', city: 'Irving, TX' },
+      { id: 'denver', name: 'Denver Tech Center', city: 'Englewood, CO' },
+      { id: 'phoenix', name: 'Phoenix Sky Harbor Campus', city: 'Tempe, AZ' },
+      { id: 'sf', name: 'San Francisco Mission Bay', city: 'San Francisco, CA' },
+      { id: 'seattle', name: 'Seattle South Lake Union', city: 'Seattle, WA' },
+      { id: 'toronto', name: 'Toronto King Street', city: 'Toronto, ON, Canada' },
+      { id: 'mexico', name: 'Mexico City Reforma', city: 'Mexico City, Mexico' },
+      { id: 'saopaulo', name: 'São Paulo Office', city: 'São Paulo, Brazil' },
+      { id: 'london', name: 'London Canary Wharf', city: 'London, United Kingdom' }
+    ];
+    const firstSel = Object.keys(sel).filter((k) => sel[k]).map(Number).sort((a, b) => a - b)[0];
+    const currentSpNum = firstSel !== undefined ? data[firstSel][7] : null;
+    const rtMode = this.state.rtMode || 'sp';
+    const card = (o) => ({
+      title: o.title, sub: o.sub, selected: !!o.selected, disabled: !!o.disabled,
+      hasTag: !!o.tag, tag: o.tag || '', tagColor: o.tagColor || 'gray',
+      pick: o.pick,
+      border: o.selected ? '2px solid var(--color-border-brand)' : '1px solid var(--color-border-secondary)',
+      bg: o.selected ? 'var(--color-bg-brand-primary)' : 'var(--color-bg-primary)',
+      cursor: o.disabled ? 'not-allowed' : 'pointer',
+      opacity: o.disabled ? '0.6' : '1'
+    });
+    const has = (q, ...fields) => !q || fields.join(' ').toLowerCase().includes(q);
+    // Service point mode
+    const spQ = (this.state.spQuery || '').trim().toLowerCase();
+    const groupsMap = {};
+    Object.keys(SP).forEach((id) => {
+      const sp = SP[id];
+      if (!has(spQ, sp.num, sp.title, sp.building)) return;
+      const isCurrent = sp.num === currentSpNum;
+      (groupsMap[sp.building] = groupsMap[sp.building] || []).push(card({
+        title: sp.title, sub: sp.num, tag: isCurrent ? 'Current' : '', disabled: isCurrent,
+        selected: this.state.rtSp === id,
+        pick: () => this.setState({ rtSp: id })
+      }));
+    });
+    const spGroups = Object.keys(groupsMap).map((b) => ({ name: b, items: groupsMap[b] }));
+    // Recipient mode
+    const recQ = (this.state.recQuery || '').trim().toLowerCase();
+    const recipients = RECIPIENTS.filter((r) => has(recQ, r.name, r.dept)).map((r) => card({
+      title: r.name, sub: r.dept, selected: this.state.rtRecipient === r.id,
+      // Picking a recipient pre-selects their default (preferred) service point.
+      pick: () => this.setState({ rtRecipient: r.id, rtRecipSp: r.sps[0], recSpQuery: '' })
+    }));
+    const recObj = RECIPIENTS.find((r) => r.id === this.state.rtRecipient);
+    const recDefId = recObj ? recObj.sps[0] : null;
+    const recDefault = recObj ? [card({
+      title: SP[recDefId].title, sub: SP[recDefId].num + ' · ' + SP[recDefId].building,
+      tag: 'Default', tagColor: 'brand',
+      selected: this.state.rtRecipSp === recDefId,
+      pick: () => this.setState({ rtRecipSp: recDefId })
+    })] : [];
+    const recSpQ = (this.state.recSpQuery || '').trim().toLowerCase();
+    const recGroupsMap = {};
+    if (recObj) {
+      Object.keys(SP).forEach((id) => {
+        if (id === recDefId) return;
+        const sp = SP[id];
+        if (!has(recSpQ, sp.num, sp.title, sp.building)) return;
+        (recGroupsMap[sp.building] = recGroupsMap[sp.building] || []).push(card({
+          title: sp.title, sub: sp.num,
+          selected: this.state.rtRecipSp === id,
+          pick: () => this.setState({ rtRecipSp: id })
+        }));
+      });
+    }
+    const recSpGroups = Object.keys(recGroupsMap).map((b) => ({ name: b, items: recGroupsMap[b] }));
+    // Location mode
+    const locQ = (this.state.locQuery || '').trim().toLowerCase();
+    const locations = LOCATIONS.filter((l) => has(locQ, l.name, l.city)).map((l) => card({
+      title: l.name, sub: l.city, selected: this.state.rtLocation === l.id,
+      pick: () => this.setState({ rtLocation: l.id })
+    }));
+    // Destination summary
+    let destSummary = '';
+    if (rtMode === 'sp' && this.state.rtSp) destSummary = SP[this.state.rtSp].num + ' · ' + SP[this.state.rtSp].title;
+    if (rtMode === 'recipient' && recObj && this.state.rtRecipSp) destSummary = recObj.name + ' at ' + SP[this.state.rtRecipSp].num;
+    if (rtMode === 'location' && this.state.rtLocation) destSummary = LOCATIONS.find((l) => l.id === this.state.rtLocation).name;
+    const rerouteVals = {
+      rtKeys: [rtMode],
+      setRtMode: (keys) => { const k = Array.from(keys || [])[0]; if (k) this.setState({ rtMode: k }); },
+      modeSp: rtMode === 'sp',
+      modeRecipient: rtMode === 'recipient',
+      modeLocation: rtMode === 'location',
+      spQuery: this.state.spQuery || '',
+      setSpQuery: (v) => this.setState({ spQuery: v }),
+      spGroups: spGroups,
+      spEmpty: spGroups.length === 0,
+      recQuery: this.state.recQuery || '',
+      setRecQuery: (v) => this.setState({ recQuery: v }),
+      recipients: recipients,
+      recEmpty: recipients.length === 0,
+      noRecipient: !recObj,
+      hasRecipient: !!recObj,
+      recName: recObj ? recObj.name : '',
+      recDept: recObj ? recObj.dept : '',
+      recInitials: recObj ? recObj.name.split(' ').map((w) => w[0]).join('') : '',
+      recDefaultLabel: recObj ? recObj.name.split(' ')[0] + '’s default service point' : '',
+      clearRecipient: () => this.setState({ rtRecipient: null, rtRecipSp: null, recSpQuery: '' }),
+      recDefault: recDefault,
+      recSpQuery: this.state.recSpQuery || '',
+      setRecSpQuery: (v) => this.setState({ recSpQuery: v }),
+      recSpGroups: recSpGroups,
+      recSpEmpty: recSpGroups.length === 0,
+      locQuery: this.state.locQuery || '',
+      setLocQuery: (v) => this.setState({ locQuery: v }),
+      locations: locations,
+      locEmpty: locations.length === 0,
+      hasDest: !!destSummary,
+      noDest: !destSummary || selCount === 0,
+      destSummary: destSummary,
+      // Disabled state says what's missing instead of "Reroute 0 items".
+      confirmLabel: selCount === 0 ? 'Select items to reroute' : !destSummary ? 'Choose a destination' : 'Reroute ' + selCount + (selCount === 1 ? ' item' : ' items'),
+      doReroute: () => {
+        // Read live state (not the render-time copy)
+        const st = this.state;
+        const mode = st.rtMode || 'sp';
+        const rec = RECIPIENTS.find((r) => r.id === st.rtRecipient);
+        let dest = null, summary = '';
+        if (mode === 'sp' && st.rtSp) { dest = { point: SP[st.rtSp].num, route: SP[st.rtSp].building + ' Route' }; summary = SP[st.rtSp].num + ' · ' + SP[st.rtSp].title; }
+        if (mode === 'recipient' && rec && st.rtRecipSp) { dest = { point: SP[st.rtRecipSp].num, route: SP[st.rtRecipSp].building + ' Route', recipient: rec.name }; summary = rec.name + ' at ' + SP[st.rtRecipSp].num; }
+        if (mode === 'location' && st.rtLocation) { const l = LOCATIONS.find((x) => x.id === st.rtLocation); dest = { point: l.name, route: 'Inter-office transfer' }; summary = l.name; }
+        const liveSel = st.selected || {};
+        const moved = Object.keys(liveSel).filter((k) => liveSel[k]).map(Number);
+        if (!dest || moved.length === 0) return;
+        const overrides = Object.assign({}, st.overrides || {});
+        moved.forEach((i) => { overrides[i] = dest; });
+        const n = moved.length;
+        this.setState({
+          selected: {}, anchor: null, success: null, phaseDropped: false,
+          rtSp: null, rtRecipient: null, rtRecipSp: null, rtLocation: null, spQuery: '', recQuery: '', recSpQuery: '', locQuery: ''
+        });
+        // Selection is now empty, so the phase filter releases: reload with only
+        // "Available for reroute", then confirm in the drawer.
+        runTableUpdate('reroute', {}, 'Rerouting ' + n + (n === 1 ? ' item…' : ' items…'), null, () => {
+          this.setState({ overrides: overrides, success: { title: n + (n === 1 ? ' item rerouted' : ' items rerouted'), body: 'Sent to ' + summary + '. Status is now Processing · Scheduled.' } });
+        });
+      },
+      // Confirmation stays until the next item is ticked or a new destination is picked.
+      showSuccess: !!this.state.success && selCount === 0 && !destSummary && !filtering,
+      successTitle: this.state.success ? this.state.success.title : '',
+      successBody: this.state.success ? this.state.success.body : ''
+    };
+    return {
+      allSelected: pageSel === pageIdx.length,
+      someSelected: pageSel > 0 && pageSel < pageIdx.length,
+      toggleAll: () => {
+        const next = Object.assign({}, this.state.selected || {});
+        const selectNow = pageSel === 0;
+        pageIdx.forEach((i) => { next[i] = selectNow; });
+        if (this.state.action === 'reroute' && rerouteSelectionChanged(next, selCount, pageIdx[0])) return;
+        const remaining = Object.keys(next).filter((k) => next[k]).map(Number);
+        const anchor = remaining.includes(this.state.anchor) ? this.state.anchor : (remaining.length ? remaining[0] : null);
+        this.setState({ selected: next, anchor: anchor, drawerOpen: selectNow ? true : this.state.drawerOpen });
+      },
+      setPage: (p) => this.setState({ page: Math.min(Math.max(p, 1), totalPages) }),
+      drawerOpen: !!this.state.drawerOpen,
+      // Closing the drawer (X or Cancel) always lands on the full list of packages, however they got there.
+      closeDrawer: () => this._showAll(),
+      // "Active items" chip: same reset.
+      showAllItems: () => this._showAll(),
+      // Ricoh logo: full prototype reset, including undoing every reroute.
+      // Ricoh logo: resets the whole prototype: this page, the shared pickup data (Pickup queue and both TV displays), and saved settings.
+      resetPrototype: () => { try { window.localStorage.removeItem('pq.autoAnnounce'); } catch (e) {} this.sharedReset(); this.setState({ overrides: {}, navOpen: false }); this._showAll('Resetting prototype…'); },
+      filtering: filtering,
+      loadingLabel: this.state.loadingLabel || 'Loading…',
+      tableOpacity: filtering ? '0.4' : '1',
+      showOverlay: !!this.state.drawerOpen && !action,
+      pickingAction: !action,
+      drawerTitle: action === 'reroute' ? 'Reroute' : 'Select action',
+      showItemCount: !!action && selCount > 0,
+      // Toolbar "Actions" opens the action drawer with whatever is (or isn't) selected.
+      openActions: () => this.setState({ drawerOpen: true }),
+      // Clicking the dimmed table while choosing an action explains what to do instead of closing.
+      onOverlayClick: (e) => {
+        clearTimeout(this._tipTimer);
+        const vw = window.innerWidth;
+        const rawX = e && e.clientX ? e.clientX : vw / 2;
+        const x = Math.min(Math.max(rawX, 176), Math.max(176, vw - 412 - 176)); // stay clear of the edge and the drawer
+        const y = Math.max(e && e.clientY ? e.clientY : 300, (this.state.navCollapsed && !this.state.navPeek && !this.state.navFocus ? 52 : 116) + 80);           // stay below the header
+        this.setState({ overlayTip: { x: x, y: y } });
+        this._tipTimer = setTimeout(() => this.setState({ overlayTip: null }), 7000);
+      },
+      overlayTipOn: !!this.state.overlayTip && !!this.state.drawerOpen && !action,
+      overlayTipX: this.state.overlayTip ? this.state.overlayTip.x + 'px' : '0px',
+      overlayTipY: this.state.overlayTip ? this.state.overlayTip.y + 'px' : '0px',
+      // ---- Search + filter panel ----
+      searchQ: this.state.searchQ || '',
+      hasSearch: !!(this.state.searchQ || '').trim(),
+      setSearch: (v) => { if (this.state.scanText != null) return; this.setState({ searchQ: v, page: 1 }); },
+      searchValue: this.state.scanText != null ? this.state.scanText : (this.state.searchQ || ''),
+      simOpen: !!this.state.simOpen,
+      toggleSim: () => this.setState({ simOpen: !this.state.simOpen }),
+      simReset: () => { this.setState({ simOpen: false, scanRejected: false, scanRejectCount: 0 }); const b = document.querySelector('button[title="Reset prototype"]'); if (b) b.click(); },
+      // While "Select action" is open, a scan is rejected (action must be chosen first).
+      simScan: () => {
+        this.setState({ simOpen: false });
+        if (this.state.drawerOpen && !this.state.action) { this.setState({ scanRejected: true, scanRejectCount: (this.state.scanRejectCount || 0) + 1 }); this._errorBeep(); return; }
+        this._simulateScan();
+      },
+      scanWarn: !!this.state.scanRejected && !!this.state.drawerOpen && !this.state.action,
+      scanWarnClass: (this.state.scanRejectCount || 0) % 2 ? 'scan-pulse-a' : 'scan-pulse-b',
+      scanWarnTitle: (this.state.scanRejectCount || 0) > 1 ? this.state.scanRejectCount + ' scans not added.' : 'Scan not added.',
+      scanWarnBody: (this.state.scanRejectCount || 0) > 1 ? 'Choose an action first, then scan these packages again.' : 'Choose an action first, then scan it again.',
+      noScanWarn: !(!!this.state.scanRejected && !!this.state.drawerOpen && !this.state.action),
+      // Enter turns the typed search into a pill; pills combine as "any of".
+      onSearchKey: (e) => {
+        if (!e || e.key !== 'Enter') return;
+        if (e.preventDefault) e.preventDefault();
+        const t = (this.state.searchQ || '').trim();
+        const cur = this.state.searchPills || [];
+        this.setState({ searchQ: '', searchPills: t && !cur.includes(t) ? cur.concat([t]) : cur, page: 1 });
+      },
+      hasChips: pills.length > 0 || statusFilterOn || fxOn.length > 0 || !!pfx.date || (applied === 'reroute' && !filtering),
+      clearAllML: pills.length ? '8px' : '0px',
+      showClearAllPills: pills.length + effStatuses.length + fxOn.length + (pfx.date ? 1 : 0) > 1,
+      showPhaseHidden: (() => {
+        if (applied !== 'reroute' || !appliedPhase || filtering) return false;
+        if (this.state.phaseDropped) return true;
+        if (pfStatuses.some((l) => statusAllowed(l).why === 'Other phase')) return true;
+        const terms = termsFor(pills, this.state.searchQ);
+        if (!terms.length) return false;
+        return listFor('reroute', null).some((i) => data[i][1] !== appliedPhase && matchesTerms(data[i], terms));
+      })(),
+      searchPillList: pills.map((t) => ({
+        label: 'Search: “' + t + '”',
+        removeLabel: 'Remove search ' + t,
+        remove: () => this.removePills((this.state.searchPills || []).filter((x) => x !== t))
+      })),
+      // Clear all: search pills and status chips together, one reload.
+      clearAllPills: () => {
+        if (!pfStatuses.length && !fxOn.length && !pfx.date) return this.removePills([]);
+        clearTimeout(this._panelTimer);
+        this.setState({ searchPills: [], searchQ: '', draftStatuses: [], dfx: {}, filtering: true, loadingLabel: 'Clearing filters…' });
+        this._panelTimer = setTimeout(() => this.setState({ filtering: false, pfStatuses: [], pfx: {}, page: 1 }), 2000);
+      },
+      // Status chips can be removed with their ×; the panel's draft stays in sync.
+      statusChipList: effStatuses.map((l) => ({
+        label: 'Status: ' + l,
+        removeLabel: 'Remove status ' + l,
+        remove: () => {
+          const next = (this.state.pfStatuses || []).filter((x) => x !== l);
+          clearTimeout(this._panelTimer);
+          this.setState({ draftStatuses: (this.state.draftStatuses || []).filter((x) => x !== l), filtering: true, loadingLabel: next.length ? 'Updating results…' : 'Clearing filters…' });
+          this._panelTimer = setTimeout(() => this.setState({ filtering: false, pfStatuses: next, page: 1 }), 2000);
+        }
+      })),
+      clearSearch: () => this.setState({ searchQ: '', searchPills: [], page: 1 }),
+      noRows: !filtering && pageIdx.length === 0,
+      panelOpen: !!this.state.panelOpen,
+      // Dropdown placement per Untitled UI Dropdown: bottom-right of the filter button, 8px below it.
+      panelTop: (22 + 14 + 8) + 'px',
+      // Icon-only dropdown trigger: focus-ring outline while its panel is open (Untitled UI Dropdown.DotsButton pattern).
+      filterTriggerClass: this.state.panelOpen ? 'dd-trigger dd-open' : 'dd-trigger',
+      filterBtnColor: this.state.panelOpen || statusFilterOn || fxOn.length > 0 ? 'secondary' : 'tertiary',
+      togglePanel: () => this.setState({ panelOpen: !this.state.panelOpen, statusOpen: false, draftStatuses: (this.state.pfStatuses || []).slice(), dfx: Object.assign({}, this.state.pfx || {}) }),
+      closePanel: () => this.setState({ panelOpen: false, statusOpen: false }),
+      statusEnabled: true,
+      statusDisabled: false,
+      statusLockText: action === 'reroute' ? 'Set by Reroute' : 'Set by current action',
+      statusLockTip: 'Status can’t be changed while you’re ' + (action === 'reroute' ? 'rerouting' : 'in an action') + '. Close the drawer to edit it.',
+      statusLockAria: 'Status, locked. Status can’t be changed while you’re ' + (action === 'reroute' ? 'rerouting' : 'in an action') + '.',
+      statusOpen: !!this.state.statusOpen,
+      toggleStatus: () => this.setState({ statusOpen: !this.state.statusOpen }),
+      statusBorder: this.state.statusOpen ? 'var(--color-border-brand)' : 'var(--color-border-primary)',
+      statusShadow: this.state.statusOpen ? '0 0 0 1px var(--color-border-brand), 0 1px 2px rgba(10,13,18,0.05)' : '0 1px 2px rgba(10,13,18,0.05)',
+      noDraftStatus: (this.state.draftStatuses || []).length === 0,
+      draftStatusTags: (this.state.draftStatuses || []).map((l) => ({
+        label: l, removeLabel: 'Remove ' + l,
+        remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ draftStatuses: (this.state.draftStatuses || []).filter((x) => x !== l) }); }
+      })),
+      statusOptions: (() => {
+        const seen = [];
+        data.forEach((d) => { const l = statusOf(d); if (!seen.includes(l)) seen.push(l); });
+        seen.sort();
+        const draft = this.state.draftStatuses || [];
+        const opts = seen.map((l) => {
+          const al = statusAllowed(l);
+          return {
+            label: l, on: draft.includes(l) && al.ok, disabled: !al.ok, why: al.ok ? '' : al.why, tip: al.ok ? '' : al.tip,
+            cls: al.ok ? 'st-opt' : 'st-off', color: al.ok ? 'var(--color-text-primary)' : 'var(--color-text-quaternary)', cursor: al.ok ? 'pointer' : 'not-allowed',
+            flip: () => {
+              if (!al.ok) return;
+              const cur = this.state.draftStatuses || [];
+              this.setState({ draftStatuses: cur.includes(l) ? cur.filter((x) => x !== l) : cur.concat([l]) });
+            }
+          };
+        });
+        const ok = opts.filter((o) => !o.disabled), off = opts.filter((o) => o.disabled);
+        off.forEach((o, i) => { o.divider = i === 0 && ok.length > 0; });
+        ok.forEach((o) => { o.divider = false; });
+        return ok.concat(off);
+      })(),
+      routeItems: Array.from(new Set(data.map((d) => d[8]))).sort().map((r) => ({ id: r, label: r })),
+      senderItems: Array.from(new Set(data.map((d) => d[4]))).sort().map((r) => ({ id: r, label: r })),
+      recipientItems: Array.from(new Set(data.map((d) => d[3]))).sort().map((r) => ({ id: r, label: r })),
+      waypointItems: Array.from(new Set(data.map((d) => d[7]))).sort().map((r) => ({ id: r, label: r })),
+      no: false,
+      // Draft values for the searchable fields and date range (applied on Apply filters).
+      dfxRoute: dfx.route || null, dfxSender: dfx.sender || null, dfxRecipient: dfx.recipient || null, dfxWaypoint: dfx.waypoint || null, dfxDate: dfx.date || null,
+      setDfxRoute: (k) => this.setState({ dfx: Object.assign({}, this.state.dfx, { route: k || null }) }),
+      setDfxSender: (k) => this.setState({ dfx: Object.assign({}, this.state.dfx, { sender: k || null }) }),
+      setDfxRecipient: (k) => this.setState({ dfx: Object.assign({}, this.state.dfx, { recipient: k || null }) }),
+      setDfxWaypoint: (k) => this.setState({ dfx: Object.assign({}, this.state.dfx, { waypoint: k || null }) }),
+      setDfxDate: (v) => this.setState({ dfx: Object.assign({}, this.state.dfx, { date: v || null }) }),
+      // Applied filter chips (× removes one; Arrival date is display-only for now).
+      fxChipList: fxOn.map((f) => ({
+        label: f[1] + ': ' + pfx[f[0]], removeLabel: 'Remove ' + f[1] + ' filter', remove: () => this.removeFx(f[0])
+      })).concat(pfx.date ? [{ label: 'Arrival: ' + fmtRange(pfx.date), removeLabel: 'Remove Arrival date filter', remove: () => this.removeFx('date') }] : []),
+      showHiddenSel: (() => { if (filtering) return false; const ks = Object.keys(sel).filter((k) => sel[k]).map(Number); return ks.some((k) => !list.includes(k)); })(),
+      hiddenSelText: (() => { const n = Object.keys(sel).filter((k) => sel[k]).map(Number).filter((k) => !list.includes(k)).length; return n + (n === 1 ? ' selected item is' : ' selected items are') + ' hidden by your filters.'; })(),
+      openCombo: (e) => { const inp = e.currentTarget.parentElement.querySelector('input'); if (inp) { inp.blur(); setTimeout(() => inp.focus(), 0); } },
+      routeItemRender: this._routeRender || (this._routeRender = (it) => window.React.createElement(window.UntitledUI.Select.Item, { id: it.id, label: it.label }, it.label)),
+      routeOptions: [{ label: 'Select', value: '' }].concat(
+        Array.from(new Set(data.map((d) => d[8]))).sort().map((r) => ({ label: r, value: r }))
+      ),
+      applyFilters: () => {
+        const next = (this.state.draftStatuses || []).slice();
+        const nextFx = Object.assign({}, this.state.dfx || {});
+        clearTimeout(this._panelTimer);
+        this.setState({ panelOpen: false, statusOpen: false, filtering: true, loadingLabel: 'Applying filters…' });
+        this._panelTimer = setTimeout(() => this.setState({ filtering: false, pfStatuses: next, pfx: nextFx, page: 1 }), 2000);
+      },
+      clearFilters: () => {
+        const cur = this.state.pfx || {};
+        const had = (this.state.pfStatuses || []).length > 0 || Object.keys(cur).some((k) => cur[k]);
+        this.setState({ draftStatuses: [], dfx: {}, statusOpen: false });
+        if (had) {
+          clearTimeout(this._panelTimer);
+          this.setState({ filtering: true, loadingLabel: 'Clearing filters…' });
+          this._panelTimer = setTimeout(() => this.setState({ filtering: false, pfStatuses: [], pfx: {}, page: 1 }), 2000);
+        }
+      },
+      hasStatusChips: statusFilterOn,
+      statusChips: pfStatuses.map((l) => 'Status: ' + l),
+      // Hidden while an action workflow (e.g. Reroute) is running in the drawer.
+      showActionsBtn: !(this.state.drawerOpen && action),
+      itemCountLabel: selCount + (selCount === 1 ? ' item' : ' items'),
+      yes: true,
+      ...rerouteVals,
+      hasAction: !!action,
+      filterChip: applied === 'reroute' && !filtering,
+      phaseChip: applied === 'reroute' && !filtering && !!appliedPhase,
+      phaseChipLabel: 'Phase: ' + (appliedPhase || ''),
+      phaseTooltip: 'Items in different phases can’t be rerouted together, so this list only shows ' + (appliedPhase || '') + ' items, the phase of the first item you selected. Untick all items or exit reroute to clear this filter.',
+      phaseTooltipAria: 'Filtered to phase ' + (appliedPhase || '') + '. Items in different phases can’t be rerouted together.',
+      tipOffset4: 4, tipOffset6: 6, tooltipDelay: 200,
+      // Drawer is 412px; it overlaps the card by ~372px (412 minus the 40px page gutter).
+      // Shift toolbar + pagination by the measured drawer overlap (see measureOverlap).
+      toolbarPadR: this.state.drawerOpen && action ? ((this.state.overlap || 0) + 24) + 'px' : '24px',
+      footerPadR: this.state.drawerOpen && action ? (this.state.overlap || 0) + 'px' : '0px',
+      // Scroll-collapsing product bar (the whole page scrolls).
+      navHidden: navHidden,
+      navY: navHidden ? '-64px' : '0px',
+      drawerTop: navHidden ? '52px' : '116px',
+      headerEnter: () => { if (!this.state.navPeek) this.setState({ navPeek: true }); },
+      headerLeave: () => { if (this.state.navPeek) this.setState({ navPeek: false }); },
+      navFocusIn: () => { if (!this.state.navFocus) this.setState({ navFocus: true }); },
+      navFocusOut: (e) => { if (!(e && e.relatedTarget && e.currentTarget.contains(e.relatedTarget))) this.setState({ navFocus: false }); },
+      cardRef: this._cardRef || (this._cardRef = (el) => { this._card = el; if (el) this.measureOverlap(); }),
+      backToActions: () => clearAction({}),
+      // Reroute is unavailable when nothing selected is eligible for it.
+      rerouteOn: show.reroute && !(selCount > 0 && Object.keys(sel).filter((k) => sel[k] && rerouteEligible(data[k])).length === 0),
+      rerouteOff: show.reroute && selCount > 0 && Object.keys(sel).filter((k) => sel[k] && rerouteEligible(data[k])).length === 0,
+      notEligibleAria: 'Reroute, unavailable. ' + (selCount === 1 ? 'The item you selected isn’t eligible for reroute.' : 'None of the items you selected are eligible for reroute.'),
+      notEligibleTip: selCount === 1 ? 'The item you selected isn’t eligible for reroute.' : 'None of the items you selected are eligible for reroute.',
+      pickReroute: () => {
+        if (this.state.scanRejected) this.setState({ scanRejected: false, scanRejectCount: 0 });
+        // Read the live selection (not the copy from when the action list rendered),
+        // so the ticked items stay ticked and we land on their page.
+        const liveSel = this.state.selected || {};
+        const eligibleSel = Object.keys(liveSel).filter((k) => liveSel[k] && rerouteEligible(data[k])).map(Number);
+        const anchor = eligibleSel.includes(this.state.anchor) ? this.state.anchor : (eligibleSel.length ? eligibleSel[0] : null);
+        const phase = anchor !== null ? data[anchor][1] : null;
+        // Keep only selected items that share the anchor's phase.
+        const next = {};
+        eligibleSel.forEach((k) => { if (!phase || data[k][1] === phase) next[k] = true; });
+        const droppedByPhase = eligibleSel.some((k) => phase && data[k][1] !== phase);
+        // Any typed search becomes a removable pill so it's clear why the list is short.
+        const typed = (this.state.searchQ || '').trim();
+        const curPills = this.state.searchPills || [];
+        this.setState({ action: 'reroute', selected: next, anchor: anchor, phaseDropped: droppedByPhase, query: '', searchQ: '', searchPills: typed && !curPills.includes(typed) ? curPills.concat([typed]) : curPills });
+        runTableUpdate('reroute', next, phase ? 'Filtering to ' + phase + ' items eligible for reroute…' : 'Filtering items eligible for reroute…', phase);
+      },
+      setQuery: (v) => this.setState({ query: v }),
+      show: show,
+      noMatches: shown === 0,
+      ic: U.Icons || {},
+      navOpen: !!this.state.navOpen,
+      navW: this.state.navOpen ? '300px' : '56px',
+      navLabelOp: this.state.navOpen ? '1' : '0',
+      navShadow: this.state.navOpen ? '0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)' : '0 1px 2px rgba(10,13,18,0.05)',
+      navChevron: this.state.navOpen ? 'rotate(180deg)' : 'none',
+      navToggleLabel: this.state.navOpen ? 'Collapse menu' : 'Expand menu',
+      openNav: () => { if (!this.state.navOpen) this.setState({ navOpen: true }); },
+      closeNav: () => { if (this.state.navOpen) this.setState({ navOpen: false }); },
+      toggleNav: () => this.setState({ navOpen: !this.state.navOpen }),
+      page: page,
+      total: totalPages,
+      filters: [
+        { label: 'Customer Requests', count: '36' },
+        { label: 'Service Center Pickups', count: '36' },
+        { label: 'Pending Decision', count: '7' },
+        { label: 'Incoming Items', count: '12' }
+      ],
+      rows: rows
+    };
+  }
+}
+</script>
+</body>
+</html>

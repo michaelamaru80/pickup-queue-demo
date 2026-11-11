@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pick list – proxy pickup</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/untitledui/components/bundle.css">
+<script src="ds/untitledui/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#ffffff}
+</style>
+</helmet>
+<div style="width: 816px; height: 1056px; box-sizing: border-box; padding: 72px; display: flex; flex-direction: column; gap: 28px; background: #ffffff; font-family: Inter, system-ui, sans-serif; color: #181D27">
+
+  <!-- Masthead -->
+  <header style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-bottom: 20px; border-bottom: 2px solid #181D27">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 12px; line-height: 18px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #535862">Delivery CTRL · [Mailroom name]</span>
+      <h1 style="margin: 0; font-size: 30px; line-height: 38px; font-weight: 600">Pick list</h1>
+      <span style="font-size: 12px; line-height: 18px; color: #535862">Printed Wed, Oct 28, 2026 · 9:38 AM</span>
+    </div>
+    <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 120px; height: 64px; padding: 0 16px; box-sizing: border-box; border: 2px solid #181D27; border-radius: 10px; font-size: 36px; font-weight: 700; letter-spacing: 0.02em">A103</span>
+  </header>
+
+  <!-- Who and where -->
+  <section aria-label="Pickup" style="display: flex; flex-direction: column; gap: 16px">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 32px">
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; line-height: 18px; font-weight: 600; color: #535862">At the window</span>
+        <span style="font-size: 18px; line-height: 28px; font-weight: 600">Daniel Reyes</span>
+        <span style="margin-top: 2px; display: grid; grid-template-columns: auto 1fr; column-gap: 12px; row-gap: 2px; align-items: baseline">
+          <span style="font-size: 14px; line-height: 20px; color: #535862">Student ID</span><span style="font-size: 14px; line-height: 20px; font-weight: 600; color: #414651; font-variant-numeric: tabular-nums">2041 8823</span>
+          <span style="font-size: 14px; line-height: 20px; color: #535862">Mail code</span><span style="font-size: 14px; line-height: 20px; font-weight: 600; color: #414651; font-variant-numeric: tabular-nums">0741 8529</span>
+        </span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; line-height: 18px; font-weight: 600; color: #535862">Bring to</span>
+        <span style="font-size: 18px; line-height: 28px; font-weight: 600">Window 2</span>
+        <span style="font-size: 14px; line-height: 20px; color: #414651">3 items · 2 shelves</span>
+      </div>
+    </div>
+    <div style="padding: 10px 16px; border: 1px solid #A4A7AE; border-radius: 8px; font-size: 14px; line-height: 20px; font-weight: 600">Pick up for: Kevin O’Brien, Mei Lin</div>
+  </section>
+
+  <!-- Items grouped by who they belong to (like the kiosk and the receipt), in shelf order within each group -->
+  <section aria-labelledby="items-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="items-h" style="margin: 0; font-size: 16px; line-height: 24px; font-weight: 600">Items by person, sorted by shelf</h2>
+    <div role="table" aria-labelledby="items-h" style="display: flex; flex-direction: column; border: 1px solid #A4A7AE; border-radius: 8px; overflow: hidden">
+      <div role="row" style="display: grid; grid-template-columns: 56px 88px minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; min-height: 40px; background: #F5F5F5; border-bottom: 1px solid #A4A7AE; font-size: 12px; line-height: 18px; font-weight: 600; color: #414651">
+        <span role="columnheader" style="padding: 0 0 0 16px">Got it</span>
+        <span role="columnheader" style="padding: 0 12px">Shelf</span>
+        <span role="columnheader" style="padding: 0 12px">Item</span>
+        <span role="columnheader" style="padding: 0 16px 0 12px">Tracking number</span>
+      </div>
+      <div role="row" style="padding: 8px 16px; background: #FAFAFA; border-bottom: 1px solid #D5D7DA; font-size: 12px; line-height: 18px; font-weight: 600; color: #414651"><span role="cell">For Kevin O’Brien · 2 items</span></div>
+      <div role="row" style="display: grid; grid-template-columns: 56px 88px minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; min-height: 64px; border-bottom: 1px solid #D5D7DA; font-size: 14px; line-height: 20px">
+        <span role="cell" style="padding: 0 0 0 16px"><span aria-label="Checkbox to tick by hand" style="display: block; width: 16px; height: 16px; box-sizing: border-box; border: 1.5px solid #181D27; border-radius: 3px"></span></span>
+        <span role="cell" style="padding: 0 12px; font-size: 18px; line-height: 28px; font-weight: 600">B-09</span>
+        <span role="cell" style="padding: 0 12px">USPS · Envelope</span>
+        <span role="cell" style="padding: 0 16px 0 12px; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 20px">9400 ••• 8529</span>
+      </div>
+      <div role="row" style="display: grid; grid-template-columns: 56px 88px minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; min-height: 64px; border-bottom: 1px solid #D5D7DA; font-size: 14px; line-height: 20px">
+        <span role="cell" style="padding: 0 0 0 16px"><span aria-label="Checkbox to tick by hand" style="display: block; width: 16px; height: 16px; box-sizing: border-box; border: 1.5px solid #181D27; border-radius: 3px"></span></span>
+        <span role="cell" style="padding: 0 12px; font-size: 18px; line-height: 28px; font-weight: 600">B-09</span>
+        <span role="cell" style="padding: 0 12px">Amazon · Medium box</span>
+        <span role="cell" style="padding: 0 16px 0 12px; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 20px">TBA7 ••• 3074</span>
+      </div>
+      <div role="row" style="padding: 8px 16px; background: #FAFAFA; border-bottom: 1px solid #D5D7DA; font-size: 12px; line-height: 18px; font-weight: 600; color: #414651"><span role="cell">For Mei Lin · 1 item</span></div>
+      <div role="row" style="display: grid; grid-template-columns: 56px 88px minmax(0, 1fr) minmax(0, 1.4fr); align-items: center; min-height: 64px; font-size: 14px; line-height: 20px">
+        <span role="cell" style="padding: 0 0 0 16px"><span aria-label="Checkbox to tick by hand" style="display: block; width: 16px; height: 16px; box-sizing: border-box; border: 1.5px solid #181D27; border-radius: 3px"></span></span>
+        <span role="cell" style="padding: 0 12px; font-size: 18px; line-height: 28px; font-weight: 600">B-15</span>
+        <span role="cell" style="padding: 0 12px">Amazon · Medium box</span>
+        <span role="cell" style="padding: 0 16px 0 12px; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 20px">TBA1 ••• 7418</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="margin-top: auto; display: flex; justify-content: space-between; gap: 24px; padding-top: 16px; border-top: 1px solid #A4A7AE; font-size: 12px; line-height: 18px; color: #535862">
+    <span>Match the tracking number on each label. Check the student’s ID at the window.</span>
+    <span>Number A103 · Page 1 of 1</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":816,"height":1056}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

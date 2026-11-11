@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lobby display – sign in to exit</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.i{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.uu-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:8px;font-family:inherit;font-weight:600;cursor:pointer;text-decoration:none;transition:background-color .1s linear,color .1s linear}
+.uu-btn:focus-visible{outline:2px solid #9E77ED;outline-offset:2px}
+.uu-primary{background:#7F56D9;color:#fff;border:2px solid rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px rgba(10,13,18,.18),inset 0 -2px 0 0 rgba(10,13,18,.05),0 1px 2px rgba(10,13,18,.05)}
+.uu-primary:hover{background:#6941C6;color:#fff}
+.uu-secondary{background:#fff;color:#414651;box-shadow:inset 0 0 0 1px #D5D7DA,inset 0 -2px 0 0 rgba(10,13,18,.05),0 1px 2px rgba(10,13,18,.05)}
+.uu-secondary:hover{background:#FAFAFA;color:#252B37}
+.uu-btn:disabled{cursor:not-allowed;background:#F5F5F5;color:#A4A7AE;box-shadow:inset 0 0 0 1px #E9EAEB;border-color:transparent}
+.uu-input:focus{outline:none;box-shadow:inset 0 0 0 2px #9E77ED,0 1px 2px rgba(10,13,18,.05)}
+</style>
+</helmet>
+<div style="position: relative; height: 100vh; overflow: hidden">
+  <!-- The live lobby display stays underneath -->
+  <dc-import name="LobbyDisplay" on-exit="{{reopen}}" hint-size="100%,1080px"></dc-import>
+
+  <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+    <div style="position: absolute; inset: 0; z-index: 60; background: rgba(12,17,29,.6); display: flex; align-items: center; justify-content: center; padding: 24px">
+      <div role="dialog" aria-modal="true" aria-labelledby="exit-title" aria-describedby="exit-desc" style="width: 100%; max-width: 560px; border-radius: 20px; background: #fff; color: #181D27; box-shadow: 0 24px 48px -12px rgba(10,13,18,.18); padding: 40px; display: flex; flex-direction: column; gap: 28px">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px">
+          <span style="width: 56px; height: 56px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: #F4EBFF; box-shadow: 0 0 0 8px #F9F5FF; color: #7F56D9">
+            <svg class="i" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </span>
+          <div>
+            <h1 id="exit-title" style="margin: 8px 0 0; font-size: 30px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em">Sign in to exit the display</h1>
+            <p id="exit-desc" style="margin: 8px 0 0; font-size: 18px; line-height: 28px; color: #535862">This screen is in a public area, so staff need to sign in before it returns to the pickup queue.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px">
+          <div>
+            <label for="ex-user" style="display: block; margin-bottom: 6px; font-size: 16px; line-height: 24px; font-weight: 500; color: #414651">Username</label>
+            <input id="ex-user" class="uu-input" value="{{user}}" onChange="{{onUser}}" autocomplete="off" placeholder="Enter your username" style="width: 100%; height: 56px; border: 0; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px {{ring}}, 0 1px 2px rgba(10,13,18,.05); padding: 0 16px; font-family: inherit; font-size: 18px; line-height: 28px; color: #181D27">
+          </div>
+          <div>
+            <label for="ex-pw" style="display: block; margin-bottom: 6px; font-size: 16px; line-height: 24px; font-weight: 500; color: #414651">Password</label>
+            <input id="ex-pw" type="password" class="uu-input" value="{{pw}}" onChange="{{onPw}}" aria-invalid="{{err}}" aria-describedby="ex-err" placeholder="Enter your password" style="width: 100%; height: 56px; border: 0; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px {{ring}}, 0 1px 2px rgba(10,13,18,.05); padding: 0 16px; font-family: inherit; font-size: 18px; line-height: 28px; color: #181D27">
+            <sc-if value="{{err}}" hint-placeholder-val="{{false}}">
+              <p id="ex-err" role="alert" style="margin: 6px 0 0; font-size: 16px; line-height: 24px; color: #D92D20">That username or password isn’t right.</p>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <a href="LobbyDisplay.dc.html" class="uu-btn uu-secondary" style="height: 56px; font-size: 18px; line-height: 28px">Cancel</a>
+            <sc-if value="{{valid}}" hint-placeholder-val="{{false}}">
+              <a href="PickupQueue.dc.html" class="uu-btn uu-primary" style="height: 56px; font-size: 18px; line-height: 28px">Sign in and exit</a>
+            </sc-if>
+            <sc-if value="{{invalid}}" hint-placeholder-val="{{false}}">
+              <button type="button" class="uu-btn uu-primary" onClick="{{tryWrong}}" style="height: 56px; font-size: 18px; line-height: 28px">Sign in and exit</button>
+            </sc-if>
+            <sc-if value="{{notReady}}" hint-placeholder-val="{{true}}">
+              <button type="button" class="uu-btn uu-primary" disabled="{{true}}" style="height: 56px; font-size: 18px; line-height: 28px">Sign in and exit</button>
+            </sc-if>
+          </div>
+          <p style="margin: 0; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #8A8A8A">Prototype test account: <button type="button" title="Mailroom operator · fills both fields" onClick="{{fillTest}}" style="padding: 0; border: 0; background: none; font: inherit; color: inherit; text-decoration: underline; cursor: pointer">john.bourne@ricoh-usa.com</button></p>
+          <p aria-live="polite" style="margin: 0; text-align: center; font-size: 16px; line-height: 24px; color: #717680">Returning to the display in <span style="font-weight: 600; color: #414651; font-variant-numeric: tabular-nums">{{left}}s</span> if no one signs in.</p>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  state = { user: '', pw: '', left: 30, err: false };
+  componentDidMount() {
+    this._t = setInterval(() => {
+      if (this.state.left > 0) this.setState({ left: this.state.left - 1 });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+  renderVals() {
+    const s = this.state;
+    const reset = () => this.setState({ left: 30 });
+    const ready = !!s.user.trim() && s.pw.length > 0;
+    return {
+      // At 0 the prompt closes and the display underneath carries on.
+      open: s.left > 0,
+      reopen: () => this.setState({ left: 30, user: '', pw: '', err: false }),
+      left: String(s.left),
+      user: s.user, pw: s.pw,
+      // Prototype: only the test account signs in; anything else shows the error. Fields keep their values; typing clears it.
+      valid: ready && s.user.trim() === 'john.bourne@ricoh-usa.com' && s.pw === 'prototype',
+      invalid: ready && !(s.user.trim() === 'john.bourne@ricoh-usa.com' && s.pw === 'prototype'),
+      notReady: !ready,
+      err: !!s.err,
+      ring: s.err ? '#FDA29B' : '#D5D7DA',
+      tryWrong: () => { this.setState({ err: true }); reset(); },
+      fillTest: () => { this.setState({ user: 'john.bourne@ricoh-usa.com', pw: 'prototype', err: false }); reset(); },
+      onUser: (e) => { this.setState({ user: e.target.value, err: false }); reset(); },
+      onPw: (e) => { this.setState({ pw: e.target.value, err: false }); reset(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

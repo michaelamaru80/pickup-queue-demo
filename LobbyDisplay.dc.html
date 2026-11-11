@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lobby display</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#53389E;font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+.i{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.exit-ctl{transition:opacity 200ms linear,background-color 100ms linear}
+.exit-ctl:hover{background:rgba(255,255,255,.24) !important}
+.exit-ctl:focus-visible{outline:2px solid #ffffff;outline-offset:2px}
+@keyframes ld-call{0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}100%{box-shadow:0 0 0 20px rgba(255,255,255,0)}}
+.ld-call{animation:ld-call 1.1s ease-out 6}
+@keyframes ld-scroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.ld-scroll{animation-name:ld-scroll;animation-timing-function:linear;animation-iteration-count:infinite}
+@media (prefers-reduced-motion: reduce){.ld-call,.ld-scroll{animation:none}}
+.proto{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;background:#1E1E1E !important;color:#CCCCCC !important;border-radius:4px !important;box-shadow:0 0 0 1px #3C3C3C,0 8px 24px rgba(0,0,0,.4) !important}
+.proto *{font-family:inherit !important;letter-spacing:0 !important;font-size:12px !important;line-height:18px !important;border-color:#3C3C3C !important}
+.proto *:not([role=radio]):not([role=switch]){color:#CCCCCC !important;background-color:transparent !important;box-shadow:none !important;border-radius:2px !important}
+.proto div[style*="font-weight: 600"],.proto span[style*="font-weight: 600"]{color:#FFFFFF !important;text-transform:lowercase !important}
+.proto .uu-row:hover,.proto .uu-btn:hover{background-color:#2D2D2D !important}
+.proto .uu-btn{border:1px solid #555555 !important;height:26px !important;padding:0 8px !important}
+.proto-trigger{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace !important;font-size:11px !important;letter-spacing:0 !important}
+</style>
+</helmet>
+<div onMouseMove="{{wake}}" style="height: 100vh; overflow: hidden; display: flex; flex-direction: column; background: #53389E; color: #ffffff; font-family: Inter, ui-sans-serif, system-ui, sans-serif; cursor: {{cursor}}">
+
+  <!-- Header: same as the kiosk -->
+  <header style="flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 36px 64px 12px">
+    <div style="display: flex; align-items: center; gap: 18px; min-width: 0">
+      <span style="position: relative; width: 72px; height: 72px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: #F5F5F5; color: #717680; font-size: 26px; line-height: 32px; font-weight: 600; flex-shrink: 0"><span aria-hidden="true">NU</span><span aria-hidden="true" style="position: absolute; inset: 0; border-radius: 9999px; box-shadow: inset 0 0 0 1px rgba(10,13,18,.08)"></span></span>
+      <div style="min-width: 0">
+        <div style="font-size: 28px; line-height: 36px; font-weight: 600">Northbridge University</div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 22px; line-height: 32px; color: #E9D7FE"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 9999px; background: #17B26A"></span>Student Mail Center · Open until 5:00 PM</div>
+      </div>
+    </div>
+    <div style="text-align: right">
+      <div style="font-size: 36px; line-height: 44px; font-weight: 600; font-variant-numeric: tabular-nums">{{clock}}</div>
+      <div style="font-size: 20px; line-height: 30px; color: #E9D7FE">{{date}}</div>
+    </div>
+  </header>
+
+  <main style="flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 40px; padding: 28px 64px 32px">
+
+    <!-- Now serving -->
+    <section aria-labelledby="ld-serving" aria-live="polite" style="min-height: 0; display: flex; flex-direction: column; gap: 24px">
+      <h1 id="ld-serving" style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 36px; line-height: 44px; font-weight: 600; color: #E9D7FE"><svg class="i" width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" style="color: #D6BBFB"><path d="M11 5 6 9H2v6h4l5 4V5Z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>Now serving</h1>
+
+      <sc-if value="{{hasLead}}" hint-placeholder-val="{{true}}">
+        <div class="{{lead.cls}}" style="margin: 8px 0 16px; border-radius: 28px; background: #ffffff; color: #53389E; padding: 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px">
+          <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+            <span aria-label="Number {{lead.ticket}}" style="font-size: 160px; line-height: 1; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">{{lead.ticket}}</span>
+            <sc-if value="{{showNames}}" hint-placeholder-val="{{true}}">
+              <span style="font-size: 40px; line-height: 48px; font-weight: 600; color: #6941C6">{{lead.name}}</span>
+            </sc-if>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px; flex-shrink: 0">
+            <svg class="i" width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="color: #9E77ED"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            <span style="font-size: 64px; line-height: 72px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap">{{lead.window}}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+        <sc-for list="{{others}}" as="o" hint-placeholder-count="4">
+          <div style="border-radius: 20px; background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+              <span style="font-size: 72px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{o.ticket}}</span>
+              <sc-if value="{{showNames}}" hint-placeholder-val="{{true}}">
+                <span style="font-size: 26px; line-height: 34px; font-weight: 500; color: #E9D7FE">{{o.name}}</span>
+              </sc-if>
+            </div>
+            <span style="font-size: 36px; line-height: 44px; font-weight: 600; color: #E9D7FE; white-space: nowrap">{{o.window}}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{noServing}}" hint-placeholder-val="{{false}}">
+        <div style="flex: 1; border-radius: 28px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center">
+          <span style="font-size: 56px; line-height: 64px; font-weight: 600">Numbers will appear here</span>
+          <span style="font-size: 26px; line-height: 36px; color: #E9D7FE">Check in at the kiosk or in the app</span>
+        </div>
+      </sc-if>
+    </section>
+
+    <!-- Up next -->
+    <section aria-labelledby="ld-next" style="min-height: 0; border-left: 1px solid rgba(255,255,255,.2); padding-left: 40px; display: flex; flex-direction: column; gap: 24px; overflow: hidden">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+        <h2 id="ld-next" style="margin: 0; font-size: 36px; line-height: 44px; font-weight: 600; color: #E9D7FE">Get ready</h2>
+        <span style="display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px 8px 14px; border-radius: 9999px; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); font-size: 22px; line-height: 32px; font-weight: 500"><svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" style="color: #D6BBFB"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>{{waitPill}}</span>
+      </div>
+      <!-- Get ready: the next 3 stay put so the people about to be called can always find themselves -->
+      <ol aria-label="Get ready" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+        <sc-for list="{{pinned}}" as="n" hint-placeholder-count="3">
+          <li style="display: grid; grid-template-columns: 56px auto minmax(0, 1fr); align-items: center; gap: 24px; height: 92px; padding: 0 20px 0 16px; border-radius: 16px; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2)">
+            <span style="width: 48px; height: 48px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.12); font-size: 22px; line-height: 32px; font-weight: 600; color: #E9D7FE">{{n.pos}}</span>
+            <span style="font-size: 52px; line-height: 60px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{n.ticket}}</span>
+            <sc-if value="{{showNames}}" hint-placeholder-val="{{true}}">
+              <span style="justify-self: end; max-width: 100%; font-size: 40px; line-height: 48px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.name}}</span>
+            </sc-if>
+          </li>
+        </sc-for>
+      </ol>
+      <sc-if value="{{hasRest}}" hint-placeholder-val="{{true}}">
+        <h3 style="margin: 8px 0 0; font-size: 28px; line-height: 36px; font-weight: 600; color: #E9D7FE">Up next</h3>
+      </sc-if>
+      <!-- Everyone else scrolls when the list is longer than the space: the list runs twice so the loop is seamless -->
+      <div style="position: relative; flex: 1 1 auto; min-height: 0; margin-top: -8px; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 16px, #000 calc(100% - 48px), transparent 100%)">
+        <div class="{{scrollCls}}" style="animation-duration: {{scrollDur}}">
+          <ol aria-label="Up next" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+            <sc-if value="{{scrolling}}" hint-placeholder-val="{{true}}">
+              <li aria-hidden="true" style="height: 96px"></li>
+            </sc-if>
+            <sc-for list="{{rest}}" as="n" hint-placeholder-count="4">
+          <li style="display: grid; grid-template-columns: 56px auto minmax(0, 1fr); align-items: center; gap: 24px; height: 96px; border-top: 1px solid rgba(255,255,255,.14)">
+            <span style="width: 48px; height: 48px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.12); font-size: 22px; line-height: 32px; font-weight: 600; color: #E9D7FE">{{n.pos}}</span>
+            <span style="font-size: 52px; line-height: 60px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{n.ticket}}</span>
+            <sc-if value="{{showNames}}" hint-placeholder-val="{{true}}">
+              <span style="justify-self: end; max-width: 100%; font-size: 40px; line-height: 48px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.name}}</span>
+            </sc-if>
+          </li>
+            </sc-for>
+          </ol>
+          <sc-if value="{{scrolling}}" hint-placeholder-val="{{true}}">
+            <ol aria-hidden="true" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+              <li aria-hidden="true" style="height: 96px"></li>
+              <sc-for list="{{rest}}" as="n" hint-placeholder-count="4">
+          <li style="display: grid; grid-template-columns: 56px auto minmax(0, 1fr); align-items: center; gap: 24px; height: 96px; border-top: 1px solid rgba(255,255,255,.14)">
+            <span style="width: 48px; height: 48px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.12); font-size: 22px; line-height: 32px; font-weight: 600; color: #E9D7FE">{{n.pos}}</span>
+            <span style="font-size: 52px; line-height: 60px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{n.ticket}}</span>
+            <sc-if value="{{showNames}}" hint-placeholder-val="{{true}}">
+              <span style="justify-self: end; max-width: 100%; font-size: 40px; line-height: 48px; font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{n.name}}</span>
+            </sc-if>
+          </li>
+              </sc-for>
+            </ol>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{noQueue}}" hint-placeholder-val="{{false}}">
+        <span style="font-size: 26px; line-height: 36px; color: #E9D7FE">No one waiting. Check in and you’re next.</span>
+      </sc-if>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer style="flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 64px 36px; font-size: 22px; line-height: 32px; color: #D6BBFB">
+    <span style="display: flex; align-items: center; gap: 12px"><svg class="i" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="color: #ffffff"><rect x="2" y="5" width="20" height="14" rx="2"></rect><circle cx="9" cy="11" r="2"></circle><path d="M6.17 15a3 3 0 0 1 5.66 0"></path><path d="M16 10h2"></path><path d="M16 14h2"></path></svg><span><span style="font-weight: 600; color: #ffffff">Bring your ID to the window.</span> Staff will confirm it before handing over packages.</span></span>
+    <span>Not checked in? Use the kiosk or the app.</span>
+  </footer>
+
+  <!-- Exit control: hidden at rest, appears on mouse move or focus; exit asks for a sign-in -->
+  <sc-if value="{{exitAsLink}}" hint-placeholder-val="{{true}}">
+  <a href="LobbyExit.dc.html" class="exit-ctl" onFocus="{{wake}}" onBlur="{{wake}}" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 50; display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 22px 0 18px; border-radius: 12px; background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 1px rgba(255,255,255,.24); color: #ffffff; font-size: 20px; line-height: 30px; font-weight: 600; text-decoration: none; opacity: {{exitOpacity}}; pointer-events: {{exitEvents}}">
+    <svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Exit display
+  </a>
+  </sc-if>
+  <!-- Inside the sign-in screen the exit control reopens the prompt instead of navigating -->
+  <sc-if value="{{exitAsButton}}" hint-placeholder-val="{{false}}">
+  <button type="button" class="exit-ctl" onFocus="{{wake}}" onBlur="{{wake}}" onClick="{{exitPress}}" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 50; display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 22px 0 18px; border-radius: 12px; background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 1px rgba(255,255,255,.24); color: #ffffff; font-size: 20px; line-height: 30px; font-weight: 600; border: 0; font-family: inherit; cursor: pointer; opacity: {{exitOpacity}}; pointer-events: {{exitEvents}}">
+    <svg class="i" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>Exit display
+  </button>
+  </sc-if>
+
+  <!-- Prototype only: dev-tools controls, deliberately not the design system -->
+  <sc-if value="{{proto.show}}" hint-placeholder-val="{{true}}">
+  <button type="button" class="proto-trigger" aria-expanded="{{proto.open}}" onClick="{{proto.toggle}}" style="position: fixed; left: 50%; bottom: 6px; transform: translateX(-50%); z-index: 60; padding: 2px 8px; border: 0; background: none; color: #FFFFFF; opacity: 0.55; cursor: pointer">Simulate</button>
+  </sc-if>
+  <sc-if value="{{proto.open}}" hint-placeholder-val="{{false}}">
+    <aside class="proto" aria-label="Prototype controls" style="position: fixed; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 61; width: 320px; padding: 12px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 600">Prototype only</div>
+      <span>Wait times</span>
+      <sc-for list="{{proto.waits}}" as="w" hint-placeholder-count="3">
+        <button type="button" class="uu-btn" aria-pressed="{{w.on}}" style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{w.pick}}">{{w.label}}</button>
+      </sc-for>
+      <span style="margin-top: 6px">Data</span>
+      <button type="button" class="uu-btn" style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.reset}}">Reset prototype (all screens)</button>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"showNames":{"editor":"boolean","default":true},"showExit":{"editor":"boolean","default":false},"onExit":{"editor":null},"$preview":{"width":1920,"height":1080}}'>
+class Component extends DCLogic {
+  componentDidMount() { this.sharedStart(); }
+  componentWillUnmount() { this.sharedStop(); clearTimeout(this._hide); }
+  // ---- Shared prototype data ------------------------------------------------
+  // The same block runs in Pickup queue, Staff display and Lobby display. All
+  // three read and write one record in this browser's storage, so an action on
+  // the operator screen shows up on both TVs. Windows 1, 3, 4 and 5 are other
+  // operators, simulated every 25 seconds by whichever screen is open.
+  sharedKey() { return 'pq.shared.v6'; }
+  sharedSeed() {
+    const t = Date.now();
+    const s = (sec) => t - sec * 1000;
+    const q = (id, name, sid, pk, shelf, via, ago) => ({ id: id, name: name, sid: sid, pk: pk, shelf: shelf, via: via, at: s(ago) });
+    const sv = (id, name, sid, pk, shelf, via, ago, win, since, annAgo) => Object.assign(q(id, name, sid, pk, shelf, via, ago), { win: win, since: s(since), ann: annAgo == null ? 0 : 1, annAt: annAgo == null ? null : s(annAgo) });
+    return {
+      v: 6, t0: t, lastSimAt: t, nextNum: 118, poolIdx: 0,
+      // Leo Park was the last pickup at Window 5 before it closed; Windows 2 and 5 have no simulated operator.
+      // Window 2 starts empty so a newly signed-in operator serves someone first. Priya (A101) was moved to
+      // Window 5, which has no operator, and waits there until someone takes that window.
+      completed: [Object.assign(sv('A097', 'Leo Park', '2040 5512', 1, 'A-10', 'App', 980, 'Window 5', 330, 325), { doneAt: s(240) })].concat(this.sharedSeedCompleted(t)),
+      queue: [
+        q('A102', 'Elena Petrova', '2037 4481', 1, 'A-01', 'Kiosk', 1180),
+        q('A103', 'Daniel Reyes', '2041 8823', 2, 'B-12, B-13', 'App', 1122),
+        q('A104', 'Hannah Okafor', '2039 1170', 1, 'A-04', 'Kiosk', 842),
+        q('A105', 'Marcus Bell', '2044 0391', 3, 'C-01 (oversize)', 'App', 611),
+        q('A106', 'Grace Kim', '2040 7756', 1, 'A-09', 'App', 455),
+        q('A107', 'Omar Haddad', '2042 3318', 2, 'B-03', 'Kiosk', 402),
+        q('A108', 'Sophia Martinez', '2043 9902', 1, 'A-11', 'App', 371),
+        q('A109', 'Aaron Whitfield', '2038 6604', 1, 'B-07', 'Kiosk', 333),
+        q('A110', 'Isabella Cruz', '2045 2287', 2, 'B-10', 'App', 290),
+        q('A111', 'Ethan Brooks', '2039 7741', 1, 'A-03', 'Kiosk', 251),
+        q('A112', 'Fatima Ali', '2042 0915', 1, 'A-12', 'App', 214),
+        q('A113', 'Lucas Romero', '2040 6638', 3, 'C-02 (oversize)', 'App', 176),
+        q('A114', 'Nina Kowalski', '2043 1206', 1, 'A-08', 'Kiosk', 140),
+        q('A115', 'Tyler Nguyen', '2044 9953', 2, 'B-05', 'App', 102),
+        q('A116', 'Zoe Bennett', '2038 4471', 1, 'A-15', 'App', 66),
+        q('A117', 'Malik Johnson', '2041 3390', 1, 'A-07', 'Kiosk', 31)
+      ],
+      serving: [
+        sv('A098', 'Chloe Martin', '2042 7704', 2, 'B-11', 'Kiosk', 900, 'Window 4', 260, 255),
+        sv('A099', 'Sam Rivera', '2039 2268', 1, 'A-05', 'App', 820, 'Window 3', 190, 185),
+        sv('A100', 'Jordan Lee', '2044 1187', 1, 'A-13', 'App', 760, 'Window 1', 130, 125),
+        sv('A101', 'Priya Natarajan', '2041 2209', 2, 'B-02', 'App', 1250, 'Window 5', 96, 90)
+      ],
+      // Students with packages ready who haven't checked in (searchable for walk-ups)
+      ready: [
+        { id: 'E1', name: 'Rachel Goldberg', sid: '2040 1187', pk: 1, shelf: 'A-06', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E2', name: 'Kevin O’Brien', sid: '2045 0072', pk: 2, shelf: 'B-09', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E3', name: 'Mei Lin', sid: '2039 5531', pk: 2, shelf: 'B-15', ready: 'Oct 15', day: 0, notified: 'Email reminder sent' },
+        { id: 'E4', name: 'Jasmine Patel', sid: '2042 8890', pk: 1, shelf: 'A-14', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E5', name: 'Liam Novak', sid: '2044 6612', pk: 3, shelf: 'C-03 (oversize)', ready: 'Oct 16', day: 1, notified: 'App notification' },
+        { id: 'E6', name: 'Noah Fischer', sid: '2038 2245', pk: 1, shelf: 'A-02', ready: 'Oct 16', day: 1, notified: 'Email reminder sent' },
+        { id: 'E7', name: 'Ava Thompson', sid: '2043 3378', pk: 1, shelf: 'A-17', ready: 'Oct 16', day: 2, notified: 'App notification' },
+        { id: 'E8', name: 'Aiden Brooks', sid: '2041 5530', pk: 1, shelf: 'A-22', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E9', name: 'Bella Ortiz', sid: '2043 6619', pk: 2, shelf: 'B-17', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E10', name: 'Caleb Wu', sid: '2039 8872', pk: 1, shelf: 'A-23', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E11', name: 'Daria Ivanova', sid: '2044 1048', pk: 1, shelf: 'A-24', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E12', name: 'Elijah Grant', sid: '2040 7731', pk: 3, shelf: 'C-05 (oversize)', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E13', name: 'Freya Holm', sid: '2042 9906', pk: 1, shelf: 'A-25', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E14', name: 'Gavin Reed', sid: '2038 4425', pk: 2, shelf: 'B-18', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E15', name: 'Hailey Moss', sid: '2045 3387', pk: 1, shelf: 'A-26', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E16', name: 'Isaac Levy', sid: '2041 6694', pk: 1, shelf: 'A-27', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E17', name: 'Jade Kowal', sid: '2043 2253', pk: 2, shelf: 'B-19', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E18', name: 'Kai Nakamura', sid: '2039 5508', pk: 1, shelf: 'A-28', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E19', name: 'Lena Fischer', sid: '2044 7716', pk: 1, shelf: 'A-29', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E20', name: 'Miles Carter', sid: '2040 3362', pk: 2, shelf: 'B-20', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E21', name: 'Nadia Rahman', sid: '2042 8849', pk: 1, shelf: 'A-30', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E22', name: 'Owen Blake', sid: '2038 1197', pk: 1, shelf: 'A-31', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E23', name: 'Priya Shah', sid: '2045 6625', pk: 3, shelf: 'C-06 (oversize)', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E24', name: 'Ruby Allen', sid: '2041 9934', pk: 1, shelf: 'A-32', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E25', name: 'Samir Haddad', sid: '2043 4471', pk: 2, shelf: 'B-21', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E26', name: 'Tessa Lowe', sid: '2039 2286', pk: 1, shelf: 'A-33', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E27', name: 'Victor Chen', sid: '2044 5512', pk: 1, shelf: 'A-34', ready: 'Oct 15', day: 0, notified: 'App notification' },
+        { id: 'E28', name: 'Willa Grant', sid: '2040 8807', pk: 2, shelf: 'B-22', ready: 'Oct 16', day: 0, notified: 'App notification' },
+        { id: 'E29', name: 'Yusuf Ali', sid: '2042 3348', pk: 1, shelf: 'A-35', ready: 'Oct 14', day: 0, notified: 'App notification' },
+        { id: 'E30', name: 'Zara Patel', sid: '2038 6673', pk: 1, shelf: 'A-36', ready: 'Oct 15', day: 0, notified: 'App notification' }
+      ]
+    };
+  }
+  sharedSeedCompleted(t) {
+    // 46 pickups already completed this morning, newest first
+    const names = [['Ana Torres', '2040 1102'], ['Brian Walsh', '2043 2271'], ['Carmen Diaz', '2039 8840'], ['Devin Shah', '2044 3315'], ['Emma Rossi', '2041 6629'], ['Felix Wagner', '2038 7703'], ['Gabriela Ruiz', '2042 5518'], ['Henry Cole', '2045 1194'], ['Ivy Morgan', '2040 9927'], ['Jamal Wright', '2043 4406'], ['Kara Lund', '2039 6650'], ['Leah Kim', '2044 8813'], ['Mateo Silva', '2041 2287'], ['Nora Quinn', '2038 3361'], ['Oscar Bell', '2042 7745'], ['Paige Ford', '2045 6602'], ['Quinn Avery', '2040 4478'], ['Rosa Mendes', '2043 9156'], ['Sean Doyle', '2039 1839'], ['Tara Iyer', '2044 5524'], ['Umar Farouk', '2041 7790'], ['Vera Novak', '2038 8867'], ['Wes Turner', '2042 3349']];
+    const out = [];
+    for (let i = 0; i < 46; i++) {
+      const n = names[i % names.length];
+      const doneAt = t - (410 + i * 230) * 1000;
+      out.push({ id: 'A0' + String(96 - i).padStart(2, '0'), name: n[0], sid: n[1], pk: 1 + (i % 3 === 0 ? 1 : 0), shelf: ['A', 'B'][i % 2] + '-' + String(1 + (i * 7) % 20).padStart(2, '0'), via: i % 3 ? 'App' : 'Kiosk', win: 'Window ' + (1 + (i % 5)), at: doneAt - (360 + (i * 53) % 480) * 1000, since: doneAt - (90 + (i * 31) % 150) * 1000, ann: 1, annAt: doneAt - (85 + (i * 31) % 150) * 1000, doneAt: doneAt });
+    }
+    return out;
+  }
+  sharedRead() {
+    let d = null;
+    try { d = JSON.parse(window.localStorage.getItem(this.sharedKey()) || 'null'); } catch (e) { d = null; }
+    // Start over after 4 hours so a stale prototype doesn't come back half-empty.
+    if (!d || d.v !== 6 || Date.now() - d.t0 > 4 * 3600 * 1000) {
+      d = this._mem && this._mem.v === 6 ? this._mem : this.sharedSeed();
+      try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    }
+    return d;
+  }
+  sharedData() {
+    if (!this._mem) this._mem = this.sharedRead();
+    return this.state.sh || this._mem;
+  }
+  sharedUpdate(fn) {
+    const d = JSON.parse(JSON.stringify(this.sharedRead()));
+    fn(d);
+    try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    this._mem = d;
+    this.setState({ sh: d });
+  }
+  // Prototype only: Simulate › Wait times. Ages check-in times in the shared data so every screen shows
+  // 15+ (yellow) and 20+ (red) waits. Original times are kept on each student and restored by "Normal waits".
+  simWaits(mode) {
+    this.sharedUpdate((x) => {
+      const now = Date.now();
+      x.queue.forEach((q) => { if (q.at0 == null) q.at0 = q.at; });
+      if (mode === 'normal') { x.queue.forEach((q) => { q.at = q.at0; delete q.at0; }); x.waitMode = null; return; }
+      const n = x.queue.length, half = Math.ceil(n / 2);
+      x.queue.forEach((q, i) => {
+        let t = null;
+        if (mode === 'mixed') { if (i < 3) t = 1260 + (2 - i) * 90; else if (i < 6) t = 930 + (5 - i) * 60; }
+        else { t = i < half ? 1230 + (half - i) * 45 : 915 + (n - i) * 20; }
+        q.at = t == null ? q.at0 : Math.min(q.at0, now - t * 1000);
+      });
+      x.waitMode = mode;
+    });
+  }
+  // Prototype only: Simulate panel on the TV (hidden when this board is shown inside another one).
+  protoVals() {
+    const st = this.state || {};
+    const sh = this.sharedData();
+    const mode = sh.waitMode || 'normal';
+    const embedded = !!(this.props && (this.props.onExit || this.props.showExit));
+    const close = () => this.setState({ protoOpen: false });
+    return {
+      show: !embedded,
+      open: !!st.protoOpen && !embedded,
+      toggle: () => this.setState({ protoOpen: !st.protoOpen }),
+      waits: [['mixed', 'Mixed: some 15+, some 20+'], ['late', 'Everyone late: all 15+'], ['normal', 'Normal waits']].map((m) => ({
+        label: (mode === m[0] ? '✓ ' : '') + m[1], on: mode === m[0], pick: () => { this.simWaits(m[0]); close(); }
+      })),
+      reset: () => { try { ['pq.autoAnnounce', 'pq.annMute', 'pq.myWin'].forEach((k) => window.localStorage.removeItem(k)); } catch (e) {} this.sharedReset(); close(); }
+    };
+  }
+  sharedReset() {
+    const d = this.sharedSeed();
+    try { window.localStorage.setItem(this.sharedKey(), JSON.stringify(d)); } catch (e) {}
+    this._mem = d;
+    this.setState({ sh: d });
+  }
+  sharedStart() {
+    this._onStorage = (e) => {
+      if (e.key !== this.sharedKey() || !e.newValue) return;
+      try { const d = JSON.parse(e.newValue); this._mem = d; this.setState({ sh: d }); } catch (err) {}
+    };
+    window.addEventListener('storage', this._onStorage);
+    this._mem = this.sharedRead();
+    this.setState({ sh: this._mem, now: Date.now() });
+    this._tick = setInterval(() => { this.setState({ now: Date.now() }); this.sharedSim(); }, 1000);
+  }
+  sharedStop() {
+    window.removeEventListener('storage', this._onStorage);
+    clearInterval(this._tick);
+  }
+  sharedSim() {
+    const cur = this.sharedData();
+    if (Date.now() - (cur.lastSimAt || 0) < 25000) return;
+    const POOL = [['Ava Collins', '2040 3321', 1, 'A-16', 'App'], ['Ben Carter', '2043 8812', 2, 'B-14', 'Kiosk'], ['Maya Singh', '2041 7709', 1, 'A-18', 'App'], ['Owen Price', '2038 9934', 1, 'A-19', 'App'], ['Lily Chen', '2044 2205', 3, 'C-04 (oversize)', 'Kiosk'], ['Diego Alvarez', '2042 6617', 1, 'A-20', 'App'], ['Hana Sato', '2039 4410', 2, 'B-16', 'App'], ['Noor Hassan', '2045 7783', 1, 'A-21', 'Kiosk']];
+    this.sharedUpdate((x) => {
+      const now = Date.now();
+      if (now - (x.lastSimAt || 0) < 25000) return; // another screen just ran it
+      x.lastSimAt = now;
+      const wins = ['Window 1', 'Window 3', 'Window 4']; // windows with a simulated operator
+      const others = x.serving.filter((s) => wins.indexOf(s.win) >= 0);
+      let free = wins.find((w) => !others.some((s) => s.win === w));
+      if (!free && others.length) {
+        const oldest = others.reduce((a, b) => (a.since < b.since ? a : b));
+        x.serving = x.serving.filter((s) => s.id !== oldest.id);
+        x.completed.unshift(Object.assign({}, oldest, { doneAt: now }));
+        free = oldest.win;
+      }
+      if (free && x.queue.length) {
+        const nx = x.queue.shift();
+        x.serving.push(Object.assign(nx, { win: free, since: now, ann: 1, annAt: now }));
+      }
+      // Simulate › Empty the check-in queue pauses new arrivals until the queue is refilled or reset.
+      if (x.arrivalsPaused) return;
+      // Someone new checks in from the name pool (the ready list is kept for walk-up search).
+      let p;
+      if (false) { // walk-up pool stays intact; new arrivals come from the name pool
+        const e = x.ready.shift();
+        p = [e.name, e.sid, e.pk, e.shelf, x.nextNum % 4 === 0 ? 'App' : 'Kiosk'];
+      } else {
+        p = POOL[x.poolIdx % POOL.length];
+        x.poolIdx += 1;
+      }
+      x.queue.push({ id: 'A' + x.nextNum, name: p[0], sid: p[1], pk: p[2], shelf: p[3], via: p[4], at: now });
+      x.nextNum += 1;
+    });
+  }
+  // ---------------------------------------------------------------------------
+  renderVals() {
+    const sh = this.sharedData();
+    const st = this.state;
+    const now = st.now || Date.now();
+    const queue = sh.queue;
+    // Only numbers that have been announced appear here, most recent call first.
+    const called = sh.serving.filter((x) => x.ann > 0 && x.annAt).sort((a, b) => b.annAt - a.annAt);
+    const short = (name) => { const p = name.split(' '); return p[0] + (p[1] ? ' ' + p[1][0] + '.' : ''); };
+    const exitOn = !!this.props.showExit || !!st.awake;
+    const lead = called[0];
+    const next = queue.map((q, i) => ({ pos: String(i + 1), ticket: q.id, name: short(q.name) }));
+    const windowsOpen = 5;
+    const mins = Math.max(1, Math.round((queue.length + 1) * 2.5 / windowsOpen));
+    return {
+      clock: new Date(now).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      proto: this.protoVals(),
+      date: new Date(now).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+      showNames: this.props.showNames !== false,
+      wake: (e) => {
+        if (!this.state.awake) this.setState({ awake: true });
+        clearTimeout(this._hide);
+        const onExit = e && e.type !== 'blur' && e.target && e.target.closest && e.target.closest('.exit-ctl');
+        if (onExit) return; // hold while pointer or focus is on the exit button
+        this._hide = setTimeout(() => {
+          const a = document.activeElement;
+          if (a && a.classList && a.classList.contains('exit-ctl')) return;
+          this.setState({ awake: false });
+        }, 3000);
+      },
+      exitAsLink: typeof this.props.onExit !== 'function',
+      exitAsButton: typeof this.props.onExit === 'function',
+      exitPress: () => { if (typeof this.props.onExit === 'function') this.props.onExit(); },
+      exitOpacity: exitOn ? '1' : '0',
+      exitEvents: exitOn ? 'auto' : 'none',
+      cursor: exitOn ? 'default' : 'none',
+      hasLead: !!lead,
+      noServing: !lead,
+      lead: lead ? { ticket: lead.id, name: short(lead.name), window: lead.win, cls: (now - lead.annAt) < 8000 ? 'ld-call' : '' } : { ticket: '', name: '', window: '', cls: '' },
+      others: called.slice(1, 5).map((x) => ({ ticket: x.id, name: short(x.name), window: x.win })),
+      waitPill: 'About ' + mins + ' min wait',
+      noQueue: queue.length === 0,
+      // First 3 stay fixed ("Get ready"); the rest scroll when they overflow (about 3 rows fit); ~2.5s per row.
+      pinned: next.slice(0, 3),
+      rest: next.slice(3),
+      hasRest: next.length > 3,
+      scrolling: next.length - 3 > 3,
+      scrollCls: next.length - 3 > 3 ? 'ld-scroll' : '',
+      scrollDur: ((Math.max(next.length - 3, 1) + 1) * 2.5) + 's'
+    };
+  }
+}
+</script>
+</body>
+</html>
