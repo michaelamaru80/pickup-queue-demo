@@ -41,6 +41,13 @@ body{margin:0}
 .proto .proto-tab.on{color:#FFFFFF !important;border-bottom-color:#FFFFFF !important}
 .bar-anim{transition:transform 200ms linear,height 200ms linear}
 @media (prefers-reduced-motion: reduce){.bar-anim{transition:none !important}}
+/* Overlay motion standard (web): drawers open like Untitled UI React SlideoutMenu. The panel slides in from the right over 300ms,
+   the dim layer fades in over 300ms. Closing is instant in the prototype (the real component slides out over 500ms). */
+@keyframes pq-drawer-in{from{transform:translateX(100%)}to{transform:none}}
+@keyframes pq-scrim-in{from{opacity:0}to{opacity:1}}
+.pq-drawer{animation:pq-drawer-in 300ms cubic-bezier(.4,0,.2,1) both}
+.pq-scrim{animation:pq-scrim-in 300ms linear both}
+@media (prefers-reduced-motion: reduce){.pq-drawer,.pq-scrim{animation:none}}
 html:root{--color-brand-25:#f6fafb;--color-brand-50:#eef5f7;--color-brand-100:#d9e9ed;--color-brand-200:#b7d3db;--color-brand-300:#8bb6c2;--color-brand-400:#5d93a2;--color-brand-500:#437886;--color-brand-600:#35626e;--color-brand-700:#2f525c;--color-brand-800:#2b454d;--color-brand-900:#263b42;--color-brand-950:#15252a}
 a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-secondary_hover)}
 .side-nav{transition:width 220ms cubic-bezier(.2,.8,.2,1),box-shadow 220ms ease}
@@ -636,8 +643,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 
   <!-- Complete pickup drawer: items, pick list, live signature, then complete -->
   <sc-if value="{{dr.open}}" hint-placeholder-val="{{false}}">
-    <div aria-hidden="true" onClick="{{dr.close}}" class="bar-anim" style="position: fixed; left: 0; right: 0; bottom: 0; top: {{railTop}}; z-index: 37; background: rgba(12, 17, 29, 0.45); transition: top 200ms linear"></div>
-    <aside role="dialog" aria-modal="true" aria-labelledby="dr-title" class="bar-anim" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 460px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column; transition: top 200ms linear">
+    <div aria-hidden="true" onClick="{{dr.close}}" class="bar-anim pq-scrim" style="position: fixed; left: 0; right: 0; bottom: 0; top: {{railTop}}; z-index: 37; background: rgba(12, 17, 29, 0.45); transition: top 200ms linear"></div>
+    <aside role="dialog" aria-modal="true" aria-labelledby="dr-title" class="bar-anim pq-drawer" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 460px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column; transition: top 200ms linear">
 
       <!-- Header (compact): small photo to check against the person and their ID (click to enlarge), number, name and codes.
            Serving time lives on the card behind the drawer. Announce and Close are icon buttons. -->
@@ -945,8 +952,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 
   <!-- Manager only: Pickup queue settings slideout. Same right-side drawer pattern as Complete pickup. -->
   <sc-if value="{{set.open}}" hint-placeholder-val="{{false}}">
-    <div aria-hidden="true" onClick="{{set.close}}" style="position: fixed; left: 0; right: 0; bottom: 0; top: {{railTop}}; z-index: 37; background: rgba(12, 17, 29, 0.45)"></div>
-    <aside role="dialog" aria-modal="true" aria-labelledby="set-title" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 420px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column">
+    <div aria-hidden="true" onClick="{{set.close}}" class="pq-scrim" style="position: fixed; left: 0; right: 0; bottom: 0; top: {{railTop}}; z-index: 37; background: rgba(12, 17, 29, 0.45)"></div>
+    <aside role="dialog" aria-modal="true" aria-labelledby="set-title" class="pq-drawer" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 420px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column">
       <div style="flex: 0 0 auto; padding: 20px 24px 16px; border-bottom: 1px solid var(--color-border-secondary); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
         <div style="display: flex; flex-direction: column; gap: 4px">
           <h2 id="set-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">Pickup queue configuration</h2>
