@@ -13,9 +13,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
 <style>
+/* Item details inside the Complete pickup drawer (web version of the student app pattern).
+   White card with an outline = clickable; gray fill = information only. Sub-views slide/cross-fade in (300ms). */
+.pq-icard{display:flex;align-items:flex-start;gap:12px;width:100%;box-sizing:border-box;padding:16px;border:1px solid var(--color-border-secondary);border-radius:16px;background:var(--color-bg-primary);box-shadow:var(--shadow-xs);font-family:inherit;text-align:left;color:inherit;cursor:pointer}
+.pq-icard:hover{background:var(--color-bg-primary_hover)}
+.pq-icard:focus-visible,.pq-orow:focus-visible{outline:2px solid var(--color-focus-ring,#9E77ED);outline-offset:2px}
+.pq-circ{width:32px;height:32px;flex:0 0 32px;border-radius:9999px;display:flex;align-items:center;justify-content:center;background:var(--color-bg-tertiary);color:var(--color-fg-quaternary)}
+.pq-circ.on{background:var(--color-bg-success-secondary);color:var(--color-fg-success-primary);box-shadow:0 0 0 4px var(--color-bg-success-primary)}
+.pq-orow{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;box-sizing:border-box;padding:0 24px;border:0;border-bottom:1px solid var(--color-border-secondary);background:none;font-family:inherit;text-align:left;color:inherit}
+button.pq-orow{cursor:pointer}button.pq-orow:hover{background:var(--color-bg-primary_hover)}
+.pq-thumb{position:relative;flex:0 0 auto;border-radius:12px;background:var(--color-bg-tertiary);color:var(--color-fg-quaternary);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pq-rowopen{cursor:pointer}
+@keyframes pq-view-in{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.pq-view{display:flex;flex-direction:column;gap:24px;animation:pq-view-in 300ms cubic-bezier(.4,0,.2,1) both}
+@media (prefers-reduced-motion: reduce){.pq-view{animation:none}}
 body{margin:0}
 /* Group header "Remove": Untitled UI link-gray colors at 12px to match the group label (the smallest Button is 14px). */
-.grp-rm{padding:0;border:0;background:none;font:inherit;font-size:12px;line-height:18px;font-weight:600;color:var(--color-text-tertiary);cursor:pointer;border-radius:4px}
+.grp-rm{padding:0;border:0;background:none;font-family:inherit;font-size:var(--text-xs);line-height:var(--text-xs--line-height);font-weight:var(--font-weight-semibold);color:var(--color-text-tertiary);cursor:pointer;border-radius:4px}
 .grp-rm:hover{color:var(--color-text-tertiary_hover)}
 .grp-rm:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px}
 .pq-manual button{padding:0 !important;border:0 !important;background:transparent !important;box-shadow:none !important;color:var(--color-fg-quaternary) !important;cursor:pointer}
@@ -96,10 +110,10 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 .pq-dim{opacity:.35;transition:opacity 200ms linear}
 .pq-undim{opacity:1;transition:opacity 200ms linear}
 @media (prefers-reduced-motion: reduce){.pq-pulse{animation:none}.pq-dim,.pq-undim{transition:none}}
-.pq-step{width:32px;height:32px;flex:0 0 auto;box-sizing:border-box;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
-.pq-photo{flex:0 0 168px;width:168px;align-self:stretch;min-height:184px;object-fit:cover;display:flex;align-items:center;justify-content:center;background:var(--color-bg-tertiary);color:var(--color-text-quaternary);font-size:32px;font-weight:600;border-right:1px solid var(--color-border-secondary)}
-.pq-photo.sm{flex-basis:112px;width:112px;min-height:136px;font-size:26px}
-.name-btn{padding:0;border:0;background:none;font:inherit;text-align:left;cursor:pointer;color:var(--color-text-primary)}
+.pq-step{width:32px;height:32px;flex:0 0 auto;box-sizing:border-box;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);font-weight:var(--font-weight-semibold)}
+.pq-photo{flex:0 0 168px;width:168px;align-self:stretch;min-height:184px;object-fit:cover;display:flex;align-items:center;justify-content:center;background:var(--color-bg-tertiary);color:var(--color-text-quaternary);font-size:var(--text-display-sm);font-weight:var(--font-weight-semibold);border-right:1px solid var(--color-border-secondary)}
+.pq-photo.sm{flex-basis:112px;width:112px;min-height:136px;font-size:var(--text-display-xs)}
+.name-btn{padding:0;border:0;background:none;font-family:inherit;text-align:left;cursor:pointer;color:var(--color-text-primary)}
 .name-btn:hover{text-decoration:underline;text-underline-offset:3px}
 .name-btn:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:2px;border-radius:4px}
 @keyframes sig-draw{to{stroke-dashoffset:0}}
@@ -110,16 +124,24 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 @keyframes pq-pulse{0%{box-shadow:0 0 0 0 rgba(23,178,106,0.45)}70%{box-shadow:0 0 0 8px rgba(23,178,106,0)}100%{box-shadow:0 0 0 0 rgba(23,178,106,0)}}
 .live-dot{animation:pq-pulse 1.6s linear infinite}
 @media (prefers-reduced-motion: reduce){.live-dot{animation:none}}
+/* Prototype patch: segmented control drawn by hand because Untitled UI Tabs (React 19) doesn't load on the canvas (React 18).
+   In Untitled UI React use Tabs + TabList type="button-border" size="sm". Same tokens and sizes as that style. */
+.pq-seg{display:inline-flex;gap:4px;padding:4px;border-radius:10px;background:var(--color-bg-secondary_alt);box-shadow:inset 0 0 0 1px var(--color-border-secondary)}
+.pq-seg-btn{display:flex;align-items:center;padding:8px 12px;border:0;border-radius:6px;background:none;font-family:inherit;font-size:var(--text-sm);line-height:var(--text-sm--line-height);font-weight:var(--font-weight-semibold);white-space:nowrap;color:var(--color-text-quaternary);cursor:pointer;transition:background-color 100ms linear,color 100ms linear}
+.pq-seg-btn:hover:not(:disabled){color:var(--color-text-secondary)}
+.pq-seg-btn:disabled{opacity:.5;cursor:not-allowed}
+.pq-seg-btn[aria-pressed="true"]{background:var(--color-bg-primary_alt);color:var(--color-text-secondary);box-shadow:0 1px 3px rgba(10,13,18,0.1),0 1px 2px -1px rgba(10,13,18,0.1)}
+.pq-seg-btn:focus-visible{outline:2px solid var(--color-focus-ring);outline-offset:-2px}
 </style>
 </helmet>
-<div style="min-height: 100vh; box-sizing: border-box; background: var(--color-bg-primary); color: var(--color-text-primary); font-family: Inter, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 20px; display: flex; flex-direction: column">
+<div class="text-sm" style="min-height: 100vh; box-sizing: border-box; background: var(--color-bg-primary); color: var(--color-text-primary); font-family: Inter, -apple-system, 'Segoe UI', sans-serif; display: flex; flex-direction: column">
 
   <div onMouseLeave="{{barLeave}}" style="position: sticky; top: 0; z-index: 40">
   <!-- Platform bar -->
   <header onMouseEnter="{{barPeek}}" style="position: relative; z-index: 2; background: var(--color-brand-800); color: #ffffff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 0 clamp(24px, 5vw, 80px); height: 52px; box-sizing: border-box">
     <div style="display: flex; align-items: center; gap: 28px">
-      <button type="button" onClick="{{resetPrototype}}" title="Reset prototype" aria-label="Ricoh – reset prototype" style="display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; cursor: pointer"><svg role="img" aria-label="Ricoh" width="139" height="32" viewBox="0 0 139 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-left: -10px; flex: 0 0 auto"><path d="M56.6944 15.5944C56.6944 19.7361 59.8187 22.7678 65.0427 22.7678C67.259 22.8097 69.4562 22.3594 71.469 21.4508L73.4291 24.0518C70.7239 25.4475 68.1246 26.1847 64.1156 26.1847C55.7843 26.1847 49.6585 22.2584 49.6585 15.5944C49.6712 8.93046 55.797 5 64.1283 5C68.1204 5 70.4191 5.56741 73.2301 6.74779L71.2277 9.74638C69.111 8.64054 67.2483 8.41275 65.0427 8.41275C59.8187 8.41275 56.6944 11.4569 56.6944 15.582" fill="white"></path><path d="M88.4831 5C80.4184 5 74.6018 8.93046 74.6018 15.5944C74.6018 22.2584 80.4184 26.1889 88.4831 26.1889C96.5477 26.1889 102.369 22.2626 102.369 15.5944C102.369 8.92632 96.5519 5 88.4831 5ZM88.4831 22.8921C84.0465 22.8921 81.5996 19.6326 81.5996 15.5903C81.5996 11.548 84.0507 8.2885 88.4831 8.2885C92.9155 8.2885 95.3708 11.5522 95.3708 15.5903C95.3708 19.6284 92.9197 22.8921 88.4831 22.8921Z" fill="white"></path><path d="M123.337 17.1269V25.6505H130V5.53014H123.337V13.2047H113.147V5.53014H106.496V25.6505H113.147V17.1269H123.337Z" fill="white"></path><path d="M45.6537 5.53427H38.6347V25.6546H45.6537V5.53427Z" fill="white"></path><path d="M18.5007 14.7413V16.663C21.9124 19.2781 24.9796 22.297 27.6321 25.6505H35.4893C32.7545 22.5069 28.5635 18.7753 25.4731 16.8949C29.1011 16.75 33.1398 15.3128 33.1398 11.2415C33.1398 6.01886 27.4332 5.05798 21.663 5.05798C16.9512 5.05798 12.6078 5.27335 10 5.48044V25.6505H16.5575V8.52044C18.2618 8.32596 19.9769 8.23605 21.6927 8.25123C25.0794 8.25123 26.7727 9.34463 26.7727 11.2457C26.7727 12.8734 26.0658 14.8199 18.4964 14.7454" fill="white"></path></svg></button>
-      <span style="font-size: 13px; font-weight: 600; line-height: 18px">Intelligent Business Platform</span>
+      <span style="display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; "><svg role="img" aria-label="Ricoh" width="139" height="32" viewBox="0 0 139 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin-left: -10px; flex: 0 0 auto"><path d="M56.6944 15.5944C56.6944 19.7361 59.8187 22.7678 65.0427 22.7678C67.259 22.8097 69.4562 22.3594 71.469 21.4508L73.4291 24.0518C70.7239 25.4475 68.1246 26.1847 64.1156 26.1847C55.7843 26.1847 49.6585 22.2584 49.6585 15.5944C49.6712 8.93046 55.797 5 64.1283 5C68.1204 5 70.4191 5.56741 73.2301 6.74779L71.2277 9.74638C69.111 8.64054 67.2483 8.41275 65.0427 8.41275C59.8187 8.41275 56.6944 11.4569 56.6944 15.582" fill="white"></path><path d="M88.4831 5C80.4184 5 74.6018 8.93046 74.6018 15.5944C74.6018 22.2584 80.4184 26.1889 88.4831 26.1889C96.5477 26.1889 102.369 22.2626 102.369 15.5944C102.369 8.92632 96.5519 5 88.4831 5ZM88.4831 22.8921C84.0465 22.8921 81.5996 19.6326 81.5996 15.5903C81.5996 11.548 84.0507 8.2885 88.4831 8.2885C92.9155 8.2885 95.3708 11.5522 95.3708 15.5903C95.3708 19.6284 92.9197 22.8921 88.4831 22.8921Z" fill="white"></path><path d="M123.337 17.1269V25.6505H130V5.53014H123.337V13.2047H113.147V5.53014H106.496V25.6505H113.147V17.1269H123.337Z" fill="white"></path><path d="M45.6537 5.53427H38.6347V25.6546H45.6537V5.53427Z" fill="white"></path><path d="M18.5007 14.7413V16.663C21.9124 19.2781 24.9796 22.297 27.6321 25.6505H35.4893C32.7545 22.5069 28.5635 18.7753 25.4731 16.8949C29.1011 16.75 33.1398 15.3128 33.1398 11.2415C33.1398 6.01886 27.4332 5.05798 21.663 5.05798C16.9512 5.05798 12.6078 5.27335 10 5.48044V25.6505H16.5575V8.52044C18.2618 8.32596 19.9769 8.23605 21.6927 8.25123C25.0794 8.25123 26.7727 9.34463 26.7727 11.2457C26.7727 12.8734 26.0658 14.8199 18.4964 14.7454" fill="white"></path></svg></span>
+      <span class="text-xs font-semibold">Intelligent Business Platform</span>
     </div>
     <div style="display: flex; align-items: center; gap: 24px">
       <button type="button" aria-label="Notifications" style="background: none; border: 0; padding: 8px; color: #ffffff; cursor: pointer; display: flex; border-radius: 8px">
@@ -128,8 +150,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <div style="display: flex; align-items: center; gap: 8px">
         <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" initials="JB" alt="John Bourne"></x-import>
         <div style="display: flex; flex-direction: column">
-          <span style="font-size: 14px; font-weight: 600; line-height: 20px">John Bourne</span>
-          <span style="font-size: 12px; line-height: 18px; opacity: 0.85">john.bourne@ricoh-usa.com</span>
+          <span class="text-sm font-semibold">John Bourne</span>
+          <span class="text-xs" style="opacity: 0.85">john.bourne@ricoh-usa.com</span>
         </div>
       </div>
     </div>
@@ -141,7 +163,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <button type="button" aria-label="App switcher" style="background: none; border: 0; padding: 6px; margin-left: -6px; color: #ffffff; cursor: pointer; display: flex; border-radius: 8px">
         <x-import component-from-global-scope="UntitledUI.Icons.DotsGrid" class="size-5"></x-import>
       </button>
-      <span style="font-size: 18px; font-weight: 600; line-height: 28px; margin-right: 12px">Delivery CTRL™</span>
+      <span class="text-lg font-semibold" style="margin-right: 12px">Delivery CTRL™</span>
       <button type="button" style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px 0 8px; border-radius: 8px; border: 0; background: rgba(0,0,0,0.22); color: #ffffff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer">
         <span style="width: 20px; height: 20px; border-radius: 999px; background: #ffffff; color: var(--color-brand-800); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center">UP</span>
         Print Center
@@ -162,17 +184,17 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
     <!-- Side menu: one panel that widens from the 56px rail to 300px; icons stay put, labels fade in -->
     <div onMouseLeave="{{closeNav}}" class="bar-anim" style="position: sticky; top: {{railTop}}; align-self: flex-start; height: calc(100vh - {{railTop}} - 24px); flex: 0 0 56px; display: flex; z-index: 25; transition: top 200ms linear, height 200ms linear">
       <nav aria-label="Sections" onMouseEnter="{{openNav}}" class="side-nav" style="position: absolute; top: 4px; bottom: 0; left: 0; width: {{navW}}; padding: 20px 8px; box-sizing: border-box; display: flex; flex-direction: column; gap: 4px; overflow: hidden; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-left: 0; border-radius: 0 12px 12px 0; box-shadow: {{navShadow}}">
-        <button type="button" aria-label="Contacts Lookup" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Contacts Lookup</span></button>
-        <a href="Main.dc.html" aria-label="Inbound" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; color: var(--color-text-secondary); text-decoration: none"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowDownRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Inbound</span></a>
-        <button type="button" aria-label="Outbound" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowUpRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Outbound</span></button>
-        <button type="button" aria-label="Routes" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Routes</span></button>
-        <button type="button" aria-label="Search" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Scan" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Search</span></button>
-        <button type="button" aria-current="page" aria-label="Pickup Queue" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: var(--color-bg-brand-solid); font-family: inherit; color: #ffffff; text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto"><x-import component-from-global-scope="UntitledUI.Icons.Ticket01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Pickup Queue</span></button>
-        <button type="button" aria-label="Event Manager" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lightbulb02" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Event Manager</span></button>
-        <button type="button" aria-label="Submit an Idea" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageSquare01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Submit an Idea</span></button>
-        <button type="button" aria-label="Knowledge Base" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.BookOpen01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Knowledge Base</span></button>
+        <button type="button" aria-label="Contacts Lookup" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Contacts Lookup</span></button>
+        <a href="Main.dc.html" aria-label="Inbound" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; color: var(--color-text-secondary); text-decoration: none"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowDownRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Inbound</span></a>
+        <button type="button" aria-label="Outbound" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ArrowUpRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Outbound</span></button>
+        <button type="button" aria-label="Routes" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Routes</span></button>
+        <button type="button" aria-label="Search" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Scan" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Search</span></button>
+        <button type="button" aria-current="page" aria-label="Pickup Queue" class="text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: var(--color-bg-brand-solid); font-family: inherit; color: #ffffff; text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto"><x-import component-from-global-scope="UntitledUI.Icons.Ticket01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Pickup Queue</span></button>
+        <button type="button" aria-label="Event Manager" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lightbulb02" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Event Manager</span></button>
+        <button type="button" aria-label="Submit an Idea" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageSquare01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Submit an Idea</span></button>
+        <button type="button" aria-label="Knowledge Base" class="nav-row text-md font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-secondary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.BookOpen01" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Knowledge Base</span></button>
         <div style="flex-grow: 1"></div>
-        <button type="button" aria-label="{{navToggleLabel}}" aria-expanded="{{navOpen}}" onClick="{{toggleNav}}" class="nav-row" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary); transform: {{navChevron}}; transition: transform 200ms ease"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Collapse</span></button>
+        <button type="button" aria-label="{{navToggleLabel}}" aria-expanded="{{navOpen}}" onClick="{{toggleNav}}" class="nav-row text-sm font-semibold" style="display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; white-space: nowrap; overflow: hidden; flex: 0 0 auto; border: 0; background: none; font-family: inherit; color: var(--color-text-tertiary); text-align: left; cursor: pointer"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary); transform: {{navChevron}}; transition: transform 200ms ease"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-5"></x-import></span><span class="nav-label" style="opacity: {{navLabelOp}}">Collapse</span></button>
       </nav>
     </div>
 
@@ -182,8 +204,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <!-- Page header -->
       <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px">
         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-          <h1 style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; color: var(--color-text-primary)">Pickup queue</h1>
-          <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Students who checked in on the app or kiosk at Service point 3110 · Lobby Lockers</p>
+          <h1 class="text-display-xs font-semibold" style="margin: 0; color: var(--color-text-primary)">Pickup queue</h1>
+          <p class="text-sm" style="margin: 0; color: var(--color-text-tertiary)">Students who checked in on the app or kiosk at Service point 3110 · Lobby Lockers</p>
         </div>
         <div style="display: flex; align-items: center; gap: 12px">
           <span style="font-size: 14px; font-weight: 500; color: var(--color-text-tertiary)">{{todayLabel}}</span>
@@ -195,11 +217,11 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.Monitor01}}" icon-trailing="{{ic.ChevronDown}}" aria-haspopup="menu" aria-expanded="{{win.open}}" is-disabled="{{win.locked}}" on-press="{{win.toggle}}">{{winLabel}}</x-import>
             <sc-if value="{{win.open}}" hint-placeholder-val="{{false}}">
               <div role="menu" aria-label="Serving at" style="position: absolute; top: calc(100% + 8px); right: 0; z-index: 35; width: 380px; padding: 6px 0; box-sizing: border-box; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-radius: 8px; box-shadow: 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)">
-                <div style="padding: 8px 16px 6px; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-tertiary)">Serve at</div>
+                <div class="text-xs font-semibold" style="padding: 8px 16px 6px; color: var(--color-text-tertiary)">Serve at</div>
                 <sc-for list="{{win.list}}" as="w" hint-placeholder-count="5">
                   <button type="button" role="menuitemradio" aria-checked="{{w.on}}" disabled="{{w.inUse}}" onClick="{{w.pick}}" class="nav-row" style="display: flex; align-items: center; gap: 10px; width: calc(100% - 12px); margin: 0 6px; padding: 9px 10px; box-sizing: border-box; border: 0; border-radius: 6px; background: none; opacity: {{w.op}}; font: inherit; text-align: left; cursor: {{w.cursor}}">
                     <span style="display: flex; color: {{w.iconFg}}"><x-import component-from-global-scope="UntitledUI.Icons.Monitor01" class="size-4"></x-import></span>
-                    <span style="flex: 0 0 auto; min-width: 72px; font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{w.fg}}">{{w.name}}</span>
+                    <span class="text-sm font-semibold" style="flex: 0 0 auto; min-width: 72px; font-variant-numeric: tabular-nums; color: {{w.fg}}">{{w.name}}</span>
                     <span style="flex: 1 1 auto; display: inline-flex; align-items: center; gap: 6px">
                       <sc-if value="{{w.showInUse}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.BadgeWithDot" type="pill-color" color="gray" size="sm">In use</x-import></sc-if>
                       <sc-if value="{{w.showAvail}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.BadgeWithDot" type="pill-color" color="success" size="sm">Available</x-import></sc-if>
@@ -215,7 +237,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--color-border-secondary)">
                     <button type="button" role="menuitem" onClick="{{win.leave}}" class="nav-row" style="display: flex; align-items: center; gap: 10px; width: calc(100% - 12px); margin: 0 6px; padding: 9px 10px; box-sizing: border-box; border: 0; border-radius: 6px; background: none; font: inherit; text-align: left; cursor: pointer">
                       <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.LogOut01" class="size-4"></x-import></span>
-                      <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{win.leaveLabel}}</span>
+                      <span class="text-sm font-semibold" style="color: var(--color-text-secondary)">{{win.leaveLabel}}</span>
                     </button>
                   </div>
                 </sc-if>
@@ -230,22 +252,22 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.Tv03}}" icon-trailing="{{ic.ChevronDown}}" aria-haspopup="menu" aria-expanded="{{dispOpen}}" on-press="{{toggleDisp}}">Display</x-import>
             <sc-if value="{{dispOpen}}" hint-placeholder-val="{{false}}">
               <div role="menu" aria-label="Switch this screen to" style="position: absolute; top: calc(100% + 8px); right: 0; z-index: 35; width: 360px; padding: 6px 0; box-sizing: border-box; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-radius: 8px; box-shadow: 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03)">
-                <div style="padding: 8px 16px 6px; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-tertiary)">Switch this screen to</div>
+                <div class="text-xs font-semibold" style="padding: 8px 16px 6px; color: var(--color-text-tertiary)">Switch this screen to</div>
                 <a href="StaffDisplay.dc.html" role="menuitem" class="nav-row" style="display: flex; align-items: flex-start; gap: 12px; margin: 0 6px; padding: 10px; border-radius: 6px; text-decoration: none">
                   <span style="display: flex; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Tv03" class="size-5"></x-import></span>
                   <span style="display: flex; flex-direction: column; gap: 2px">
-                    <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Staff display</span>
-                    <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">For the mailroom TV. Shows the queue, shelf locations and wait times.</span>
+                    <span class="text-sm font-semibold" style="color: var(--color-text-primary)">Staff display</span>
+                    <span class="text-xs" style="color: var(--color-text-tertiary)">For the mailroom TV. Shows the queue, shelf locations and wait times.</span>
                   </span>
                 </a>
                 <a href="LobbyDisplay.dc.html" role="menuitem" class="nav-row" style="display: flex; align-items: flex-start; gap: 12px; margin: 0 6px; padding: 10px; border-radius: 6px; text-decoration: none">
                   <span style="display: flex; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users02" class="size-5"></x-import></span>
                   <span style="display: flex; flex-direction: column; gap: 2px">
-                    <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Lobby display</span>
-                    <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">For the TV students see. Shows numbers and windows only.</span>
+                    <span class="text-sm font-semibold" style="color: var(--color-text-primary)">Lobby display</span>
+                    <span class="text-xs" style="color: var(--color-text-tertiary)">For the TV students see. Shows numbers and windows only.</span>
                   </span>
                 </a>
-                <div style="margin-top: 6px; padding: 10px 16px 6px; border-top: 1px solid var(--color-border-secondary); display: flex; gap: 8px; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">
+                <div class="text-xs" style="margin-top: 6px; padding: 10px 16px 6px; border-top: 1px solid var(--color-border-secondary); display: flex; gap: 8px; color: var(--color-text-tertiary)">
                   <span style="display: flex; flex: 0 0 auto; padding-top: 1px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lock01" class="size-4"></x-import></span>
                   <span>This computer stops showing queue actions. The lobby display asks for a sign-in to exit.</span>
                 </div>
@@ -262,32 +284,32 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <!-- Metrics: compact strip -->
       <div role="group" aria-label="Queue metrics" class="pq-strip {{dimCls}}">
         <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users01" class="size-4"></x-import></span>In queue</div>
-          <div style="font-size: 20px; line-height: 28px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.queue}}</div>
+          <div class="text-xs font-medium" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Users01" class="size-4"></x-import></span>In queue</div>
+          <div class="text-xl font-semibold" style="color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.queue}}</div>
         </div>
         <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Announcement02" class="size-4"></x-import></span>Serving · all windows</div>
-          <div style="font-size: 20px; line-height: 28px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.serving}}</div>
+          <div class="text-xs font-medium" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Announcement02" class="size-4"></x-import></span>Serving · all windows</div>
+          <div class="text-xl font-semibold" style="color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.serving}}</div>
         </div>
         <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Hourglass03" class="size-4"></x-import></span>Longest wait</div>
+          <div class="text-xs font-medium" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Hourglass03" class="size-4"></x-import></span>Longest wait</div>
           <div style="display: flex; align-items: center; gap: 8px; min-width: 0">
-            <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{m.longestWho}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}"><x-import component-from-global-scope="UntitledUI.TooltipTrigger" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"><span style="font-size: 20px; line-height: 28px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums; color: {{m.longestFg}}">{{m.longest}}</span></x-import></x-import>
-            <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.longestId}}</span>
+            <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{m.longestWho}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}"><x-import component-from-global-scope="UntitledUI.TooltipTrigger" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"><span class="text-xl font-semibold" style="color: var(--color-text-primary); font-variant-numeric: tabular-nums; color: {{m.longestFg}}">{{m.longest}}</span></x-import></x-import>
+            <span class="text-xs" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.longestId}}</span>
           </div>
         </div>
         <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ClockStopwatch" class="size-4"></x-import></span>Average wait</div>
-          <div style="font-size: 20px; line-height: 28px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.avg}}</div>
+          <div class="text-xs font-medium" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ClockStopwatch" class="size-4"></x-import></span>Average wait</div>
+          <div class="text-xl font-semibold" style="color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.avg}}</div>
         </div>
         <div style="padding: 12px 20px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
-          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-4"></x-import></span>Served today</div>
+          <div class="text-xs font-medium" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary); white-space: nowrap"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-4"></x-import></span>Served today</div>
           <div style="display: flex; align-items: center; gap: 8px; min-width: 0">
-            <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{m.lastServed}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}"><x-import component-from-global-scope="UntitledUI.TooltipTrigger" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"><span aria-live="polite" class="{{m.tickCls}}" style="font-size: 20px; line-height: 28px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.served}}</span></x-import></x-import>
+            <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{m.lastServed}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}"><x-import component-from-global-scope="UntitledUI.TooltipTrigger" class="rounded-md outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"><span aria-live="polite" class="{{m.tickCls}} text-xl font-semibold" style="color: var(--color-text-primary); font-variant-numeric: tabular-nums">{{m.served}}</span></x-import></x-import>
             <sc-if value="{{m.hasSession}}" hint-placeholder-val="{{false}}">
               <span class="{{m.popCls}}"><x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="pill-color" color="success" size="sm" icon-leading="{{ic.ArrowUp}}">{{m.session}}</x-import></span>
             </sc-if>
-            <button type="button" class="tab-btn" onClick="{{viewList}}" style="margin-left: auto; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-brand-secondary); cursor: pointer; white-space: nowrap">View list</button>
+            <button type="button" class="tab-btn text-xs font-semibold" onClick="{{viewList}}" style="margin-left: auto; padding: 0; border: 0; background: none; font-family: inherit; color: var(--color-text-brand-secondary); cursor: pointer; white-space: nowrap">View list</button>
           </div>
         </div>
       </div>
@@ -299,13 +321,13 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; min-height: 28px">
           <div style="display: flex; align-items: center; gap: 10px">
             <span class="{{liveDotClass}}" aria-hidden="true" style="width: 10px; height: 10px; border-radius: 999px; background: {{liveDotBg}}"></span>
-            <h2 id="serving-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">{{servingTitle}}</h2>
+            <h2 id="serving-title" class="text-lg font-semibold" style="margin: 0; color: var(--color-text-primary)">{{servingTitle}}</h2>
             <sc-if value="{{hasServing}}" hint-placeholder-val="{{true}}">
               
             </sc-if>
           </div>
           <sc-if value="{{hasServing}}" hint-placeholder-val="{{true}}">
-            <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Announce a student to call them over the lobby speakers.</span>
+            <span class="text-sm" style="color: var(--color-text-tertiary)">Announce a student to call them over the lobby speakers.</span>
           </sc-if>
         </div>
 
@@ -318,16 +340,16 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               <sc-if value="{{s.noPhoto}}" hint-placeholder-val="{{false}}"><span class="pq-photo" aria-hidden="true">{{s.initials}}</span></sc-if>
               <div style="flex: 1 1 auto; min-width: 0; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px">
                 <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                  <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">
+                  <div class="text-sm" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; color: var(--color-text-tertiary)">
                     <!-- Serving timer as an Untitled UI Badge: gray, warning at 5 min, error at 10 min (thresholds to confirm with operations) -->
                     <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{s.servColor}}" size="sm"><span style="font-variant-numeric: tabular-nums">Serving {{s.servingLabel}}</span></x-import>
                     <span>Waited {{s.waitedLabel}}</span>
                   </div>
                   <div style="display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 14px; min-width: 0">
-                    <span style="font-size: 30px; line-height: 38px; font-weight: 700; color: var(--color-brand-600); letter-spacing: 0.01em">{{s.ticket}}</span>
-                    <button type="button" class="name-btn" onClick="{{s.open}}" aria-label="Open pickup for {{s.name}}" style="font-size: 20px; line-height: 30px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">{{s.name}}</button><sc-if value="{{s.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
+                    <span class="text-display-sm font-bold" style="color: var(--color-brand-600); letter-spacing: 0.01em">{{s.ticket}}</span>
+                    <button type="button" class="name-btn text-xl font-semibold" onClick="{{s.open}}" aria-label="Open pickup for {{s.name}}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">{{s.name}}</button><sc-if value="{{s.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
                   </div>
-                  <div style="display: flex; flex-wrap: wrap; column-gap: 20px; row-gap: 4px; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">
+                  <div class="text-sm" style="display: flex; flex-wrap: wrap; column-gap: 20px; row-gap: 4px; color: var(--color-text-tertiary)">
                     <span style="display: inline-flex; align-items: center; gap: 6px"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-4"></x-import></span><span style="font-weight: 500; color: var(--color-text-primary)">{{s.pkLabel}}</span>{{s.shelfLine}}</span>
                     <span>{{s.idLine}}</span>
                     <span>{{s.via}}</span>
@@ -339,13 +361,13 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.Announcement02}}" is-disabled="{{s.annBusy}}" on-press="{{s.announce}}">{{s.announceText}}</x-import>
                   <span aria-live="polite" style="display: inline-flex; align-items: center; min-width: 0">
                     <sc-if value="{{s.annNone}}" hint-placeholder-val="{{false}}">
-                      <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Not announced yet</span>
+                      <span class="text-sm" style="color: var(--color-text-tertiary)">Not announced yet</span>
                     </sc-if>
                     <sc-if value="{{s.annBusy}}" hint-placeholder-val="{{false}}">
                       <x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="pill-color" color="brand" size="md" icon-leading="{{ic.VolumeMax}}">Announcing…</x-import>
                     </sc-if>
                     <sc-if value="{{s.annDone}}" hint-placeholder-val="{{true}}">
-                      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></span>{{s.annLabel}}</span>
+                      <span class="text-sm" style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-tertiary)"><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></span>{{s.annLabel}}</span>
                     </sc-if>
                   </span>
                   <span style="flex: 1 1 auto"></span>
@@ -359,7 +381,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 
         <!-- A student scanned their ID here while this window is serving someone: remembered; their pickup opens when this one is completed or returned. -->
         <sc-if value="{{pendCardOn}}" hint-placeholder-val="{{false}}">
-          <div role="status" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); font-size: 14px; line-height: 20px; color: var(--color-text-secondary)">
+          <div role="status" class="text-sm" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); color: var(--color-text-secondary)">
             <span style="display: flex; flex: 0 0 auto; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
             <span>{{pendingText}}</span>
           </div>
@@ -372,8 +394,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <sc-if value="{{rdy.hasNext}}" hint-placeholder-val="{{true}}"><span class="pq-chev" aria-hidden="true"><svg width="14" height="56" viewBox="0 0 14 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 28l10 26"></path></svg></span></sc-if>
             <!-- Untitled empty-state pattern, paired with the "Choose your window" box: gray FeaturedIcon (one size smaller) above the title. -->
             <span style="display: flex; margin-bottom: 12px"><x-import component-from-global-scope="UntitledUI.FeaturedIcon" icon="{{ic.User01}}" color="gray" theme="light" size="md"></x-import></span>
-            <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">No one is being served</span>
-            <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{noServingText}}</span>
+            <span class="text-md font-semibold" style="color: var(--color-text-primary)">No one is being served</span>
+            <span class="text-sm" style="color: var(--color-text-tertiary)">{{noServingText}}</span>
           </div>
         </sc-if>
         <!-- No window yet: asked at every sign-in. Serving is blocked until a window is chosen.
@@ -384,8 +406,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               <x-import component-from-global-scope="UntitledUI.FeaturedIcon" icon="{{ic.Monitor01}}" color="gray" theme="light" size="lg"></x-import>
               <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
               <div style="display: flex; flex-direction: column; gap: 4px">
-                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">Choose your window</span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Pick the window you’re working at to start calling students.</span>
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">Choose your window</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">Pick the window you’re working at to start calling students.</span>
               </div>
             <!-- Untitled UI Select (scales to any number of windows) + one primary action. Last window used on this computer is preselected. -->
             <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 12px">
@@ -405,7 +427,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <sc-if value="{{hasWin}}" hint-placeholder-val="{{true}}">
       <section aria-labelledby="upnext-title" class="{{dimCls}}" style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
         <div style="display: flex; align-items: center; min-height: 28px">
-          <h2 id="upnext-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">Up next</h2>
+          <h2 id="upnext-title" class="text-lg font-semibold" style="margin: 0; color: var(--color-text-primary)">Up next</h2>
         </div>
         <sc-if value="{{rdy.hasNext}}" hint-placeholder-val="{{true}}">
           <article class="pq-card {{rdy.inCls}}" aria-label="Up next: number {{rdy.ticket}}, {{rdy.name}}" style="display: flex; border: 1px solid var(--color-border-secondary); border-radius: 16px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); overflow: hidden">
@@ -416,10 +438,10 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
                 <span style="display: flex"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{rdy.waitColor}}" size="sm"><span style="font-variant-numeric: tabular-nums">Waiting {{rdy.waitLabel}}</span></x-import></span>
                 <span style="display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 12px; margin-top: 4px">
-                  <span style="font-size: 22px; line-height: 30px; font-weight: 700; color: var(--color-text-primary); letter-spacing: 0.01em">{{rdy.ticket}}</span>
-                  <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">{{rdy.name}}</span><sc-if value="{{rdy.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
+                  <span class="text-xl font-bold" style="color: var(--color-text-primary); letter-spacing: 0.01em">{{rdy.ticket}}</span>
+                  <span class="text-md font-semibold" style="color: var(--color-text-primary)">{{rdy.name}}</span><sc-if value="{{rdy.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
                 </span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{rdy.idLine}} · {{rdy.pkLine}}</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">{{rdy.idLine}} · {{rdy.pkLine}}</span>
               </div>
               <span style="display: flex">
                 <x-import component-from-global-scope="UntitledUI.Button" color="{{upNextColor}}" size="md" icon-trailing="{{ic.ArrowUp}}" on-press="{{serveNext}}">Serve next</x-import>
@@ -431,8 +453,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           <div class="pq-card" style="padding: 28px 24px; border: 1px solid var(--color-border-secondary); border-radius: 16px; background: var(--color-bg-primary); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center">
             <x-import component-from-global-scope="UntitledUI.FeaturedIcon" icon="{{ic.CheckCircle}}" color="gray" theme="light" size="md"></x-import>
             <div style="display: flex; flex-direction: column; gap: 4px">
-              <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">You’re all caught up</span>
-              <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Students appear here as soon as they check in.</span>
+              <span class="text-md font-semibold" style="color: var(--color-text-primary)">You’re all caught up</span>
+              <span class="text-sm" style="color: var(--color-text-tertiary)">Students appear here as soon as they check in.</span>
             </div>
           </div>
         </sc-if>
@@ -449,16 +471,12 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           </div>
           <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 10px 0">
             <sc-if value="{{tabs.queueSel}}" hint-placeholder-val="{{true}}">
-              <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">Oldest check-in first</span>
+              <span class="text-xs" style="color: var(--color-text-tertiary)">Oldest check-in first</span>
               <span aria-hidden="true" style="width: 1px; height: 20px; background: var(--color-border-secondary)"></span>
               <x-import component-from-global-scope="UntitledUI.Checkbox" size="sm" label="Announce when serving" is-selected="{{autoAnn}}" on-change="{{setAutoAnn}}"></x-import>
             </sc-if>
             <sc-if value="{{tabs.compSel}}" hint-placeholder-val="{{false}}">
-              <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">Newest first</span>
-              <div role="group" aria-label="Filter by window" style="display: flex; gap: 8px">
-                <sc-if value="{{hasWin}}" hint-placeholder-val="{{true}}"><button type="button" aria-pressed="{{comp.mineOn}}" onClick="{{comp.showMine}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid {{comp.mineBorder}}; background: {{comp.mineBg}}; color: {{comp.mineFg}}; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">{{myWin}}</button></sc-if>
-                <button type="button" aria-pressed="{{comp.allOn}}" onClick="{{comp.showAll}}" style="height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid {{comp.allBorder}}; background: {{comp.allBg}}; color: {{comp.allFg}}; font: inherit; font-size: 12px; font-weight: 500; cursor: pointer">All windows</button>
-              </div>
+              <span class="text-xs" style="color: var(--color-text-tertiary)">Newest first</span>
             </sc-if>
           </div>
         </div>
@@ -483,15 +501,15 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="md" icon-leading="{{ic.UserPlus01}}" aria-haspopup="dialog" aria-expanded="{{walkOpen}}" on-press="{{toggleWalk}}">Check in a student</x-import>
               <sc-if value="{{walkOpen}}" hint-placeholder-val="{{false}}">
                 <div role="dialog" aria-label="Check in a student" style="position: absolute; top: calc(100% + 8px); left: 0; width: 400px; padding: 16px; box-sizing: border-box; background: var(--color-bg-primary); border: 1px solid var(--color-border-secondary); border-radius: 12px; box-shadow: 0 12px 16px -4px rgba(10,13,18,0.08), 0 4px 6px -2px rgba(10,13,18,0.03); display: flex; flex-direction: column; gap: 8px">
-                  <label for="walk-q" style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Students with packages ready</label>
+                  <label for="walk-q" class="text-sm font-medium" style="color: var(--color-text-secondary)">Students with packages ready</label>
                   <input id="walk-q" value="{{walkQ}}" onChange="{{onWalkQ}}" autocomplete="off" placeholder="Search name or student ID" style="height: 40px; padding: 0 12px; box-sizing: border-box; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; font-size: 14px; color: var(--color-text-primary)">
                   <div style="display: flex; flex-direction: column; max-height: 280px; overflow-y: auto; margin-top: 4px">
                     <sc-for list="{{walkList}}" as="w" hint-placeholder-count="4">
                       <div style="display: flex; align-items: center; gap: 12px; padding: 10px 2px; border-top: 1px solid var(--color-border-secondary)">
                         <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" src="{{w.photo}}" initials="{{w.initials}}" alt="{{w.name}}"></x-import>
                         <div style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
-                          <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.name}}</span>
-                          <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">ID {{w.sid}} · {{w.pkLabel}} · Shelf {{w.shelf}}</span>
+                          <span class="text-sm font-semibold" style="color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{w.name}}</span>
+                          <span class="text-xs" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">ID {{w.sid}} · {{w.pkLabel}} · Shelf {{w.shelf}}</span>
                         </div>
                         <sc-if value="{{w.ready}}" hint-placeholder-val="{{true}}">
                           <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" on-press="{{w.checkIn}}">Check in</x-import>
@@ -502,10 +520,10 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                       </div>
                     </sc-for>
                     <sc-if value="{{walkHint}}" hint-placeholder-val="{{true}}">
-                      <span style="padding: 12px 2px; border-top: 1px solid var(--color-border-secondary); font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Type a name or student ID to find students with packages ready.</span>
+                      <span class="text-sm" style="padding: 12px 2px; border-top: 1px solid var(--color-border-secondary); color: var(--color-text-tertiary)">Type a name or student ID to find students with packages ready.</span>
                     </sc-if>
                     <sc-if value="{{noWalk}}" hint-placeholder-val="{{false}}">
-                      <span style="padding: 12px 2px; border-top: 1px solid var(--color-border-secondary); font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{noWalkText}}</span>
+                      <span class="text-sm" style="padding: 12px 2px; border-top: 1px solid var(--color-border-secondary); color: var(--color-text-tertiary)">{{noWalkText}}</span>
                     </sc-if>
                   </div>
                 </div>
@@ -514,7 +532,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           </div>
           <div style="overflow-x: auto">
           <div role="table" aria-label="Checked-in students" style="min-width: 980px">
-            <div role="row" style="display: grid; grid-template-columns: 64px 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.9fr) 128px; align-items: center; min-height: 44px; box-sizing: border-box; background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border-secondary); font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-quaternary)">
+            <div role="row" class="text-xs font-medium" style="display: grid; grid-template-columns: 64px 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 0.9fr) 128px; align-items: center; min-height: 44px; box-sizing: border-box; background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border-secondary); color: var(--color-text-quaternary)">
               <div role="columnheader" style="padding: 0 12px 0 24px">#</div>
               <div role="columnheader" style="padding: 0 12px">Number</div>
               <div role="columnheader" style="padding: 0 12px">Student</div>
@@ -532,12 +550,12 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" src="{{r.photo}}" initials="{{r.initials}}" alt="{{r.name}}"></x-import>
                   <div style="display: flex; flex-direction: column; min-width: 0">
                     <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span><sc-if value="{{r.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if></span>
-                    <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{r.idLine}}</span>
+                    <span class="text-xs" style="color: var(--color-text-tertiary)">{{r.idLine}}</span>
                   </div>
                 </div>
                 <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column; min-width: 0">
                   <span style="color: var(--color-text-primary)">{{r.pkLabel}}</span>
-                  <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{r.shelfLine}}</span>
+                  <span class="text-xs" style="color: var(--color-text-tertiary)">{{r.shelfLine}}</span>
                 </div>
                 <div role="cell" style="padding: 0 12px"><x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="pill-color" color="gray" size="sm" icon-leading="{{r.viaIcon}}">{{r.via}}</x-import></div>
                 <div role="cell" style="padding: 0 12px; color: var(--color-text-tertiary)">{{r.checkedAt}}</div>
@@ -549,14 +567,14 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             </sc-for>
             <sc-if value="{{noQueue}}" hint-placeholder-val="{{false}}">
               <div style="padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center">
-                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">The queue is empty</span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Students appear here as soon as they check in on the app or kiosk.</span>
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">The queue is empty</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">Students appear here as soon as they check in on the app or kiosk.</span>
               </div>
             </sc-if>
             <sc-if value="{{queueNoMatch}}" hint-placeholder-val="{{false}}">
               <div style="padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center">
-                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">No one in line matches “{{qQueueTrim}}”</span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Try a different spelling, check Completed, or check them in if they have packages ready.</span>
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">No one in line matches “{{qQueueTrim}}”</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">Try a different spelling, check Completed, or check them in if they have packages ready.</span>
                 <div style="margin-top: 12px; display: flex; gap: 12px">
                   <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" on-press="{{clearQQueue}}">Clear search</x-import>
                   <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" icon-leading="{{ic.UserPlus01}}" on-press="{{walkFromSearch}}">Check in a student</x-import>
@@ -581,13 +599,21 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             </div>
             <!-- Completed date: Untitled UI Date range picker (presets, two months, Apply/Cancel). Defaults to Today. -->
             <x-import component-from-global-scope="UntitledUI.DateRangePicker" size="md" aria-label="Completed date" value="{{cd.value}}" on-change="{{cd.change}}" on-apply="{{cd.apply}}" on-cancel="{{cd.cancel}}" on-open-change="{{cd.openChange}}"></x-import>
+            <!-- Window filter: segmented control (Untitled UI Tabs, button-border style; hand-drawn patch, see .pq-seg), same as the phone app, after search and date.
+                 Search still looks across all windows and dates. No window chosen yet: My window is disabled and All completed is selected. -->
+            <sc-if value="{{cf.on}}" hint-placeholder-val="{{true}}">
+              <div role="group" aria-label="Show completed pickups" class="pq-seg">
+                <button type="button" class="pq-seg-btn" aria-pressed="{{comp.mineOn}}" disabled="{{noWin}}" onClick="{{comp.showMine}}">My window</button>
+                <button type="button" class="pq-seg-btn" aria-pressed="{{comp.allOn}}" onClick="{{comp.showAll}}">All completed</button>
+              </div>
+            </sc-if>
             <sc-if value="{{qCompSet}}" hint-placeholder-val="{{false}}">
-              <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import>Searching all windows and dates</span>
+              <span class="text-xs" style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import>Searching all windows and dates</span>
             </sc-if>
           </div>
           <div style="overflow-x: auto">
           <div role="table" aria-label="Completed pickups" style="min-width: 980px">
-            <div role="row" style="display: grid; grid-template-columns: 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 152px; align-items: center; min-height: 44px; box-sizing: border-box; background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border-secondary); font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-quaternary)">
+            <div role="row" class="text-xs font-medium" style="display: grid; grid-template-columns: 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 152px; align-items: center; min-height: 44px; box-sizing: border-box; background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border-secondary); color: var(--color-text-quaternary)">
               <div role="columnheader" style="padding: 0 12px 0 24px">Number</div>
               <div role="columnheader" style="padding: 0 12px">Student</div>
               <div role="columnheader" style="padding: 0 12px">Packages</div>
@@ -597,19 +623,20 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               <div role="columnheader" aria-label="Actions"></div>
             </div>
             <sc-for list="{{completed}}" as="c" hint-placeholder-count="8">
-              <div role="row" class="q-row" style="display: grid; grid-template-columns: 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 152px; align-items: center; min-height: 64px; padding: 10px 0; box-sizing: border-box; border-bottom: 1px solid var(--color-border-secondary)">
+              <!-- Click anywhere on the row (or the name, for keyboard) to open Pickup details. -->
+              <div role="row" class="q-row pq-rowopen" onClick="{{c.rowOpen}}" style="display: grid; grid-template-columns: 96px minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 152px; align-items: center; min-height: 64px; padding: 10px 0; box-sizing: border-box; border-bottom: 1px solid var(--color-border-secondary)">
                 <div role="cell" style="padding: 0 12px 0 24px"><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 32px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-primary); color: var(--color-text-secondary); font-size: 14px; font-weight: 700; letter-spacing: 0.02em">{{c.ticket}}</span></div>
                 <div role="cell" style="padding: 0 12px; display: flex; align-items: center; gap: 12px; min-width: 0">
                   <x-import component-from-global-scope="UntitledUI.Avatar" size="sm" src="{{c.photo}}" initials="{{c.initials}}" alt="{{c.name}}"></x-import>
                   <div style="display: flex; flex-direction: column; min-width: 0">
-                  <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.name}}</span><sc-if value="{{c.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if></span>
-                  <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{c.idLine}}</span>
-                  <sc-if value="{{c.hasProxy}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.proxyText}}</span></sc-if>
+                  <span style="display: flex; align-items: center; gap: 8px; min-width: 0"><button type="button" class="name-btn" onClick="{{c.open}}" aria-label="Open pickup details for {{c.name}}" style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%">{{c.name}}</button><sc-if value="{{c.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if></span>
+                  <span class="text-xs" style="color: var(--color-text-tertiary)">{{c.idLine}}</span>
+                  <sc-if value="{{c.hasProxy}}" hint-placeholder-val="{{false}}"><span class="text-xs" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.proxyText}}</span></sc-if>
                   </div>
                 </div>
                 <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column; min-width: 0">
                   <span style="color: var(--color-text-primary)">{{c.pkLabel}}</span>
-                  <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">Shelf {{c.shelf}}</span>
+                  <span class="text-xs" style="color: var(--color-text-tertiary)">Shelf {{c.shelf}}</span>
                   <sc-if value="{{c.hasMissing}}" hint-placeholder-val="{{false}}">
                     <span style="margin-top: 4px"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">{{c.missingLabel}}</x-import></span>
                   </sc-if>
@@ -618,20 +645,19 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   </sc-if>
                 </div>
                 <div role="cell" style="padding: 0 12px"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="{{c.winColor}}" size="sm">{{c.win}}</x-import></div>
-                <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column"><span style="color: var(--color-text-primary)">{{c.doneDay}}</span><span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{c.doneAt}}</span></div>
+                <div role="cell" style="padding: 0 12px; display: flex; flex-direction: column"><span style="color: var(--color-text-primary)">{{c.doneDay}}</span><span class="text-xs" style="color: var(--color-text-tertiary)">{{c.doneAt}}</span></div>
                 <div role="cell" style="padding: 0 12px; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{c.total}}</div>
                 <div role="cell" style="padding: 0 24px 0 8px; display: flex; align-items: center; justify-content: flex-end; gap: 4px">
                   <sc-if value="{{c.canUndo}}" hint-placeholder-val="{{false}}">
                     <x-import component-from-global-scope="UntitledUI.Button" color="tertiary" size="sm" icon-leading="{{ic.FlipBackward}}" on-press="{{c.undo}}">Undo</x-import>
                   </sc-if>
-                  <x-import component-from-global-scope="UntitledUI.Tooltip" title="Print pickup receipt" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.Printer}}" on-press="{{c.print}}" aria-label="Print pickup receipt"></x-import></x-import>
                 </div>
               </div>
             </sc-for>
             <sc-if value="{{noCompleted}}" hint-placeholder-val="{{false}}">
               <div style="padding: 48px 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center">
-                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">{{noCompletedText}}</span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Pickups show up here once they’re marked complete.</span>
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">{{noCompletedText}}</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">Pickups show up here once they’re marked complete.</span>
               </div>
             </sc-if>
           </div>
@@ -658,23 +684,23 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           </button>
         </sc-if>
         <sc-if value="{{idc.noPhoto}}" hint-placeholder-val="{{false}}">
-          <span aria-hidden="true" style="flex: 0 0 84px; width: 84px; height: 84px; border-radius: 10px; background: var(--color-bg-tertiary); border: 1px solid var(--color-border-secondary); box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; color: var(--color-text-quaternary)">{{idc.initials}}</span>
+          <span aria-hidden="true" style="flex: 0 0 84px; width: 84px; height: 84px; border-radius: 10px; background: var(--color-bg-tertiary); border: 1px solid var(--color-border-secondary); box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: var(--color-text-quaternary)" class="text-display-xs font-semibold">{{idc.initials}}</span>
         </sc-if>
         <!-- Same height for every pickup (sized for a proxy: name, ID, mail code, one "Picking up for" line). Shorter content leaves space below; a long proxy list can grow it. -->
         <div style="display: flex; flex-direction: column; gap: 0; min-width: 0; flex: 1 1 0; min-height: 84px">
           <!-- Line 1: number (+ Guest badge). Line 2: name, so the badge never reads as part of the name. -->
           <span style="display: flex; align-items: center; flex-wrap: wrap; column-gap: 8px; min-width: 0">
-            <span style="font-size: 18px; line-height: 26px; font-weight: 700; color: var(--color-brand-600); letter-spacing: 0.01em">{{dr.ticket}}</span><sc-if value="{{gd.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
+            <span class="text-lg font-bold" style="color: var(--color-brand-600); letter-spacing: 0.01em">{{dr.ticket}}</span><sc-if value="{{gd.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if>
           </span>
-          <span style="font-size: 16px; line-height: 22px; font-weight: 600; color: var(--color-text-primary); overflow-wrap: anywhere">{{dr.name}}</span>
+          <span class="text-md font-semibold" style="color: var(--color-text-primary); overflow-wrap: anywhere">{{dr.name}}</span>
           <!-- Codes the operator checks against the card, on one line. Guests have none: they show a photo ID. -->
-          <sc-if value="{{gd.guest}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; line-height: 18px; color: var(--color-text-tertiary)">Check a photo ID</span></sc-if>
+          <sc-if value="{{gd.guest}}" hint-placeholder-val="{{false}}"><span class="text-xs" style="color: var(--color-text-tertiary)">Check a photo ID</span></sc-if>
           <sc-if value="{{gd.notGuest}}" hint-placeholder-val="{{true}}">
-            <span style="font-size: 13px; line-height: 18px; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">Student ID <span style="font-weight: 600; color: var(--color-text-secondary)">{{dr.sid}}</span></span>
-            <span style="font-size: 13px; line-height: 18px; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">Mail code <span style="font-weight: 600; color: var(--color-text-secondary)">{{dr.mail}}</span></span>
+            <span class="text-xs" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">Student ID <span style="font-weight: 600; color: var(--color-text-secondary)">{{dr.sid}}</span></span>
+            <span class="text-xs" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">Mail code <span style="font-weight: 600; color: var(--color-text-secondary)">{{dr.mail}}</span></span>
           </sc-if>
           <!-- Proxy pickup: shown only here (not in the tables). -->
-          <sc-if value="{{pxy.has}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-brand-secondary)">{{pxy.header}}</span></sc-if>
+          <sc-if value="{{pxy.has}}" hint-placeholder-val="{{false}}"><span class="text-xs font-semibold" style="color: var(--color-text-brand-secondary)">{{pxy.header}}</span></sc-if>
         </div>
         <!-- Announce and Close get their own row at the top, so a long name or proxy list below can use the full width and never runs into them. -->
         <div style="order: -1; flex: 0 0 100%; display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-bottom: -4px">
@@ -692,8 +718,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <!-- Before anyone is added: heading, search and results. After: the package groups below show who's added (× on each group), and search collapses to a link. -->
             <sc-if value="{{gd.showSearch}}" hint-placeholder-val="{{true}}">
             <div>
-              <h3 id="dr-guest" style="margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Who is {{gd.first}} picking up for?</h3>
-              <p style="margin: 2px 0 0; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">Search the student they name. Only students who added {{gd.first}} in the app can be added.</p>
+              <h3 id="dr-guest" class="text-sm font-semibold" style="margin: 0; color: var(--color-text-primary)">Who is {{gd.first}} picking up for?</h3>
+              <p class="text-xs" style="margin: 2px 0 0; color: var(--color-text-tertiary)">Search the student they name. Only students who added {{gd.first}} in the app can be added.</p>
             </div>
             <div style="position: relative">
               <label for="dr-gq" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search students</label>
@@ -703,23 +729,23 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <sc-for list="{{gd.results}}" as="g" hint-placeholder-count="2">
               <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--color-border-secondary); border-radius: 8px">
                 <span style="display: flex; opacity: {{g.op}}"><x-import component-from-global-scope="UntitledUI.Avatar" size="sm" src="{{g.photo}}" initials="{{g.initials}}" alt="{{g.name}}"></x-import></span>
-                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; opacity: {{g.op}}"><span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">{{g.name}}</span><span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{g.sub}}</span></span>
+                <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; opacity: {{g.op}}"><span class="text-sm font-semibold" style="color: var(--color-text-primary)">{{g.name}}</span><span class="text-xs" style="color: var(--color-text-tertiary)">{{g.sub}}</span></span>
                 <sc-if value="{{g.added}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="pill-color" color="success" size="sm" icon-leading="{{ic.CheckCircle}}">Added</x-import></sc-if><sc-if value="{{g.added}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Tooltip" title="{{g.removeLabel}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" aria-label="{{g.removeLabel}}" on-press="{{g.remove}}"></x-import></x-import></sc-if>
                 <sc-if value="{{g.canAdd}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" icon-leading="{{ic.Plus}}" on-press="{{g.add}}" aria-label="Add {{g.name}}">Add</x-import></sc-if>
               </div>
             </sc-for>
             <sc-if value="{{gd.hasMore}}" hint-placeholder-val="{{false}}">
-              <span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{gd.moreText}}</span>
+              <span class="text-xs" style="color: var(--color-text-tertiary)">{{gd.moreText}}</span>
             </sc-if>
             <sc-if value="{{gd.noMatch}}" hint-placeholder-val="{{false}}">
-              <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">No students match “{{gd.q}}”.</span>
+              <span class="text-sm" style="color: var(--color-text-tertiary)">No students match “{{gd.q}}”.</span>
             </sc-if>
             </sc-if>
             <sc-if value="{{gd.showAddLink}}" hint-placeholder-val="{{false}}">
               <span style="display: flex"><x-import component-from-global-scope="UntitledUI.Button" color="link-color" size="sm" icon-leading="{{ic.Plus}}" on-press="{{gd.openAdd}}">Add another student</x-import></span>
             </sc-if>
             <sc-if value="{{gd.blocked}}" hint-placeholder-val="{{false}}">
-              <div role="status" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); font-size: 14px; line-height: 20px; color: var(--color-text-secondary)">
+              <div role="status" class="text-sm" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); color: var(--color-text-secondary)">
                 <span style="display: flex; flex: 0 0 auto; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
                 <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600; color: var(--color-text-primary)">{{gd.blockTitle}}</span><span>{{gd.blockText}}</span></span>
               </div>
@@ -727,6 +753,13 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <sc-if value="{{gd.canRemove}}" hint-placeholder-val="{{false}}">
               <span style="display: flex"><x-import component-from-global-scope="UntitledUI.Button" color="secondary-destructive" size="sm" icon-leading="{{ic.Trash01}}" on-press="{{gd.remove}}">Remove from queue</x-import></span>
             </sc-if>
+            <!-- Prototype only: test names for the guest search (same quiet dev-tools row as the phone app). Never product UI. -->
+            <div class="proto-trigger" aria-label="Prototype test names" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; color: #535862; opacity: 0.55">
+              <span>Test names:</span>
+              <sc-for list="{{gd.tests}}" as="t" hint-placeholder-count="3">
+                <button type="button" class="proto-trigger" onClick="{{t.go}}" style="padding: 0; border: 0; background: none; color: inherit; text-decoration: underline; cursor: pointer">{{t.label}}</button>
+              </sc-for>
+            </div>
           </section>
         </sc-if>
 
@@ -735,8 +768,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           <!-- Step 1. Number turns into a check when every item is scanned. -->
           <div style="display: flex; align-items: center; gap: 12px">
             <span class="pq-step" aria-hidden="true" style="background: {{dr.st1.bg}}; border: 1.5px solid {{dr.st1.bd}}; color: {{dr.st1.fg}}; box-shadow: {{dr.st1.ring}}"><sc-if value="{{dr.st1.done}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></sc-if><sc-if value="{{dr.st1.todo}}" hint-placeholder-val="{{true}}">1</sc-if></span>
-            <h3 id="dr-items" style="margin: 0; flex: 1 1 auto; font-size: 16px; line-height: 24px; font-weight: 600; color: var(--color-text-primary)">Items</h3>
-            <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{dr.progress}}</span>
+            <h3 id="dr-items" class="text-md font-semibold" style="margin: 0; flex: 1 1 auto; color: var(--color-text-primary)">Items</h3>
+            <span class="text-sm font-medium" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{dr.progress}}</span>
             <!-- Print is a step-level utility, not content: it sits with the step's meta. "Printed 12:40" lives in the tooltip. -->
             <span aria-hidden="true" style="width: 1px; height: 16px; background: var(--color-border-secondary)"></span>
             <x-import component-from-global-scope="UntitledUI.Tooltip" title="{{dr.printTip}}" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.Button" color="link-gray" size="sm" icon-leading="{{ic.Printer}}" aria-label="{{dr.printAria}}" on-press="{{dr.print}}">{{dr.printShort}}</x-import></x-import>
@@ -766,16 +799,16 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             </div>
           </div>
           <sc-if value="{{dr.scanErrOn}}" hint-placeholder-val="{{false}}">
-            <div role="alert" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-error); background: var(--color-bg-error-primary); font-size: 14px; line-height: 20px; color: var(--color-text-error-primary)">
+            <div role="alert" class="text-sm" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-error); background: var(--color-bg-error-primary); color: var(--color-text-error-primary)">
               <span style="display: flex; flex: 0 0 auto; padding-top: 2px"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-4"></x-import></span>
               <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{dr.scanErrTitle}}</span><span>{{dr.scanErr}}</span></span>
             </div>
           </sc-if>
           <sc-if value="{{dr.scanMsgOn}}" hint-placeholder-val="{{false}}">
-            <span role="status" style="display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-4"></x-import>{{dr.scanMsg}}</span>
+            <span role="status" class="text-xs" style="display: flex; align-items: center; gap: 6px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-4"></x-import>{{dr.scanMsg}}</span>
           </sc-if>
           <sc-if value="{{dr.hasSel}}" hint-placeholder-val="{{false}}">
-            <div style="display: flex; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--color-bg-secondary); border: 1px solid var(--color-border-secondary); font-size: 12px; line-height: 18px; color: var(--color-text-secondary)"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span><span>{{dr.selText}}</span></div>
+            <div class="text-xs" style="display: flex; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--color-bg-secondary); border: 1px solid var(--color-border-secondary); color: var(--color-text-secondary)"><span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span><span>{{dr.selText}}</span></div>
           </sc-if>
           <!-- Items check off only by a scan or a typed tracking number (same as the phone). × removes a scan, with Undo in the toast.
                Shown as one contained checklist: the package icon turns into a green check when scanned; scanned rows go quiet. -->
@@ -784,7 +817,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           <sc-for list="{{dr.itemGroups}}" as="grp" hint-placeholder-count="1">
             <div role="list" aria-label="{{grp.aria}}" style="display: flex; flex-direction: column; border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden; background: var(--color-bg-primary)">
             <sc-for list="{{grp.items}}" as="it" hint-placeholder-count="2">
-              <sc-if value="{{it.groupStart}}" hint-placeholder-val="{{false}}"><div role="presentation" style="padding: 8px 16px; background: var(--color-bg-secondary); border-top: 0; border-bottom: 1px solid var(--color-border-secondary); font-size: 12px; line-height: 18px; font-weight: 600; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; box-sizing: border-box">{{it.groupLabel}}<sc-if value="{{it.canRemoveGroup}}" hint-placeholder-val="{{false}}"><!-- Removing a whole student is a bigger action than undoing one scan, so it's a text link, not the same × as the item rows. -->
+              <sc-if value="{{it.groupStart}}" hint-placeholder-val="{{false}}"><div role="presentation" class="text-xs font-semibold" style="padding: 8px 16px; background: var(--color-bg-secondary); border-top: 0; border-bottom: 1px solid var(--color-border-secondary); color: var(--color-text-secondary); display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; box-sizing: border-box">{{it.groupLabel}}<sc-if value="{{it.canRemoveGroup}}" hint-placeholder-val="{{false}}"><!-- Removing a whole student is a bigger action than undoing one scan, so it's a text link, not the same × as the item rows. -->
 <button type="button" class="grp-rm" aria-label="{{it.removeGroupLabel}}" title="{{it.removeGroupLabel}}" onClick="{{it.removeGroup}}">Remove</button></sc-if></div></sc-if>
               <div role="listitem" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 12px 8px 16px; box-sizing: border-box; border-top: {{it.rowBorder}}; background: {{it.rowBg}}">
                 <span style="display: flex; flex: 0 0 auto; color: {{it.icFg}}">
@@ -792,13 +825,15 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   <!-- Fallback when the scanner is down: the package icon looks the same, but clicking it checks the item off as if scanned. Recorded as "Checked manually". -->
                   <sc-if value="{{it.todo}}" hint-placeholder-val="{{true}}"><span class="pq-manual" style="display: flex"><x-import component-from-global-scope="UntitledUI.Tooltip" title="Check manually" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="xs" icon="{{ic.Package}}" aria-label="{{it.manualLabel}}" on-press="{{it.manual}}"></x-import></x-import></span></sc-if>
                 </span>
-                <div style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
-                  <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{it.shelfFg}}">Shelf {{it.shelf}}</span>
-                  <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.desc}}<span style="font-weight: 500; color: var(--color-text-secondary)">{{it.trk}}</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)"> · {{it.state}}</span></span>
+                <div class="pq-rowopen" onClick="{{it.open}}" style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
+                  <span class="text-md font-semibold" style="color: {{it.shelfFg}}">Shelf {{it.shelf}}</span>
+                  <span class="text-sm" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.desc}}<span style="font-weight: 500; color: var(--color-text-secondary)">{{it.trk}}</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)"> · {{it.state}}</span></span>
+                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
                 </div>
                 <sc-if value="{{it.got}}" hint-placeholder-val="{{false}}">
                   <x-import component-from-global-scope="UntitledUI.Tooltip" title="Remove scan" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" aria-label="{{it.removeLabel}}" on-press="{{it.remove}}"></x-import></x-import>
                 </sc-if>
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="Item details" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.ChevronRight}}" aria-label="Item details for shelf {{it.shelf}}" on-press="{{it.open}}"></x-import></x-import>
               </div>
             </sc-for>
           </div>
@@ -808,7 +843,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 
         <!-- A student scanned their ID at this window while this pickup is open: theirs opens next. -->
         <sc-if value="{{dr.pendingOn}}" hint-placeholder-val="{{false}}">
-          <div role="status" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); font-size: 14px; line-height: 20px; color: var(--color-text-secondary)">
+          <div role="status" class="text-sm" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); color: var(--color-text-secondary)">
             <span style="display: flex; flex: 0 0 auto; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
             <span>{{dr.pendingText}}</span>
           </div>
@@ -820,19 +855,19 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           <!-- Step 2. Gray until the items are done; a check once the ID is scanned, signed or skipped. -->
           <div style="display: flex; align-items: center; gap: 12px">
             <span class="pq-step" aria-hidden="true" style="background: {{dr.st2.bg}}; border: 1.5px solid {{dr.st2.bd}}; color: {{dr.st2.fg}}; box-shadow: {{dr.st2.ring}}"><sc-if value="{{dr.st2.done}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></sc-if><sc-if value="{{dr.st2.todo}}" hint-placeholder-val="{{true}}">2</sc-if></span>
-            <h3 id="dr-sig" style="margin: 0; flex: 1 1 auto; font-size: 16px; line-height: 24px; font-weight: 600; color: {{dr.st2.title}}">{{dr.sigHeading}}</h3>
+            <h3 id="dr-sig" class="text-md font-semibold" style="margin: 0; flex: 1 1 auto; color: {{dr.st2.title}}">{{dr.sigHeading}}</h3>
             <sc-if value="{{dr.sigSigned}}" hint-placeholder-val="{{false}}">
               <x-import component-from-global-scope="UntitledUI.Button" color="link-gray" size="sm" icon-leading="{{ic.RefreshCw01}}" on-press="{{dr.sigRequest}}">Clear and retry</x-import>
             </sc-if>
           </div>
           <!-- Always check the student ID; the photo (top of the drawer) is an extra aid. -->
           <span style="display: flex; flex-direction: column; gap: 2px">
-            <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-secondary)">{{idc.hint}}</span>
-            <sc-if value="{{pxy.has}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{pxy.auth}}</span></sc-if>
+            <span class="text-sm font-semibold" style="color: var(--color-text-secondary)">{{idc.hint}}</span>
+            <sc-if value="{{pxy.has}}" hint-placeholder-val="{{false}}"><span class="text-xs" style="color: var(--color-text-tertiary)">{{pxy.auth}}</span></sc-if>
           </span>
           <!-- Rule: Identity unlocks once at least one item is checked. A scan at the window to start doesn't count; they scan again here. -->
           <sc-if value="{{dr.sigLocked}}" hint-placeholder-val="{{false}}">
-            <div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 12px; border: 1px dashed var(--color-border-primary); font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">
+            <div class="text-sm" style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 12px; border: 1px dashed var(--color-border-primary); color: var(--color-text-tertiary)">
               <span style="display: flex; flex: 0 0 auto; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Lock01" class="size-5"></x-import></span>
               <span>{{dr.lockText}}</span>
             </div>
@@ -841,8 +876,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <div role="status" style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary)">
               <span style="display: flex; flex: 0 0 auto; color: var(--color-fg-success-primary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckVerified01" class="size-5"></x-import></span>
               <span style="display: flex; flex-direction: column; gap: 2px">
-                <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">ID confirmed</span>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{dr.idScanText}}</span>
+                <span class="text-sm font-semibold" style="color: var(--color-text-primary)">ID confirmed</span>
+                <span class="text-sm" style="color: var(--color-text-tertiary)">{{dr.idScanText}}</span>
               </span>
             </div>
           </sc-if>
@@ -854,16 +889,16 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                 <button type="button" class="opt-card" onClick="{{dr.sigRequest}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; box-sizing: border-box; border: 1px solid var(--color-border-secondary); border-radius: 12px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; text-align: left; cursor: pointer">
                   <x-import component-from-global-scope="UntitledUI.FeaturedIcon" theme="modern" color="gray" size="md" icon="{{ic.Edit05}}"></x-import>
                   <span style="display: flex; flex-direction: column; gap: 2px">
-                    <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Request signature</span>
-                    <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{gd.signText}}</span>
+                    <span class="text-sm font-semibold" style="color: var(--color-text-primary)">Request signature</span>
+                    <span class="text-sm" style="color: var(--color-text-tertiary)">{{gd.signText}}</span>
                   </span>
                 </button>
                 <sc-if value="{{gd.notGuest}}" hint-placeholder-val="{{true}}">
                 <button type="button" class="opt-card" onClick="{{dr.sigScanWait}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; box-sizing: border-box; border: 1px solid var(--color-border-secondary); border-radius: 12px; background: var(--color-bg-primary); box-shadow: 0 1px 2px rgba(10,13,18,0.05); font: inherit; text-align: left; cursor: pointer">
                   <x-import component-from-global-scope="UntitledUI.FeaturedIcon" theme="modern" color="gray" size="md" icon="{{ic.Scan}}"></x-import>
                   <span style="display: flex; flex-direction: column; gap: 2px">
-                    <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Scan student ID</span>
-                    <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">At the window scanner. No signature needed.</span>
+                    <span class="text-sm font-semibold" style="color: var(--color-text-primary)">Scan student ID</span>
+                    <span class="text-sm" style="color: var(--color-text-tertiary)">At the window scanner. No signature needed.</span>
                   </span>
                 </button>
                 </sc-if>
@@ -891,18 +926,18 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <!-- Skip: pick a required reason -->
             <sc-if value="{{dr.sigSkipChoose}}" hint-placeholder-val="{{false}}">
               <div style="width: 100%; box-sizing: border-box; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: var(--color-bg-primary)">
-                <span id="skip-label" style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">Why are you skipping the signature?</span>
+                <span id="skip-label" class="text-sm font-semibold" style="color: var(--color-text-primary)">Why are you skipping the signature?</span>
                 <div role="radiogroup" aria-labelledby="skip-label" style="display: flex; flex-direction: column; gap: 8px">
                   <sc-for list="{{dr.skipReasons}}" as="r" hint-placeholder-count="4">
                     <button type="button" role="radio" aria-checked="{{r.on}}" onClick="{{r.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{r.rowBd}}; background: {{r.rowBg}}; font: inherit; text-align: left; cursor: pointer">
                       <span aria-hidden="true" style="width: 16px; height: 16px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{r.ring}}; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; background: var(--color-bg-primary)"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{r.dot}}"></span></span>
-                      <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">{{r.label}}</span>
+                      <span class="text-sm font-medium" style="color: var(--color-text-secondary)">{{r.label}}</span>
                     </button>
                   </sc-for>
                 </div>
                 <sc-if value="{{dr.skipOther}}" hint-placeholder-val="{{false}}">
-                  <label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--color-text-secondary)">Note (required)
-                    <textarea value="{{dr.skipNote}}" onChange="{{dr.onSkipNote}}" rows="2" placeholder="What happened?" style="resize: none; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--color-border-primary); box-shadow: 0 1px 2px rgba(10,13,18,.05); font: inherit; font-size: 16px; line-height: 24px; font-weight: 400; color: var(--color-text-primary); background: var(--color-bg-primary)"></textarea>
+                  <label class="text-sm font-medium" style="display: flex; flex-direction: column; gap: 6px; color: var(--color-text-secondary)">Note (required)
+                    <textarea value="{{dr.skipNote}}" onChange="{{dr.onSkipNote}}" rows="2" placeholder="What happened?" class="text-md font-normal" style="resize: none; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--color-border-primary); box-shadow: 0 1px 2px rgba(10,13,18,.05); font-family: inherit; color: var(--color-text-primary); background: var(--color-bg-primary)"></textarea>
                   </label>
                 </sc-if>
                 <div style="display: flex; justify-content: flex-end; gap: 12px">
@@ -915,11 +950,11 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
             <sc-if value="{{dr.sigSkipped}}" hint-placeholder-val="{{false}}">
               <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 0 24px">
                 <x-import component-from-global-scope="UntitledUI.BadgeWithIcon" type="pill-color" color="warning" size="md" icon-leading="{{ic.AlertTriangle}}">Signature skipped</x-import>
-                <span style="font-size: 14px; line-height: 20px; color: var(--color-text-secondary)">{{dr.sigSkipLabel}}</span>
+                <span class="text-sm" style="color: var(--color-text-secondary)">{{dr.sigSkipLabel}}</span>
                 <x-import component-from-global-scope="UntitledUI.Button" color="link-gray" size="sm" on-press="{{dr.sigUndoSkip}}">Undo</x-import>
               </div>
             </sc-if>
-            <span style="position: absolute; left: 16px; bottom: 8px; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)">{{dr.sigStatus}}</span>
+            <span class="text-xs" style="position: absolute; left: 16px; bottom: 8px; color: var(--color-text-tertiary)">{{dr.sigStatus}}</span>
           </div>
           </sc-if>
           <!-- Same place as under the two option cards: outside the box, left-aligned. -->
@@ -931,20 +966,259 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
 
       <!-- Partial pickup: unchecked items stay ready for pickup -->
       <sc-if value="{{dr.partial}}" hint-placeholder-val="{{false}}">
-        <div role="status" style="flex: 0 0 auto; margin: 0 24px 12px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); display: flex; gap: 10px; font-size: 14px; line-height: 20px; color: var(--color-text-secondary)">
+        <div role="status" class="text-sm" style="flex: 0 0 auto; margin: 0 24px 12px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); display: flex; gap: 10px; color: var(--color-text-secondary)">
           <span style="display: flex; flex: 0 0 auto; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4"></x-import></span>
           <span>{{dr.partialText}}</span>
         </div>
       </sc-if>
       <!-- Footer -->
       <div style="flex: 0 0 auto; padding: 16px 24px; border-top: 1px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: space-between; gap: 16px">
-        <span style="font-size: 12px; line-height: 18px; color: {{dr.statusColor}}">{{dr.status}}</span>
+        <span class="text-xs" style="color: {{dr.statusColor}}">{{dr.status}}</span>
         <sc-if value="{{dr.beatOff}}" hint-placeholder-val="{{true}}">
           <x-import component-from-global-scope="UntitledUI.Button" color="primary" size="md" icon-leading="{{ic.CheckCircle}}" is-disabled="{{dr.notReady}}" on-press="{{dr.complete}}">{{dr.completeText}}</x-import>
         </sc-if>
         <!-- Success beat (~0.6 s) before the drawer closes: same size as the button, success fill, check pops in. -->
         <sc-if value="{{dr.beatOn}}" hint-placeholder-val="{{false}}">
-          <span role="status" class="pq-picked" style="display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; background: var(--color-bg-success-solid); color: #ffffff; font-size: 14px; line-height: 20px; font-weight: 600"><span class="pq-picked-ic"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-5"></x-import></span>Picked up</span>
+          <span role="status" class="pq-picked text-sm font-semibold" style="display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; box-sizing: border-box; border-radius: 8px; background: var(--color-bg-success-solid); color: #ffffff"><span class="pq-picked-ic"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-5"></x-import></span>Picked up</span>
+        </sc-if>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- Pickup details (Completed tab): opened from a completed row. Same right-side drawer as Complete pickup.
+       Header, summary, activity timeline (oldest first, notes inline), Add a note, and Print receipt (the only place to print it).
+       The timeline is hand-built in Untitled UI's activity-feed style (no Feed component in the installed bundle). -->
+  <sc-if value="{{cdv.open}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" onClick="{{cdv.close}}" class="bar-anim pq-scrim" style="position: fixed; left: 0; right: 0; bottom: 0; top: {{railTop}}; z-index: 37; background: rgba(12, 17, 29, 0.45); transition: top 200ms linear"></div>
+    <aside role="dialog" aria-modal="true" aria-labelledby="cdv-title" class="bar-anim pq-drawer" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 460px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column; transition: top 200ms linear">
+      <!-- Header: same as Complete pickup (photo, number, name, codes, proxy line). -->
+      <div style="flex: 0 0 auto; padding: 16px 16px 16px 24px; border-bottom: 1px solid var(--color-border-secondary); display: flex; flex-wrap: wrap; align-items: flex-start; column-gap: 20px">
+        <sc-if value="{{cdv.hasPhoto}}" hint-placeholder-val="{{true}}"><img src="{{cdv.photo}}" alt="Photo of {{cdv.name}}" style="flex: 0 0 84px; width: 84px; height: 84px; object-fit: cover; border-radius: 10px; border: 1px solid var(--color-border-secondary); box-sizing: border-box"></sc-if>
+        <sc-if value="{{cdv.noPhoto}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" class="text-display-xs font-semibold" style="flex: 0 0 84px; width: 84px; height: 84px; border-radius: 10px; background: var(--color-bg-tertiary); border: 1px solid var(--color-border-secondary); box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: var(--color-text-quaternary)">{{cdv.initials}}</span></sc-if>
+        <div style="display: flex; flex-direction: column; min-width: 0; flex: 1 1 0; min-height: 84px">
+          <span style="display: flex; align-items: center; flex-wrap: wrap; column-gap: 8px; min-width: 0"><span class="text-lg font-bold" style="color: var(--color-brand-600); letter-spacing: 0.01em">{{cdv.ticket}}</span><sc-if value="{{cdv.guest}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="gray" size="sm">Guest</x-import></sc-if></span>
+          <h2 id="cdv-title" class="text-md font-semibold" style="margin: 0; color: var(--color-text-primary); overflow-wrap: anywhere">{{cdv.name}}</h2>
+          <sc-for list="{{cdv.codes}}" as="cd" hint-placeholder-count="2"><span class="text-xs" style="display: flex; gap: 4px; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums"><span>{{cd.k}}</span><span class="font-semibold" style="color: var(--color-text-secondary)">{{cd.v}}</span></span></sc-for>
+          <sc-if value="{{cdv.hasProxy}}" hint-placeholder-val="{{false}}"><span class="text-xs font-semibold" style="color: var(--color-text-brand-secondary)">{{cdv.proxyText}}</span></sc-if>
+        </div>
+        <div style="order: -1; flex: 0 0 100%; display: flex; justify-content: flex-end; margin-bottom: -4px">
+          <x-import component-from-global-scope="UntitledUI.Tooltip" title="Close" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" on-press="{{cdv.close}}" aria-label="Close"></x-import></x-import>
+        </div>
+      </div>
+      <!-- Body: the same two steps as Complete pickup, both done (read-only), then the activity timeline and Add a note. -->
+      <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px 24px; display: flex; flex-direction: column; gap: 24px">
+        <section aria-labelledby="cdv-items" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span class="pq-step" aria-hidden="true" style="background: var(--color-brand-600); border: 1.5px solid var(--color-brand-600); color: #ffffff"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></span>
+            <h3 id="cdv-items" class="text-md font-semibold" style="margin: 0; flex: 1 1 auto; color: var(--color-text-primary)">Items</h3>
+            <span class="text-sm font-medium" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{cdv.itemsProgress}}</span>
+          </div>
+          <div role="list" aria-label="Items" style="display: flex; flex-direction: column; border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden; background: var(--color-bg-primary)">
+            <sc-for list="{{cdv.items}}" as="it" hint-placeholder-count="2">
+              <sc-if value="{{it.groupStart}}" hint-placeholder-val="{{false}}"><div role="presentation" class="text-xs font-semibold" style="padding: 8px 16px; background: var(--color-bg-secondary); border-top: {{it.groupBorder}}; border-bottom: 1px solid var(--color-border-secondary); color: var(--color-text-secondary)">{{it.groupLabel}}</div></sc-if>
+              <div role="listitem" style="display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 12px 8px 16px; box-sizing: border-box; border-top: {{it.rowBorder}}">
+                <span style="display: flex; flex: 0 0 auto; color: {{it.icFg}}"><sc-if value="{{it.got}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-5" aria-hidden="true"></x-import></sc-if><sc-if value="{{it.left}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-5" aria-hidden="true"></x-import></sc-if></span>
+                <div class="pq-rowopen" onClick="{{it.open}}" style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
+                  <span class="text-md font-semibold" style="color: var(--color-text-tertiary)">Shelf {{it.shelf}}</span>
+                  <span class="text-sm" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.desc}}<span class="font-medium" style="color: var(--color-text-secondary)">{{it.trk}}</span></span>
+                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
+                </div>
+                <x-import component-from-global-scope="UntitledUI.Tooltip" title="Item details" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.ChevronRight}}" aria-label="Item details for shelf {{it.shelf}}" on-press="{{it.open}}"></x-import></x-import>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section aria-labelledby="cdv-id" style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span class="pq-step" aria-hidden="true" style="background: var(--color-brand-600); border: 1.5px solid var(--color-brand-600); color: #ffffff"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4"></x-import></span>
+            <h3 id="cdv-id" class="text-md font-semibold" style="margin: 0; flex: 1 1 auto; color: var(--color-text-primary)">Identity</h3>
+          </div>
+          <sc-if value="{{cdv.sigInk}}" hint-placeholder-val="{{true}}">
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center; padding: 16px 16px 12px; border: 1px solid var(--color-border-secondary); border-radius: 12px; background: var(--color-bg-primary)">
+              <svg role="img" aria-label="Signature of {{cdv.name}}" width="320" height="110" viewBox="0 0 320 110" fill="none" stroke="var(--color-text-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="max-width: 100%">
+                <path d="M14 74c10-30 22-52 30-50 9 2-6 44-2 50 5 7 14-26 22-27 7-1 3 24 9 25 8 1 12-20 20-22 6-1 2 19 9 20 9 1 14-31 23-30 7 1-3 28 4 29 8 1 11-14 18-15 8-1 6 13 13 13 9 0 13-17 21-17 7 0 4 14 11 14 10 0 16-30 26-46 6-10 13-14 15-9 3 8-12 37-14 52-1 8 4 9 10 4 7-6 12-16 20-15 8 1 2 14 10 14 10 0 20-12 32-14"></path>
+                <path d="M40 92c60-6 150-8 240-4"></path>
+              </svg>
+              <span class="text-xs" style="align-self: flex-start; margin-top: 4px; padding-top: 8px; width: 100%; border-top: 1px solid var(--color-border-secondary); color: var(--color-text-tertiary)">{{cdv.sigCaption}}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{cdv.sigOther}}" hint-placeholder-val="{{false}}">
+            <div class="text-sm" style="display: flex; gap: 10px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--color-border-secondary); background: var(--color-bg-secondary); color: var(--color-text-secondary)"><span style="display: flex; flex: 0 0 auto; padding-top: 2px; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.CheckCircle" class="size-4"></x-import></span><span>{{cdv.sigCaption}}</span></div>
+          </sc-if>
+        </section>
+        <section aria-labelledby="cdv-act" style="display: flex; flex-direction: column; gap: 12px">
+        <h3 id="cdv-act" class="text-sm font-semibold" style="margin: 0; color: var(--color-text-tertiary)">Activity</h3>
+        <!-- Activity timeline: one style for item details and pickup details. Newest first, 32pt icon circles,
+             title over a "time · detail" line, notes in gray boxes; the entry that is the current status is green. -->
+        <div role="list" aria-label="Pickup activity" style="display: flex; flex-direction: column">
+          <sc-for list="{{cdv.entries}}" as="st" hint-placeholder-count="4">
+          <div role="listitem" style="display: flex; gap: 12px">
+            <div style="display: flex; flex-direction: column; align-items: center">
+              <span class="pq-circ {{st.cls}}">
+                <sc-if value="{{st.i_note}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_photo}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Camera01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_bell}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Bell01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_check}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_inbox}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Inbox01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_truck}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_user}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.UserCheck01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_monitor}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Monitor01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_announce}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Announcement02" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_pkg}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_scan}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Scan" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_alert}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_sign}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Edit05" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_printer}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Printer" class="size-4" aria-hidden="true"></x-import></sc-if>
+                <sc-if value="{{st.i_info}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4" aria-hidden="true"></x-import></sc-if>
+              </span>
+              <sc-if value="{{st.notLast}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="width: 2px; flex: 1 1 auto; min-height: 16px; margin: 4px 0; border-radius: 2px; background: var(--color-border-secondary)"></span></sc-if>
+            </div>
+            <div style="flex: 1 1 auto; min-width: 0; padding: 4px 0 {{st.pb}}; display: flex; flex-direction: column">
+              <span class="text-md font-semibold" style="color: var(--color-text-primary)">{{st.title}}</span>
+              <span class="text-sm" style="color: var(--color-text-tertiary)">{{st.meta}}</span>
+              <sc-for list="{{st.lines}}" as="l" hint-placeholder-count="0"><span class="text-sm" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{l.text}}</span></sc-for>
+              <sc-if value="{{st.hasText}}" hint-placeholder-val="{{false}}">
+                <div style="margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--color-bg-secondary); display: flex; gap: 12px; align-items: flex-start">
+                  <sc-if value="{{st.photo}}" hint-placeholder-val="{{false}}"><button type="button" class="pq-thumb" onClick="{{iv.toPhoto}}" aria-label="Open the photo" style="width: 48px; height: 48px; border: 0; padding: 0; cursor: pointer"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-5" aria-hidden="true"></x-import></button></sc-if>
+                  <span class="text-sm" style="color: var(--color-text-secondary); white-space: pre-wrap; overflow-wrap: anywhere">{{st.text}}</span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          </sc-for>
+        </div>
+        </section>
+        <!-- Add a note: saved with this pickup; who and when are recorded; notes can't be edited or deleted. -->
+        <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid var(--color-border-secondary)">
+          <x-import component-from-global-scope="UntitledUI.TextArea" label="Add a note" placeholder="For example: Student came back for the second box." rows="3" value="{{cdv.note}}" on-change="{{cdv.onNote}}" hint="Notes are saved with this pickup and can’t be edited."></x-import>
+          <span style="display: flex; justify-content: flex-end"><x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="sm" is-disabled="{{cdv.noNote}}" on-press="{{cdv.addNote}}">Add note</x-import></span>
+        </div>
+      </div>
+      <!-- Footer: the only place to print the pickup receipt. -->
+      <div style="flex: 0 0 auto; padding: 16px 24px; border-top: 1px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <span class="text-xs" style="color: var(--color-text-tertiary)">{{cdv.footLine}}</span>
+        <x-import component-from-global-scope="UntitledUI.Button" color="primary" size="md" icon-leading="{{ic.Printer}}" on-press="{{cdv.print}}">Print receipt</x-import>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- Item details panel: one panel for both drawers (Complete pickup and Pickup details). It covers the drawer it was opened from,
+       so it reads as that drawer's content changing (no nested drawers or modals); Back returns to the drawer exactly as it was. -->
+  <sc-if value="{{iv.on}}" hint-placeholder-val="{{false}}">
+    <aside role="dialog" aria-modal="true" aria-label="Item details" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 39; width: 460px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column; transition: top 200ms linear">
+      <div style="flex: 0 0 auto; padding: 16px 16px 16px 12px; border-bottom: 1px solid var(--color-border-secondary); display: flex; align-items: center; gap: 8px">
+        <x-import component-from-global-scope="UntitledUI.Tooltip" title="Back" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.ArrowLeft}}" on-press="{{iv.back}}" aria-label="{{iv.backLabel}}"></x-import></x-import>
+        <sc-if value="{{iv.isItem}}" hint-placeholder-val="{{true}}"><span class="text-md font-semibold" style="flex: 1 1 auto; min-width: 0; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{iv.context}}</span></sc-if>
+        <sc-if value="{{iv.isSub}}" hint-placeholder-val="{{false}}"><h2 class="text-md font-semibold" style="flex: 1 1 auto; margin: 0; color: var(--color-text-primary)">{{iv.title}}</h2></sc-if>
+        <x-import component-from-global-scope="UntitledUI.Tooltip" title="Close" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" on-press="{{iv.close}}" aria-label="Close"></x-import></x-import>
+      </div>
+      <div style="flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px">
+
+        <!-- 1. Item details -->
+        <sc-if value="{{iv.isItem}}" hint-placeholder-val="{{true}}">
+        <div class="pq-view">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; align-items: center; gap: 16px">
+              <span class="pq-thumb" aria-hidden="true" style="width: 48px; height: 48px"><x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-6"></x-import></span>
+              <h2 class="text-display-xs font-semibold" style="flex: 1 1 auto; min-width: 0; margin: 0; color: var(--color-text-primary)">{{iv.sender}}</h2>
+              <x-import component-from-global-scope="UntitledUI.Badge" type="pill-color" color="brand" size="md">{{iv.status}}</x-import>
+            </div>
+            <div class="text-sm" style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary)">
+              <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.MarkerPin01" class="size-5" aria-hidden="true"></x-import></span>
+              <span style="font-weight: 500">Shelf {{iv.shelf}}</span>
+            </div>
+          </div>
+          <sc-if value="{{iv.hasNotes}}" hint-placeholder-val="{{true}}">
+            <button type="button" class="pq-icard" onClick="{{iv.toNotes}}">
+              <span class="pq-circ"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import></span>
+              <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">From the mailroom</span>
+                <span class="text-sm" style="color: var(--color-text-secondary)">{{iv.lastNote}}</span>
+                <span class="text-sm" style="margin-top: 4px; color: var(--color-text-tertiary)">{{iv.notesMeta}}</span>
+              </span>
+              <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.ChevronRight" class="size-5" aria-hidden="true"></x-import></span>
+            </button>
+          </sc-if>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <h3 class="text-sm font-semibold" style="margin: 0; color: var(--color-text-tertiary)">Details</h3>
+            <div style="display: flex; flex-direction: column; margin: 0 -24px; border-top: 1px solid var(--color-border-secondary)">
+              <sc-for list="{{iv.facts}}" as="f" hint-placeholder-count="3">
+                <div class="pq-orow text-sm"><span style="width: 96px; flex: 0 0 96px; color: var(--color-text-tertiary)">{{f.k}}</span><span style="flex: 1 1 auto; font-weight: 500; color: var(--color-text-primary)">{{f.v}}</span></div>
+              </sc-for>
+              <button type="button" class="pq-orow text-sm" onClick="{{iv.copy}}" aria-label="Copy tracking number {{iv.tracking}}"><span style="width: 96px; flex: 0 0 96px; color: var(--color-text-tertiary)">Tracking</span><span style="flex: 1 1 auto; min-width: 0; font-weight: 500; color: var(--color-text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere">{{iv.tracking}}</span><span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Copy01" class="size-5" aria-hidden="true"></x-import></span></button>
+            </div>
+          </div>
+          <button type="button" class="pq-orow" onClick="{{iv.toPhoto}}" style="margin: -8px -24px 0; width: calc(100% + 48px); border-bottom: 0; padding-top: 8px; padding-bottom: 8px; gap: 16px">
+            <span class="pq-thumb" style="width: 64px; height: 64px"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-6" aria-hidden="true"></x-import><span aria-hidden="true" style="position: absolute; right: 4px; bottom: 4px; width: 20px; height: 20px; border-radius: 9999px; background: var(--color-bg-primary); box-shadow: var(--shadow-xs); display: flex; align-items: center; justify-content: center; color: var(--color-fg-secondary)"><x-import component-from-global-scope="UntitledUI.Icons.Expand06" class="size-3"></x-import></span></span>
+            <span style="display: flex; flex-direction: column"><span class="text-md font-medium" style="color: var(--color-text-primary)">Package photo</span><span class="text-sm" style="color: var(--color-text-tertiary)">Taken when received · {{iv.receivedTime}}</span></span>
+          </button>
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <h3 class="text-sm font-semibold" style="margin: 0; color: var(--color-text-tertiary)">Activity</h3>
+            <!-- Activity timeline: one style for item details and pickup details. Newest first, 32pt icon circles,
+                 title over a "time · detail" line, notes in gray boxes; the entry that is the current status is green. -->
+            <div role="list" aria-label="Item activity" style="display: flex; flex-direction: column">
+              <sc-for list="{{iv.entries}}" as="st" hint-placeholder-count="4">
+              <div role="listitem" style="display: flex; gap: 12px">
+                <div style="display: flex; flex-direction: column; align-items: center">
+                  <span class="pq-circ {{st.cls}}">
+                    <sc-if value="{{st.i_note}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_photo}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Camera01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_bell}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Bell01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_check}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Check" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_inbox}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Inbox01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_truck}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Truck01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_user}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.UserCheck01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_monitor}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Monitor01" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_announce}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Announcement02" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_pkg}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Package" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_scan}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Scan" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_alert}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.AlertTriangle" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_sign}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Edit05" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_printer}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.Printer" class="size-4" aria-hidden="true"></x-import></sc-if>
+                    <sc-if value="{{st.i_info}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="UntitledUI.Icons.InfoCircle" class="size-4" aria-hidden="true"></x-import></sc-if>
+                  </span>
+                  <sc-if value="{{st.notLast}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="width: 2px; flex: 1 1 auto; min-height: 16px; margin: 4px 0; border-radius: 2px; background: var(--color-border-secondary)"></span></sc-if>
+                </div>
+                <div style="flex: 1 1 auto; min-width: 0; padding: 4px 0 {{st.pb}}; display: flex; flex-direction: column">
+                  <span class="text-md font-semibold" style="color: var(--color-text-primary)">{{st.title}}</span>
+                  <span class="text-sm" style="color: var(--color-text-tertiary)">{{st.meta}}</span>
+                  <sc-for list="{{st.lines}}" as="l" hint-placeholder-count="0"><span class="text-sm" style="color: var(--color-text-tertiary); font-variant-numeric: tabular-nums">{{l.text}}</span></sc-for>
+                  <sc-if value="{{st.hasText}}" hint-placeholder-val="{{false}}">
+                    <div style="margin-top: 8px; padding: 12px 14px; border-radius: 12px; background: var(--color-bg-secondary); display: flex; gap: 12px; align-items: flex-start">
+                      <sc-if value="{{st.photo}}" hint-placeholder-val="{{false}}"><button type="button" class="pq-thumb" onClick="{{iv.toPhoto}}" aria-label="Open the photo" style="width: 48px; height: 48px; border: 0; padding: 0; cursor: pointer"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-5" aria-hidden="true"></x-import></button></sc-if>
+                      <span class="text-sm" style="color: var(--color-text-secondary); white-space: pre-wrap; overflow-wrap: anywhere">{{st.text}}</span>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+              </sc-for>
+            </div>
+          </div>
+          </div>
+        </div>
+        </sc-if>
+
+
+        <!-- 3. Notes: chat-style, oldest to newest. Space at the bottom is kept for a future "Message the mailroom" box (not built). -->
+        <sc-if value="{{iv.isNotes}}" hint-placeholder-val="{{false}}">
+        <div class="pq-view" style="gap: 16px; min-height: 100%; padding-bottom: 96px; box-sizing: border-box">
+          <div class="text-sm" style="display: flex; align-items: center; gap: 12px; color: var(--color-text-tertiary)"><span style="flex: 1 1 auto; height: 1px; background: var(--color-border-secondary)"></span>{{iv.noteDay}}<span style="flex: 1 1 auto; height: 1px; background: var(--color-border-secondary)"></span></div>
+          <sc-for list="{{iv.notes}}" as="n" hint-placeholder-count="2">
+            <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start">
+              <span class="text-sm" style="color: var(--color-text-tertiary)">Mailroom · {{n.time}}</span>
+              <span class="text-md" style="max-width: 340px; padding: 10px 14px; border-radius: 16px 16px 16px 4px; background: var(--color-bg-secondary); color: var(--color-text-primary)">{{n.text}}</span>
+              <sc-if value="{{n.photo}}" hint-placeholder-val="{{false}}"><button type="button" class="pq-thumb" onClick="{{iv.toPhoto}}" aria-label="Open the photo" style="width: 160px; height: 120px; margin-top: 4px; border: 0; padding: 0; cursor: pointer"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-6" aria-hidden="true"></x-import></button></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <!-- Photo, full size inside the drawer (no modal). Prototype placeholder image. -->
+        <sc-if value="{{iv.isPhoto}}" hint-placeholder-val="{{false}}">
+        <div class="pq-view" style="gap: 12px">
+          <div class="pq-thumb" role="img" aria-label="Package photo" style="width: 100%; aspect-ratio: 4 / 3"><x-import component-from-global-scope="UntitledUI.Icons.Image01" class="size-6" aria-hidden="true"></x-import></div>
+          <span class="text-sm" style="color: var(--color-text-tertiary)">Taken when received · {{iv.receivedFull}}</span>
+        </div>
         </sc-if>
       </div>
     </aside>
@@ -956,8 +1230,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
     <aside role="dialog" aria-modal="true" aria-labelledby="set-title" class="pq-drawer" style="position: fixed; right: 0; bottom: 0; top: {{railTop}}; z-index: 38; width: 420px; max-width: 100%; background: var(--color-bg-primary); box-shadow: 0 20px 24px -4px rgba(10,13,18,0.08), 0 8px 8px -4px rgba(10,13,18,0.03); display: flex; flex-direction: column">
       <div style="flex: 0 0 auto; padding: 20px 24px 16px; border-bottom: 1px solid var(--color-border-secondary); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
         <div style="display: flex; flex-direction: column; gap: 4px">
-          <h2 id="set-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">Pickup queue configuration</h2>
-          <span style="font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Applies to everyone at Service point 3110 · Lobby Lockers.</span>
+          <h2 id="set-title" class="text-lg font-semibold" style="margin: 0; color: var(--color-text-primary)">Pickup queue configuration</h2>
+          <span class="text-sm" style="color: var(--color-text-tertiary)">Applies to everyone at Service point 3110 · Lobby Lockers.</span>
         </div>
         <x-import component-from-global-scope="UntitledUI.Tooltip" title="Close" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" on-press="{{set.close}}" aria-label="Close"></x-import></x-import>
       </div>
@@ -1014,19 +1288,21 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <button type="button" class="uu-btn" style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.viewReceipt}}">View sample pickup receipt</button>
       <button type="button" class="uu-btn" style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.viewPick}}">View sample pick list</button>
       <span style="margin-top: 6px">Data</span>
-      <button type="button" class="uu-btn" style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.reset}}">Reset prototype (all screens)</button>
+      <button type="button" class="uu-btn" data-tip="Clears everything on every screen (queue, displays, settings) and returns to the starting queue." style="display: flex; align-items: center; width: 100%; height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.reset}}">Reset prototype</button>
       </sc-if>
       <sc-if value="{{proto.tabK}}" hint-placeholder-val="{{false}}">
         <span>Jump to a moment</span>
         <sc-for list="{{proto.cps}}" as="c" hint-placeholder-count="11">
           <button type="button" class="uu-btn" data-tip="{{c.tip}}" onClick="{{c.go}}" style="display: flex; align-items: center; width: 100%; min-height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer">{{c.label}}</button>
         </sc-for>
+        <button type="button" class="uu-btn" data-tip="Clears everything on every screen (queue, displays, settings) and returns to the starting queue." style="display: flex; align-items: center; width: 100%; min-height: 26px; margin-top: 6px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.reset}}">Reset prototype</button>
       </sc-if>
       <sc-if value="{{proto.tabE}}" hint-placeholder-val="{{false}}">
         <span>Jump to an error</span>
         <sc-for list="{{proto.errs}}" as="c" hint-placeholder-count="7">
           <button type="button" class="uu-btn" data-tip="{{c.tip}}" onClick="{{c.go}}" style="display: flex; align-items: center; width: 100%; min-height: 26px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer">{{c.label}}</button>
         </sc-for>
+        <button type="button" class="uu-btn" data-tip="Clears everything on every screen (queue, displays, settings) and returns to the starting queue." style="display: flex; align-items: center; width: 100%; min-height: 26px; margin-top: 6px; padding: 0 8px; border: 1px solid #555; background: none; font: inherit; text-align: left; cursor: pointer" onClick="{{proto.reset}}">Reset prototype</button>
       </sc-if>
     </aside>
   </sc-if>
@@ -1057,8 +1333,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
     <div role="dialog" aria-modal="true" aria-labelledby="ph-title" tabindex="-1" ref="{{idc.dlgRef}}" onKeyDown="{{idc.onKey}}" style="position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 49; width: min(368px, calc(100% - 32px)); max-height: calc(100vh - 32px); overflow-y: auto; box-sizing: border-box; padding: 24px; border-radius: 16px; background: var(--color-bg-primary); box-shadow: 0 24px 48px -12px rgba(10,13,18,.18); display: flex; flex-direction: column; gap: 20px; outline: none">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
         <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-          <h2 id="ph-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">{{dr.name}}</h2>
-          <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">Student ID {{dr.sid}}</p>
+          <h2 id="ph-title" class="text-lg font-semibold" style="margin: 0; color: var(--color-text-primary)">{{dr.name}}</h2>
+          <p class="text-sm" style="margin: 0; color: var(--color-text-tertiary)">Student ID {{dr.sid}}</p>
         </div>
         <x-import component-from-global-scope="UntitledUI.Tooltip" title="Close" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" on-press="{{idc.close}}" aria-label="Close"></x-import></x-import>
       </div>
@@ -1073,19 +1349,32 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
     <div role="dialog" aria-modal="true" aria-labelledby="mv-title" style="position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 47; width: min(480px, calc(100% - 32px)); box-sizing: border-box; padding: 24px; border-radius: 16px; background: var(--color-bg-primary); box-shadow: 0 24px 48px -12px rgba(10,13,18,.18); display: flex; flex-direction: column; gap: 20px">
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px">
         <div style="display: flex; flex-direction: column; gap: 4px">
-          <h2 id="mv-title" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: var(--color-text-primary)">Move {{mv.ticket}} to another window</h2>
-          <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--color-text-tertiary)">{{mv.name}} will be called to the window you pick. The lobby and staff displays update right away.</p>
+          <h2 id="mv-title" class="text-lg font-semibold" style="margin: 0; color: var(--color-text-primary)">Move {{mv.ticket}}</h2>
+          <p class="text-sm" style="margin: 0; color: var(--color-text-tertiary)">{{mv.name}} will be called to the window or person you pick. The lobby and staff displays update right away.</p>
         </div>
         <x-import component-from-global-scope="UntitledUI.Tooltip" title="Close" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" on-press="{{mv.close}}" aria-label="Close"></x-import></x-import>
       </div>
-      <div role="radiogroup" aria-label="Window" style="display: flex; flex-direction: column; gap: 8px">
-        <sc-for list="{{mv.wins}}" as="w" hint-placeholder-count="4">
+      <div role="radiogroup" aria-label="Where to move them" style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span class="text-sm font-semibold" style="color: var(--color-text-secondary)">Windows</span>
+          <sc-for list="{{mv.wins}}" as="w" hint-placeholder-count="4">
           <button type="button" role="radio" aria-checked="{{w.on}}" onClick="{{w.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{w.border}}; box-shadow: {{w.ring}}; background: {{w.bg}}; font: inherit; text-align: left; cursor: pointer">
             <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.Monitor01" class="size-5"></x-import></span>
-            <span style="flex: 1 1 auto; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--color-text-primary)">{{w.name}}</span>
-            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; line-height: 18px; color: var(--color-text-tertiary)"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{w.dot}}"></span>{{w.status}}</span>
+            <span class="text-sm font-semibold" style="flex: 1 1 auto; color: var(--color-text-primary)">{{w.name}}</span>
+            <span class="text-xs" style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-tertiary)"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{w.dot}}"></span>{{w.status}}</span>
           </button>
         </sc-for>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span class="text-sm font-semibold" style="color: var(--color-text-secondary)">On foot</span>
+          <sc-for list="{{mv.feet}}" as="w" hint-placeholder-count="2">
+          <button type="button" role="radio" aria-checked="{{w.on}}" onClick="{{w.pick}}" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{w.border}}; box-shadow: {{w.ring}}; background: {{w.bg}}; font: inherit; text-align: left; cursor: pointer">
+            <span style="display: flex; color: var(--color-fg-quaternary)"><x-import component-from-global-scope="UntitledUI.Icons.User01" class="size-5"></x-import></span>
+            <span class="text-sm font-semibold" style="flex: 1 1 auto; color: var(--color-text-primary)">{{w.name}}</span>
+            <span class="text-xs" style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-tertiary)"><span style="width: 6px; height: 6px; border-radius: 999px; background: {{w.dot}}"></span>{{w.status}}</span>
+          </button>
+        </sc-for>
+        </div>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 12px">
         <x-import component-from-global-scope="UntitledUI.Button" color="secondary" size="lg" on-press="{{mv.close}}">Cancel</x-import>
@@ -1123,9 +1412,12 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
       <sc-if value="{{toastIsBlocked}}" hint-placeholder-val="{{false}}">
         <span style="display: flex; flex: 0 0 auto"><x-import component-from-global-scope="UntitledUI.Icons.AlertCircle" class="size-5"></x-import></span>
       </sc-if>
+      <sc-if value="{{toastIsCopied}}" hint-placeholder-val="{{false}}">
+        <span style="display: flex; flex: 0 0 auto"><x-import component-from-global-scope="UntitledUI.Icons.Copy01" class="size-5"></x-import></span>
+      </sc-if>
       <span style="display: flex; flex-direction: column; min-width: 0">
-        <span style="font-size: 14px; line-height: 20px; font-weight: 600">{{toastTitle}}</span>
-        <span style="font-size: 14px; line-height: 20px; color: rgba(255,255,255,0.8)">{{toastText}}</span>
+        <span class="text-sm font-semibold">{{toastTitle}}</span>
+        <span class="text-sm" style="color: rgba(255,255,255,0.8)">{{toastText}}</span>
       </span>
       <sc-if value="{{toastIsDone}}" hint-placeholder-val="{{false}}">
         <button type="button" onClick="{{toastUndo}}" style="margin-left: 8px; height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); color: #ffffff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Undo</button>
@@ -1148,6 +1440,8 @@ class Component extends DCLogic {
   componentDidMount() {
     this.sharedStart();
     if (this.props.demo === 'drawer' || this.props.demo === 'serving') this.demoDrawer(this.props.demo === 'drawer');
+    // Mockup: Completed tab at Window 2 on fresh sample data.
+    if (this.props.demo === 'completedFilters') { this.sharedReset(); this.setState({ myWin: 'Window 2', tab: 'completed' }); }
     // Product bar: tucks behind the dark bar when scrolling down, returns on scroll up or at the top.
     this._lastY = 0;
     this._onScroll = () => {
@@ -1165,7 +1459,7 @@ class Component extends DCLogic {
   componentDidUpdate() { this.syncScrollLock(); }
   syncScrollLock() {
     const st = this.state || {};
-    const on = !!(st.drawerId || (st.setOpen && this.role() === 'manager') || st.photoZoom || st.protoPrint);
+    const on = !!(st.drawerId || st.cdKey || (st.setOpen && this.role() === 'manager') || st.photoZoom || st.protoPrint);
     if (on === !!this._locked) return;
     const de = document.documentElement, b = document.body;
     if (on) {
@@ -1194,7 +1488,7 @@ class Component extends DCLogic {
     // Spoken: the ticket read character by character (A one zero two), once.
     const digits = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
     const spell = String(ticket).split('').map((c) => (/[0-9]/.test(c) ? digits[+c] : c)).join(' ');
-    const text = 'Now serving ' + spell + ' at ' + win + '.';
+    const text = /^See /.test(win) ? 'Now serving ' + spell + '. ' + win + '.' : 'Now serving ' + spell + ' at ' + win + '.';
     if (this.annMuted()) return;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -1524,6 +1818,9 @@ class Component extends DCLogic {
     const pkSel = (x) => KSEL[x.id] ? x.pk + ' of ' + KSEL[x.id] + ' packages' : pk(x.pk);
     const selNote = (x) => KSEL[x.id] ? x.name.split(' ')[0] + ' chose ' + x.pk + ' of ' + KSEL[x.id] + ' at the kiosk' : '';
     const WINS = ['Window 1', 'Window 2', 'Window 3', 'Window 4', 'Window 5'];
+    // Staff serving on foot (prototype sample). The displays show them as “See [first name]”, like the phone app.
+    const FOOT = [{ name: 'Alex R.', tv: 'See Alex' }, { name: 'Nina P.', tv: 'See Nina' }];
+    const footName = (w) => { const f = FOOT.find((x) => x.tv === w); return f ? f.name : w; };
     const waitColor = (n) => n >= 1200 ? 'error' : (n >= 900 ? 'warning' : 'gray');
     const viaIcon = (v) => v === 'Kiosk' ? ic.Tablet01 : (v === 'Staff' ? ic.UserCheck01 : (v === 'ID scan' ? ic.Scan : ic.Phone01));
     const firstLast = (name) => { const p = name.split(' '); return p[0] + ' ' + (p[1] ? p[1][0] + '.' : ''); };
@@ -1538,7 +1835,7 @@ class Component extends DCLogic {
       const win = atWin || MY_WIN;
       if ((this.state.busy || {})[id]) return;
       // Number and window only: no names over the lobby speakers.
-      const text = 'Now serving ' + id + ' at ' + win + '.';
+      const text = /^See /.test(win) ? 'Now serving ' + id + '. ' + win + '.' : 'Now serving ' + id + ' at ' + win + '.';
       this.setState(Object.assign({ busy: Object.assign({}, this.state.busy || {}, { [id]: true }) }, keepToast ? {} : { toast: { kind: 'ann', ticket: id, title: 'Announcing on lobby speakers', text: '“' + text + '”' } }));
       this.speakAnnouncement(id, win);
       this.later(() => {
@@ -1623,7 +1920,7 @@ class Component extends DCLogic {
       this.sharedUpdate((x) => { x.serving = x.serving.map((sv) => sv.id === id ? Object.assign({}, sv, { win: to, since: Date.now(), ann: 0, annAt: null }) : sv); });
       if (this.state.drawerId === id) this.setState({ drawerId: null });
       { const p = Object.assign({}, this.state.pick || {}); delete p[id]; this.setState({ pick: p }); } // a move starts the pickup fresh
-      this.setState({ moveId: null, moveTo: null, toast: { kind: 'moved', title: 'Moved to ' + to, text: 'Announcing “Now serving ' + id + ' at ' + to + '” on the lobby speakers.', id: id, prev: prev } });
+      this.setState({ moveId: null, moveTo: null, toast: { kind: 'moved', title: 'Moved to ' + footName(to), text: 'Announcing “Now serving ' + id + (/^See /.test(to) ? '. ' + to + '.' : ' at ' + to) + '” on the lobby speakers.', id: id, prev: prev } });
       // Moving announces right away at the new window. Undo moves them back but can't take the announcement back.
       announceItem(it, to, true);
       this.later(() => { if (this.state.toast && this.state.toast.kind === 'moved' && this.state.toast.id === id) this.setState({ toast: null }); }, 6000);
@@ -1705,8 +2002,8 @@ class Component extends DCLogic {
     // Chloe Martin, Priya Natarajan, and new arrivals Ben Carter, Owen Price and Hana Sato.
     const NO_PHOTO_IDS = ['2041 8120', '2039 1170', '2044 0391', '2040 7756', '2042 3318', '2045 2287', '2039 7741', '2042 0915', '2038 4471', '2042 7704', '2041 2209', '2043 8812', '2038 9934', '2039 4410'];
     // Sample photos (prototype only). Picked from the Student ID so each student keeps the same photo everywhere.
-    const PHOTOS_M = ['assets/1c45a13cc2a3b67d41d9940f677eb097.jpg', 'assets/651a843b5e006b6f9534d9af40da9bc1.jpg'];
-    const PHOTOS_F = ['assets/8e6da18d903bcc0ce1395d8257228446.jpg', 'assets/826299d4e24b98a07f541450e51a7ab2.jpg', 'assets/5bf48db88195f676575c5f5a57498da6.jpg', 'assets/f783fd9e60abbca7f8c24337e16da876.jpg', 'assets/75c44bfa51f4473b83814ddc62bfc905.jpg', 'assets/da9214a0df326acad192cd429695521c.jpg', 'assets/fa149e1f28d271568519c33102e3c891.jpg', 'assets/0e31fb0f182b37e50b8e8334776893b7.jpg', 'assets/0b2691c3cced059b2a4e9bfe175f4291.jpg'];
+    const PHOTOS_M = ['/_blob/1c45a13cc2a3b67d41d9940f677eb097', '/_blob/651a843b5e006b6f9534d9af40da9bc1'];
+    const PHOTOS_F = ['/_blob/8e6da18d903bcc0ce1395d8257228446', '/_blob/826299d4e24b98a07f541450e51a7ab2', '/_blob/5bf48db88195f676575c5f5a57498da6', '/_blob/f783fd9e60abbca7f8c24337e16da876', '/_blob/75c44bfa51f4473b83814ddc62bfc905', '/_blob/da9214a0df326acad192cd429695521c', '/_blob/fa149e1f28d271568519c33102e3c891', '/_blob/0e31fb0f182b37e50b8e8334776893b7', '/_blob/0b2691c3cced059b2a4e9bfe175f4291'];
     const M_NAMES = ['Daniel', 'Aaron', 'Lucas', 'Tyler', 'Malik', 'Diego', 'Kevin', 'Leo', 'Sam', 'Jordan', 'Brian', 'Devin', 'Marcus', 'Omar', 'Ethan', 'Owen', 'Ben'];
     const photoOf = (sid, name) => {
       if (!sid) return undefined;
@@ -1818,6 +2115,8 @@ class Component extends DCLogic {
     };
     // A scan arrives (scan gun, simulated scan, or typed fallback): check off the match, or warn if it's someone else's.
     const takeScan = (code) => {
+      // A scan while looking at item details goes back to the pickup so the check-off is visible.
+      if (this.state.iv && this.state.iv.src !== 'cd') this.setState({ iv: null });
       if (!drItem) return false;
       const key = String(code).replace(/\s+/g, '').toUpperCase();
       const mine = drItems.findIndex((t) => t.tracking.replace(/\s+/g, '').toUpperCase() === key);
@@ -1874,6 +2173,8 @@ class Component extends DCLogic {
       const blockedMany = !added.length && !allowedHits.length && otherHits.length > 1;
       return {
         guest: !!g, notGuest: !g, first: first, q: st.gq || '',
+        // Prototype only: names testers can try (a student who listed this guest, one who didn't, a first name with several matches).
+        tests: (() => { const ok = g ? GUEST_STUDENTS.filter((p) => p.auth.indexOf(g.name) >= 0) : []; const t = ok.length ? [[ok[0].name, 'ok'], ['Liam', 'blocked'], [ok[0].name.split(' ')[0], 'several']] : [['Emily Chen', 'blocked'], ['Emily', 'several']]; return t.map(([q, k]) => ({ label: q + ' ' + k, go: () => this.setState({ gq: q }) })); })(),
         onQ: (e) => this.setState({ gq: e && e.target ? e.target.value : e }),
         // Search stays open the whole time: keep typing names to add more students. Added students show as their package groups below.
         showSearch: true, showAddLink: false,
@@ -1890,6 +2191,60 @@ class Component extends DCLogic {
         optCols: g ? 1 : 2, signText: g ? 'Guest signs on the pad.' : 'Student signs on the pad.', skipLabel: g ? 'Can’t sign?' : 'Can’t sign or scan?'
       };
     })();
+    // Activity timeline rows (item details + pickup details): newest first; `cur` marks the current status (green).
+    const actRows = (E) => { const L = E.slice().reverse(); return L.map((x, k) => {
+      const o = { cls: x.cur ? 'on' : '', title: x.title, meta: [x.time].concat(x.sub ? [x.sub] : []).join(' · '),
+        lines: (x.lines || []).map((t) => (typeof t === 'string' ? { text: t } : t)), hasText: !!x.text, text: x.text || '', photo: !!x.photo,
+        notLast: k < L.length - 1, pb: k < L.length - 1 ? '24px' : '0' };
+      o['i_' + (x.cur ? 'check' : x.ik)] = true; return o; }); };
+    // Item details (web version of the student app pattern), shared by Complete pickup (src 'dr') and Pickup details (src 'cd').
+    // Built lazily in the return so it can reach completed pickups. Sample data: sender, times and notes are made up per item.
+    const ivBuild = () => {
+      const S = st.iv; if (!S) return { on: false, off: true };
+      let base = null, list = [], done = null;
+      if (S.src === 'cd') { const keyOf = (c) => c.uid || (c.id + '-' + c.doneAt); base = st.cdKey === S.key ? compPool.find((c) => keyOf(c) === S.key) : null; list = base ? itemsFor(base) : []; done = base; }
+      else if (drItem && S.id === drItem.id) { base = drItem; list = drItems; }
+      const t = base ? list[S.i] : null;
+      if (!t) return { on: false, off: true };
+      const h = String(t.tracking).split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      const SENDERS = ['Patagonia', 'Amazon', 'Target', 'Apple', 'Warby Parker', 'Chewy', 'Best Buy', 'Etsy'];
+      const sender = t.carrier === 'Amazon' ? 'Amazon' : SENDERS[h % SENDERS.length];
+      const hasNotes = S.i === 0; // same rule as the list hint: first package of every pickup
+      const notes = hasNotes ? [
+        { time: '9:41 AM', text: 'Box arrived with a torn corner. Contents look fine.', photo: true },
+        { time: '9:50 AM', text: 'Oversize item. Ask for it at Window 3.', photo: false }
+      ] : [];
+      const ev = (ik, title, time, sub, cur) => ({ ik, title, time, sub, cur: !!cur });
+      const nt = (n) => ({ ik: n.photo ? 'photo' : 'note', title: 'Note', time: 'Oct 18 · ' + n.time, text: n.text, photo: n.photo });
+      const entries = actRows([].concat(
+        [ev('truck', 'Delivered by ' + t.carrier, 'Oct 18 · 9:10 AM'), ev('inbox', 'Received', 'Oct 18 · 9:32 AM', 'Hollis Hall Mailroom')],
+        hasNotes ? [nt(notes[0])] : [],
+        [ev('pkg', 'Ready for pickup', 'Oct 18 · 9:45 AM', 'Shelf ' + t.shelf, !done), ev('bell', 'Notified', 'Oct 18 · 9:46 AM', 'App notification')],
+        hasNotes ? [nt(notes[1])] : [],
+        done ? [ev('pkg', 'Picked up', clock(done.doneAt), footName(done.win), true)] : []
+      ));
+      const go = (view) => this.setState({ iv: Object.assign({}, S, { view }) });
+      const v = S.view || 'item';
+      return {
+        on: true, off: false, isItem: v === 'item', isNotes: v === 'notes', isPhoto: v === 'photo', isSub: v !== 'item',
+        title: v === 'notes' ? 'Notes' : 'Package photo',
+        context: base.id + ' · ' + base.name,
+        backLabel: v === 'item' ? (S.src === 'cd' ? 'Back to pickup details' : 'Back to the pickup') : 'Back to item details',
+        back: () => this.setState({ iv: v === 'item' ? null : Object.assign({}, S, { view: 'item' }) }),
+        close: () => { this.setState({ iv: null }); if (S.src === 'cd') this.setState({ cdKey: null, cdNote: '' }); else dr.close(); },
+        sender, status: done ? 'Picked up' : 'Ready for pickup', shelf: t.shelf,
+        hasNotes, notes, lastNote: hasNotes ? notes[notes.length - 1].text : '', notesMeta: 'Oct 18, 9:50 AM · ' + notes.length + ' notes', noteDay: 'Oct 18',
+        entries,
+        facts: [{ k: 'Carrier', v: t.carrier }, { k: 'Size', v: t.size }, { k: 'Arrived', v: 'Oct 18 · 9:32 AM' }],
+        tracking: t.tracking, receivedTime: '9:32 AM', receivedFull: 'Oct 18, 9:32 AM',
+        toNotes: () => go('notes'), toPhoto: () => go('photo'),
+        copy: () => {
+          try { navigator.clipboard && navigator.clipboard.writeText(String(t.tracking).replace(/\s/g, '')).catch(() => {}); } catch (e) {}
+          this.setState({ toast: { kind: 'copied', title: 'Tracking number copied', text: trk(t.tracking) } });
+          this.later(() => { if (this.state.toast && this.state.toast.kind === 'copied') this.setState({ toast: null }); }, 3000);
+        }
+      };
+    };
     const dr = {
       scanBg: st.scanFlash ? 'var(--color-brand-25)' : 'var(--color-bg-primary)',
       scanBorder: st.scanFlash ? 'var(--color-brand-300)' : 'var(--color-border-primary)',
@@ -1972,6 +2327,9 @@ class Component extends DCLogic {
         if (other) flashScan(itemsFor(other)[0].tracking);
       },
       items: drItems.map((t, i) => ({
+        open: () => { if (drItem) this.setState({ iv: { src: 'dr', id: drItem.id, i, view: 'item' } }); },
+        // Sample: the first package of every pickup has notes from the mailroom (same text as the student app).
+        hasNotes: i === 0, notesLabel: '2 notes',
         carrier: t.carrier, tracking: t.tracking, size: t.size, shelf: t.shelf,
         // Proxy pickup: items grouped by owner with a small label over each group.
         groupStart: !!t.owner && (i === 0 || drItems[i - 1].owner !== t.owner), groupLabel: t.ownerSelf ? t.owner + ' (their own)' : 'For ' + t.owner,
@@ -2169,7 +2527,7 @@ class Component extends DCLogic {
       ['ready', '6 · Ready to complete', 'Items done and student ID scanned; Complete pickup enabled.'],
       ['done', '7 · Just completed', 'Runs the real Complete pickup: success beat, toast, next slides in.'],
       ['proxy', '8 · Proxy pickup', 'Serving Daniel Reyes (A103), picking up for Kevin O’Brien and Mei Lin.'],
-      ['move', '9 · Move to a window', 'Move dialog open for the student being served (web moves serving only).'],
+      ['move', '9 · Move to a window or person', 'Move dialog open for the student being served: windows and on-foot staff (web moves serving only).'],
       ['requeue', '10 · Return to queue', 'Serving a student with 2 items scanned, then Return to queue: toast with Undo and the put-back reminder.'],
       ['walkup', '11 · Walk-up check-in', 'The Check in a student dialog is open.']
     ];
@@ -2206,7 +2564,6 @@ class Component extends DCLogic {
       closeNav: () => { if (this.state.navOpen) this.setState({ navOpen: false }); },
       toggleNav: () => this.setState({ navOpen: !this.state.navOpen }),
       // Ricoh logo: resets the shared data, so both displays reset too.
-      resetPrototype: () => resetAll(),
       m: {
         queue: String(queue.length),
         serving: String(servingAll.length),
@@ -2298,6 +2655,10 @@ class Component extends DCLogic {
           serve: () => serve(q.id)
         };
       }).filter((r) => r.match),
+      // Mockup board "Completed filters": proposed Button group in the search row (live screen unchanged).
+      cf: { on: true, old: false,
+        key: compMine ? 'mine' : 'all',
+        onKey: (k) => { if (k) this.setState({ compAll: k === 'all' }); } },
       comp: {
         allOn: !compMine, mineOn: compMine,
         showAll: () => this.setState({ compAll: true }),
@@ -2438,6 +2799,9 @@ class Component extends DCLogic {
         missingLabel: (c.missing || 0) + ' still to pick up',
         hasSkip: !!c.sigSkip, skipBadge: 'Signature skipped', skipTitle: c.sigSkip ? 'Signature skipped: ' + c.sigSkip : '',
         undo: () => undoComplete(c.id),
+        // Pickup details drawer. Row clicks ignore the row's own buttons (Undo).
+        open: () => this.setState({ cdKey: c.uid || (c.id + '-' + c.doneAt), cdNote: '' }),
+        rowOpen: (e) => { try { if (e && e.target && e.target.closest && e.target.closest('button:not(.name-btn)')) return; } catch (er) {} if (e && e.target && e.target.closest && e.target.closest('.name-btn')) return; this.setState({ cdKey: c.uid || (c.id + '-' + c.doneAt), cdNote: '' }); },
         // Pickup receipt: proof of pickup for this record. Same print pattern as the pick list; the receipt itself isn't rendered in this prototype.
         print: () => {
           const day = c.doneAt >= todayStart.getTime() ? 'today' : new Date(c.doneAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -2445,6 +2809,86 @@ class Component extends DCLogic {
           this.later(() => { if (this.state.toast && this.state.toast.kind === 'print') this.setState({ toast: null }); }, 3500);
         }
       })),
+      // Pickup details drawer (Completed tab). Timeline is built from the pickup record; times without a stored value are
+      // close estimates (prototype). Notes and receipt prints are kept on this screen for the session (prototype).
+      cdv: (() => {
+        const keyOf = (c) => c.uid || (c.id + '-' + c.doneAt);
+        const rec = st.cdKey ? compPool.find((c) => keyOf(c) === st.cdKey) : null;
+        if (!rec) return { open: false, entries: [] };
+        const key = keyOf(rec);
+        // Prototype: sample operator names for the other windows.
+        const OPS = { 'Window 1': 'Maya T.', 'Window 2': 'John B.', 'Window 3': 'Chris D.', 'Window 4': 'Priya S.', 'Window 5': 'Sam K.' };
+        const op = rec.win === MY_WIN ? 'John B.' : (OPS[rec.win] || footName(rec.win));
+        const since = rec.since || (rec.doneAt - 150000);
+        const its = itemsFor(rec);
+        const missing = Math.min(rec.missing || 0, its.length);
+        const got = its.slice(0, its.length - missing), left = its.slice(its.length - missing);
+        const itemLine = (x) => ({ text: x.carrier + ' · ' + x.size + ' · ' + trk(x.tracking) + ' · Shelf ' + x.shelf + (x.owner && !x.ownerSelf ? ' · for ' + shortName(x.owner) : '') });
+        const VIA = { App: 'Checked in on the app', Kiosk: 'Checked in at the kiosk', Staff: 'Checked in by staff', 'ID scan': 'Checked in by scanning their student ID' };
+        const n = (k, w) => k + (k === 1 ? ' ' + w : ' ' + w + 's');
+        const E = [];
+        E.push({ t: rec.at, ik: 'user', title: VIA[rec.via] || 'Checked in', sub: 'Number ' + rec.id });
+        E.push({ t: since, ik: 'monitor', title: 'Called to ' + footName(rec.win) });
+        if (rec.annAt) E.push({ t: rec.annAt, ik: 'announce', title: 'Announced on the lobby speakers' });
+        E.push({ t: rec.openedAt || Math.min(since + 20000, rec.doneAt - 60000), ik: 'pkg', title: 'Pickup opened by ' + op });
+        E.push({ t: rec.doneAt - 45000, ik: 'scan', title: n(got.length, 'item') + ' scanned', lines: got.map(itemLine) });
+        if (left.length) E.push({ t: rec.doneAt - 35000, ik: 'pkg', title: n(left.length, 'item') + ' left for another day', lines: left.map(itemLine) });
+        if (rec.sigSkip) E.push({ t: rec.doneAt - 15000, ik: 'alert', title: 'Signature skipped', sub: rec.sigSkip });
+        else if (rec.idScanAt) E.push({ t: rec.doneAt - 15000, ik: 'scan', title: 'Student ID scanned at ' + rec.win });
+        else if (!rec.guest) E.push({ t: rec.doneAt - 15000, ik: 'sign', title: 'Signed on the signature pad' });
+        else E.push({ t: rec.doneAt - 15000, ik: 'sign', title: 'Guest signed on the signature pad' });
+        E.push({ t: rec.doneAt, ik: 'check', cur: true, title: 'Pickup completed by ' + op + ' at ' + rec.win });
+        ((st.cdLog || {})[key] || []).forEach((g) => {
+          if (g.kind === 'print') E.push({ t: g.t, ik: 'printer', title: 'Receipt printed by ' + g.by });
+          else E.push({ t: g.t, note: true, by: g.by, text: g.text });
+        });
+        E.sort((a, b) => a.t - b.t);
+        const isToday = (t) => t >= todayStart.getTime();
+        const tLabel = (t) => isToday(t) ? clock(t) : new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + clock(t);
+        const entries = actRows(E.map((x) => ({
+          ik: x.note ? 'note' : (x.ik || 'info'), cur: !!x.cur, title: x.note ? 'Note' : x.title, time: tLabel(x.t),
+          sub: x.note ? x.by : x.sub, lines: x.lines || [], text: x.text || ''
+        })));
+        const log = (entry) => { const all = Object.assign({}, this.state.cdLog || {}); all[key] = (all[key] || []).concat([entry]); return all; };
+        const note = st.cdNote || '';
+        const P = PROXY[rec.id];
+        // Completed drawer = Complete pickup with both steps done (read-only).
+        const cdItems = its.map((x, i) => ({
+          shelf: x.shelf, got: i < got.length, left: i >= got.length, icFg: i < got.length ? 'var(--color-fg-success-primary)' : 'var(--color-fg-quaternary)',
+          desc: (i >= got.length ? 'Left for another day · ' : '') + x.size + ' · ' + x.carrier + ' · ', trk: trk(x.tracking),
+          groupStart: !!x.owner && (i === 0 || its[i - 1].owner !== x.owner), groupLabel: x.ownerSelf ? x.owner + ' (their own)' : 'For ' + x.owner,
+          groupBorder: i === 0 ? '0' : '1px solid var(--color-border-secondary)',
+          rowBorder: i === 0 || (x.owner && its[i - 1].owner !== x.owner) ? '0' : '1px solid var(--color-border-secondary)',
+          hasNotes: i === 0, notesLabel: '2 notes',
+          open: () => this.setState({ iv: { src: 'cd', key: key, i: i, view: 'item' } })
+        }));
+        const sigT = clock(rec.doneAt - 15000);
+        const sigCaption = rec.sigSkip ? 'Signature skipped · ' + rec.sigSkip : rec.idScanAt ? 'Student ID scanned at ' + rec.win + ' · ' + sigT : 'Signed ' + sigT;
+        const day = isToday(rec.doneAt) ? 'today' : new Date(rec.doneAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return {
+          open: true, ticket: rec.id, name: rec.name, guest: !!rec.guest,
+          hasPhoto: !!photoOf(rec.sid, rec.name), noPhoto: !photoOf(rec.sid, rec.name),
+          codes: rec.guest ? [{ k: 'Guest', v: 'not in the system' }] : [{ k: 'Student ID', v: rec.sid }, { k: 'Mail code', v: mailCode(rec.sid) }],
+          items: cdItems, itemsProgress: got.length + ' of ' + its.length + ' picked up',
+          sigInk: !rec.sigSkip && !rec.idScanAt, sigOther: !!(rec.sigSkip || rec.idScanAt), sigCaption: sigCaption,
+          footLine: 'Picked up ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + ' · ' + op + ' · ' + footName(rec.win),
+          photo: photoOf(rec.sid, rec.name), initials: initialsOf(rec.name),
+          idLine: rec.guest ? 'Guest · not in the system' : 'Student ID ' + rec.sid + ' · Mail code ' + mailCode(rec.sid),
+          hasProxy: !!P, proxyText: P ? (P.self ? 'Also picked up for ' : 'Picked up for ') + P.for.map((r) => r.name).join(', ') : '',
+          doneLine: 'Completed ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + ' at ' + rec.win,
+          pkLine: rowPk(rec) || pk(rec.pk),
+          total: long(Math.max(0, Math.floor((rec.doneAt - rec.at) / 1000))),
+          entries: entries,
+          note: note, noNote: !note.trim(),
+          onNote: (v) => this.setState({ cdNote: v && v.target ? v.target.value : String(v == null ? '' : v) }),
+          addNote: () => { const txt = (this.state.cdNote || '').trim(); if (!txt) return; this.setState({ cdLog: log({ t: Date.now(), kind: 'note', by: 'John B.', text: txt }), cdNote: '' }); },
+          close: () => this.setState({ cdKey: null, cdNote: '', iv: null }),
+          print: () => {
+            this.setState({ cdLog: log({ t: Date.now(), kind: 'print', by: 'John B.' }), toast: { kind: 'print', title: 'Pickup receipt sent to the mailroom printer', text: 'Number ' + rec.id + ' · ' + rec.name + ' · picked up ' + day + ' at ' + clock(rec.doneAt) } });
+            this.later(() => { if (this.state.toast && this.state.toast.kind === 'print') this.setState({ toast: null }); }, 3500);
+          }
+        };
+      })(),
       walkOpen: !!st.walkOpen,
       toggleWalk: () => this.setState({ walkOpen: !this.state.walkOpen, walkQ: '' }),
       // From a search that found no one in line: open check-in with the same text already searched.
@@ -2468,17 +2912,26 @@ class Component extends DCLogic {
       toastIsMoved: !!st.toast && st.toast.kind === 'moved',
       toastIsUnscan: !!st.toast && st.toast.kind === 'unscan',
       toastIsBlocked: !!st.toast && st.toast.kind === 'blocked',
+      toastIsCopied: !!st.toast && st.toast.kind === 'copied',
       toastUnscanUndo: () => { const t0 = this.state.toast; if (!t0 || t0.kind !== 'unscan') return; const cur = Object.assign({ got: {}, sig: 'none' }, (this.state.pick || {})[t0.id] || {}); const got = Object.assign({}, cur.got); got[t0.idx] = true; setPick(t0.id, { got: got }); this.setState({ toast: null }); },
       toastMovedUndo: () => undoMove(),
       mv: {
         open: !!moveItem,
         ticket: moveItem ? moveItem.id : '', name: moveItem ? moveItem.name : '',
         close: () => this.setState({ moveId: null, moveTo: null }),
-        go: () => doMove(), noPick: !st.moveTo, goLabel: st.moveTo ? 'Move to ' + st.moveTo : 'Choose a window',
+        go: () => doMove(), noPick: !st.moveTo, goLabel: st.moveTo ? 'Move to ' + footName(st.moveTo) : 'Choose a window or person',
         wins: WINS.filter((w) => w !== MY_WIN).map((w) => {
           const at = servingAll.filter((x) => x.win === w);
           const on = st.moveTo === w;
           return { name: w, on: on, status: at.length ? 'Serving ' + at.map((x) => x.id).join(', ') : 'Available', free: at.length === 0,
+            border: on ? 'var(--color-brand-600)' : 'var(--color-border-secondary)', bg: on ? 'var(--color-brand-25)' : 'var(--color-bg-primary)', ring: on ? 'inset 0 0 0 1px var(--color-brand-600)' : 'none',
+            dot: at.length ? '#F79009' : '#17B26A', pick: () => this.setState({ moveTo: w }) };
+        }),
+        feet: FOOT.map((f) => {
+          const w = f.tv;
+          const at = servingAll.filter((x) => x.win === w);
+          const on = st.moveTo === w;
+          return { name: f.name, on: on, status: at.length ? 'Serving ' + at.map((x) => x.id).join(', ') : 'Available', free: at.length === 0,
             border: on ? 'var(--color-brand-600)' : 'var(--color-border-secondary)', bg: on ? 'var(--color-brand-25)' : 'var(--color-bg-primary)', ring: on ? 'inset 0 0 0 1px var(--color-brand-600)' : 'none',
             dot: at.length ? '#F79009' : '#17B26A', pick: () => this.setState({ moveTo: w }) };
         })
@@ -2519,7 +2972,7 @@ class Component extends DCLogic {
           }
         };
       })(),
-      dr: dr,
+      dr: dr, iv: ivBuild(),
       proto: {
         tabC: (st.protoTab || 'controls') === 'controls', tabK: st.protoTab === 'checkpoints', tabE: st.protoTab === 'errors',
         tabCCls: (st.protoTab || 'controls') === 'controls' ? 'on' : '', tabKCls: st.protoTab === 'checkpoints' ? 'on' : '', tabECls: st.protoTab === 'errors' ? 'on' : '',
