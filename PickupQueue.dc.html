@@ -651,6 +651,8 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                   <sc-if value="{{c.canUndo}}" hint-placeholder-val="{{false}}">
                     <x-import component-from-global-scope="UntitledUI.Button" color="tertiary" size="sm" icon-leading="{{ic.FlipBackward}}" on-press="{{c.undo}}">Undo</x-import>
                   </sc-if>
+                  <!-- Same "opens details" chevron as the drawer's item rows; the whole row opens it too. -->
+                  <x-import component-from-global-scope="UntitledUI.Tooltip" title="Pickup details" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.ChevronRight}}" aria-label="Pickup details for {{c.name}}" on-press="{{c.open}}"></x-import></x-import>
                 </div>
               </div>
             </sc-for>
@@ -828,7 +830,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                 <div class="pq-rowopen" onClick="{{it.open}}" style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
                   <span class="text-md font-semibold" style="color: {{it.shelfFg}}">Shelf {{it.shelf}}</span>
                   <span class="text-sm" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.desc}}<span style="font-weight: 500; color: var(--color-text-secondary)">{{it.trk}}</span><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)"> · {{it.state}}</span></span>
-                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
+                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatSquare" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
                 </div>
                 <sc-if value="{{it.got}}" hint-placeholder-val="{{false}}">
                   <x-import component-from-global-scope="UntitledUI.Tooltip" title="Remove scan" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.XClose}}" aria-label="{{it.removeLabel}}" on-press="{{it.remove}}"></x-import></x-import>
@@ -1021,7 +1023,7 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
                 <div class="pq-rowopen" onClick="{{it.open}}" style="flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0">
                   <span class="text-md font-semibold" style="color: var(--color-text-tertiary)">Shelf {{it.shelf}}</span>
                   <span class="text-sm" style="color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.desc}}<span class="font-medium" style="color: var(--color-text-secondary)">{{it.trk}}</span></span>
-                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
+                  <sc-if value="{{it.hasNotes}}" hint-placeholder-val="{{false}}"><span class="text-sm" style="display: flex; align-items: center; gap: 4px; color: var(--color-text-tertiary)"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatSquare" class="size-4" aria-hidden="true"></x-import>{{it.notesLabel}}</span></sc-if>
                 </div>
                 <x-import component-from-global-scope="UntitledUI.Tooltip" title="Item details" placement="top" arrow="{{yes}}" delay="{{tooltipDelay}}" offset="{{tipOffset6}}"><x-import component-from-global-scope="UntitledUI.ButtonUtility" color="tertiary" size="sm" icon="{{ic.ChevronRight}}" aria-label="Item details for shelf {{it.shelf}}" on-press="{{it.open}}"></x-import></x-import>
               </div>
@@ -1130,9 +1132,9 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
           </div>
           <sc-if value="{{iv.hasNotes}}" hint-placeholder-val="{{true}}">
             <button type="button" class="pq-icard" onClick="{{iv.toNotes}}">
-              <span class="pq-circ"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatCircle" class="size-4" aria-hidden="true"></x-import></span>
+              <span class="pq-circ"><x-import component-from-global-scope="UntitledUI.Icons.MessageChatSquare" class="size-4" aria-hidden="true"></x-import></span>
               <span style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
-                <span class="text-md font-semibold" style="color: var(--color-text-primary)">From the mailroom</span>
+                <span class="text-md font-semibold" style="color: var(--color-text-primary)">Notes</span>
                 <span class="text-sm" style="color: var(--color-text-secondary)">{{iv.lastNote}}</span>
                 <span class="text-sm" style="margin-top: 4px; color: var(--color-text-tertiary)">{{iv.notesMeta}}</span>
               </span>
