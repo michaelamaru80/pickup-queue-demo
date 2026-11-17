@@ -2001,16 +2001,19 @@ class Component extends DCLogic {
     const andList = (a) => a.length > 1 ? a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1] : a[0];
     // Student photos beside names on the operator screen (not on the TVs or printouts). Initials when none is on file.
     // Prototype: one sample photo; these Student IDs have no photo on file. Use small thumbnails in production.
-    // Hannah Okafor, Marcus Bell, Grace Kim, Omar Haddad, Isabella Cruz, Ethan Brooks, Fatima Ali, Zoe Bennett,
+    // Hannah Okafor, Marcus Bell, Omar Haddad, Isabella Cruz, Ethan Brooks, Fatima Ali, Zoe Bennett,
     // Chloe Martin, Priya Natarajan, and new arrivals Ben Carter, Owen Price and Hana Sato.
-    const NO_PHOTO_IDS = ['2041 8120', '2039 1170', '2044 0391', '2040 7756', '2042 3318', '2045 2287', '2039 7741', '2042 0915', '2038 4471', '2042 7704', '2041 2209', '2043 8812', '2038 9934', '2039 4410'];
+    const NO_PHOTO_IDS = ['2041 8120', '2039 1170', '2044 0391', '2042 3318', '2045 2287', '2039 7741', '2042 0915', '2038 4471', '2042 7704', '2041 2209', '2043 8812', '2038 9934', '2039 4410'];
     // Sample photos (prototype only). Picked from the Student ID so each student keeps the same photo everywhere.
-    const PHOTOS_M = ['/_blob/1c45a13cc2a3b67d41d9940f677eb097', '/_blob/651a843b5e006b6f9534d9af40da9bc1'];
-    const PHOTOS_F = ['/_blob/8e6da18d903bcc0ce1395d8257228446', '/_blob/826299d4e24b98a07f541450e51a7ab2', '/_blob/5bf48db88195f676575c5f5a57498da6', '/_blob/f783fd9e60abbca7f8c24337e16da876', '/_blob/75c44bfa51f4473b83814ddc62bfc905', '/_blob/da9214a0df326acad192cd429695521c', '/_blob/fa149e1f28d271568519c33102e3c891', '/_blob/0e31fb0f182b37e50b8e8334776893b7', '/_blob/0b2691c3cced059b2a4e9bfe175f4291'];
+    const PHOTOS_M = ['assets/1c45a13cc2a3b67d41d9940f677eb097.jpg', 'assets/651a843b5e006b6f9534d9af40da9bc1.jpg'];
+    const PHOTOS_F = ['assets/8e6da18d903bcc0ce1395d8257228446.jpg', 'assets/826299d4e24b98a07f541450e51a7ab2.jpg', 'assets/5bf48db88195f676575c5f5a57498da6.jpg', 'assets/f783fd9e60abbca7f8c24337e16da876.jpg', 'assets/75c44bfa51f4473b83814ddc62bfc905.jpg', 'assets/da9214a0df326acad192cd429695521c.jpg', 'assets/fa149e1f28d271568519c33102e3c891.jpg', 'assets/0e31fb0f182b37e50b8e8334776893b7.jpg', 'assets/0b2691c3cced059b2a4e9bfe175f4291.jpg'];
+    // Students with their own sample photo (same image on the mobile Pickup Queue).
+    const PHOTO_BY_ID = { '2040 7756': 'assets/b8811b10212451aaed315ba62fd55e4c.jpg' }; // Grace Kim
     const M_NAMES = ['Daniel', 'Aaron', 'Lucas', 'Tyler', 'Malik', 'Diego', 'Kevin', 'Leo', 'Sam', 'Jordan', 'Brian', 'Devin', 'Marcus', 'Omar', 'Ethan', 'Owen', 'Ben'];
     const photoOf = (sid, name) => {
       if (!sid) return undefined;
       if (NO_PHOTO_IDS.indexOf(sid) >= 0) return undefined;
+      if (PHOTO_BY_ID[sid]) return PHOTO_BY_ID[sid];
       const h = String(sid).replace(/\D/g, '').split('').reduce((a, c) => a * 23 + Number(c), 0);
       const list = M_NAMES.indexOf(String(name || '').split(' ')[0]) >= 0 ? PHOTOS_M : PHOTOS_F;
       return list[h % list.length];
