@@ -1196,7 +1196,6 @@ a{color:var(--color-text-brand-secondary)}a:hover{color:var(--color-text-brand-s
               </sc-for>
             </div>
           </div>
-          </div>
         </div>
         </sc-if>
 
@@ -1621,7 +1620,7 @@ class Component extends DCLogic {
     for (let i = 0; i < 46; i++) {
       const n = names[i % names.length];
       const doneAt = t - (410 + i * 230) * 1000;
-      out.push({ id: 'A0' + String(96 - i).padStart(2, '0'), name: n[0], sid: n[1], pk: 1 + (i % 3 === 0 ? 1 : 0), shelf: ['A', 'B'][i % 2] + '-' + String(1 + (i * 7) % 20).padStart(2, '0'), via: i % 3 ? 'App' : 'Kiosk', win: 'Window ' + (1 + (i % 5)), at: doneAt - (360 + (i * 53) % 480) * 1000, since: doneAt - (90 + (i * 31) % 150) * 1000, ann: 1, annAt: doneAt - (85 + (i * 31) % 150) * 1000, doneAt: doneAt });
+      out.push({ id: 'A0' + String(96 - i).padStart(2, '0'), name: n[0], sid: n[1], pk: 1 + (i % 3 === 0 ? 1 : 0), shelf: ['A', 'B'][i % 2] + '-' + String(1 + (i * 7) % 20).padStart(2, '0'), via: i % 3 ? 'App' : 'Kiosk', win: i % 6 === 2 ? (i % 12 === 2 ? 'See Alex' : 'See Nina') : 'Window ' + (1 + (i % 5)), at: doneAt - (360 + (i * 53) % 480) * 1000, since: doneAt - (90 + (i * 31) % 150) * 1000, ann: 1, annAt: doneAt - (85 + (i * 31) % 150) * 1000, doneAt: doneAt });
     }
     return out;
   }
@@ -1641,7 +1640,7 @@ class Component extends DCLogic {
         const k = day * 13 + i * 5;
         const nm = names[k % names.length];
         const doneAt = base.getTime() + (9 * 3600 + Math.floor((i * 8 * 3600) / n) + (k * 137) % 1800) * 1000;
-        out.push({ id: 'A0' + String(10 + i * 3 + (day % 3)).padStart(2, '0'), uid: 'H' + day + '-' + i, name: nm[0], sid: nm[1], pk: 1 + (k % 4 === 0 ? 1 : 0), shelf: ['A', 'B'][k % 2] + '-' + String(1 + (k * 7) % 20).padStart(2, '0'), via: k % 3 ? 'App' : 'Kiosk', win: 'Window ' + (1 + ((day + i) % 5)), at: doneAt - (300 + (k * 53) % 600) * 1000, doneAt: doneAt });
+        out.push({ id: 'A0' + String(10 + i * 3 + (day % 3)).padStart(2, '0'), uid: 'H' + day + '-' + i, name: nm[0], sid: nm[1], pk: 1 + (k % 4 === 0 ? 1 : 0), shelf: ['A', 'B'][k % 2] + '-' + String(1 + (k * 7) % 20).padStart(2, '0'), via: k % 3 ? 'App' : 'Kiosk', win: i % 6 === 3 ? (day % 2 ? 'See Alex' : 'See Nina') : 'Window ' + (1 + ((day + i) % 5)), at: doneAt - (300 + (k * 53) % 600) * 1000, doneAt: doneAt });
       }
     }
     out.sort((a, b) => b.doneAt - a.doneAt);
@@ -1823,6 +1822,8 @@ class Component extends DCLogic {
     // Staff serving on foot (prototype sample). The displays show them as “See [first name]”, like the phone app.
     const FOOT = [{ name: 'Alex R.', tv: 'See Alex' }, { name: 'Nina P.', tv: 'See Nina' }];
     const footName = (w) => { const f = FOOT.find((x) => x.tv === w); return f ? f.name : w; };
+    // Completed by on-foot staff: the record's win is their TV line ("See Alex").
+    const isFoot = (w) => FOOT.some((x) => x.tv === w);
     const waitColor = (n) => n >= 1200 ? 'error' : (n >= 900 ? 'warning' : 'gray');
     const viaIcon = (v) => v === 'Kiosk' ? ic.Tablet01 : (v === 'Staff' ? ic.UserCheck01 : (v === 'ID scan' ? ic.Scan : ic.Phone01));
     const firstLast = (name) => { const p = name.split(' '); return p[0] + ' ' + (p[1] ? p[1][0] + '.' : ''); };
@@ -2791,7 +2792,7 @@ class Component extends DCLogic {
         pkLabel: rowPk(c) || pk(c.pk),
         shelf: rowShelf(c),
         hasProxy: !!PROXY[c.id] && c.doneAt >= todayStart.getTime(), proxyText: PROXY[c.id] ? (PROXY[c.id].self ? 'Also for ' : 'For ') + PROXY[c.id].for.map((r) => shortName(r.name)).join(', ') : '',
-        win: c.win,
+        win: isFoot(c.win) ? 'On foot · ' + footName(c.win) : c.win,
         winColor: c.win === MY_WIN ? 'brand' : 'gray',
         doneDay: c.doneAt >= todayStart.getTime() ? 'Today' : new Date(c.doneAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: new Date(c.doneAt).getFullYear() === todayStart.getFullYear() ? undefined : 'numeric' }),
         doneAt: clock(c.doneAt),
@@ -2836,10 +2837,10 @@ class Component extends DCLogic {
         E.push({ t: rec.doneAt - 45000, ik: 'scan', title: n(got.length, 'item') + ' scanned', lines: got.map(itemLine) });
         if (left.length) E.push({ t: rec.doneAt - 35000, ik: 'pkg', title: n(left.length, 'item') + ' left for another day', lines: left.map(itemLine) });
         if (rec.sigSkip) E.push({ t: rec.doneAt - 15000, ik: 'alert', title: 'Signature skipped', sub: rec.sigSkip });
-        else if (rec.idScanAt) E.push({ t: rec.doneAt - 15000, ik: 'scan', title: 'Student ID scanned at ' + rec.win });
+        else if (rec.idScanAt) E.push({ t: rec.doneAt - 15000, ik: 'scan', title: isFoot(rec.win) ? 'Student ID scanned by ' + footName(rec.win) : 'Student ID scanned at ' + rec.win });
         else if (!rec.guest) E.push({ t: rec.doneAt - 15000, ik: 'sign', title: 'Signed on the signature pad' });
         else E.push({ t: rec.doneAt - 15000, ik: 'sign', title: 'Guest signed on the signature pad' });
-        E.push({ t: rec.doneAt, ik: 'check', cur: true, title: 'Pickup completed by ' + op + ' at ' + rec.win });
+        E.push({ t: rec.doneAt, ik: 'check', cur: true, title: 'Pickup completed by ' + op + (isFoot(rec.win) ? '' : ' at ' + rec.win) });
         ((st.cdLog || {})[key] || []).forEach((g) => {
           if (g.kind === 'print') E.push({ t: g.t, ik: 'printer', title: 'Receipt printed by ' + g.by });
           else E.push({ t: g.t, note: true, by: g.by, text: g.text });
@@ -2865,7 +2866,7 @@ class Component extends DCLogic {
           open: () => this.setState({ iv: { src: 'cd', key: key, i: i, view: 'item' } })
         }));
         const sigT = clock(rec.doneAt - 15000);
-        const sigCaption = rec.sigSkip ? 'Signature skipped · ' + rec.sigSkip : rec.idScanAt ? 'Student ID scanned at ' + rec.win + ' · ' + sigT : 'Signed ' + sigT;
+        const sigCaption = rec.sigSkip ? 'Signature skipped · ' + rec.sigSkip : rec.idScanAt ? (isFoot(rec.win) ? 'Student ID scanned on foot' : 'Student ID scanned at ' + rec.win) + ' · ' + sigT : 'Signed ' + sigT;
         const day = isToday(rec.doneAt) ? 'today' : new Date(rec.doneAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         return {
           open: true, ticket: rec.id, name: rec.name, guest: !!rec.guest,
@@ -2873,11 +2874,11 @@ class Component extends DCLogic {
           codes: rec.guest ? [{ k: 'Guest', v: 'not in the system' }] : [{ k: 'Student ID', v: rec.sid }, { k: 'Mail code', v: mailCode(rec.sid) }],
           items: cdItems, itemsProgress: got.length + ' of ' + its.length + ' picked up',
           sigInk: !rec.sigSkip && !rec.idScanAt, sigOther: !!(rec.sigSkip || rec.idScanAt), sigCaption: sigCaption,
-          footLine: 'Picked up ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + ' · ' + op + ' · ' + footName(rec.win),
+          footLine: 'Picked up ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + ' · ' + op + ' · ' + (isFoot(rec.win) ? 'On foot' : rec.win),
           photo: photoOf(rec.sid, rec.name), initials: initialsOf(rec.name),
           idLine: rec.guest ? 'Guest · not in the system' : 'Student ID ' + rec.sid + ' · Mail code ' + mailCode(rec.sid),
           hasProxy: !!P, proxyText: P ? (P.self ? 'Also picked up for ' : 'Picked up for ') + P.for.map((r) => r.name).join(', ') : '',
-          doneLine: 'Completed ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + ' at ' + rec.win,
+          doneLine: 'Completed ' + (isToday(rec.doneAt) ? clock(rec.doneAt) : tLabel(rec.doneAt)) + (isFoot(rec.win) ? ' on foot' : ' at ' + rec.win),
           pkLine: rowPk(rec) || pk(rec.pk),
           total: long(Math.max(0, Math.floor((rec.doneAt - rec.at) / 1000))),
           entries: entries,
